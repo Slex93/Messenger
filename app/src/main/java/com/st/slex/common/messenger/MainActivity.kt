@@ -1,7 +1,7 @@
 package com.st.slex.common.messenger
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.st.slex.common.messenger.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

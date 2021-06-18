@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.st.slex.common.messenger.MainFragment"
+        android:name="com.st.slex.common.messenger.main_screen.MainFragment"
         android:label="Main screen"
         tools:layout="@layout/fragment_main" />
 
