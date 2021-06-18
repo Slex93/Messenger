@@ -1,4 +1,4 @@
-package com.st.slex.common.messenger.activity_model
+package com.st.slex.common.messenger.activity.activity_model
 
 data class User(
     val uid: String = "",

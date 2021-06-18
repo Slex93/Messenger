@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">Messenger</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="next_step">Next step</string>
+
+    <!--Enter code-->
+    <string name="enter_code">Code</string>
+
+    <!--Enter phone-->
+    <string name="phone_number">Phone number</string>
 </resources>

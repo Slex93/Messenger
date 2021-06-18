@@ -1,10 +1,13 @@
-package com.st.slex.common.messenger.activity_model
+package com.st.slex.common.messenger.activity.activity_model
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 
 lateinit var AUTH: FirebaseAuth
 lateinit var USER: User
 lateinit var CURRENT_UID: String
+lateinit var REF_DATABASE_ROOT: DatabaseReference
+
 
 const val NODE_USER = "user"
 const val NODE_USERNAME = "username"
