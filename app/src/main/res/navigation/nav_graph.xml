@@ -10,5 +10,15 @@
         android:name="com.st.slex.common.messenger.main_screen.MainFragment"
         android:label="Main screen"
         tools:layout="@layout/fragment_main" />
+    <fragment
+        android:id="@+id/nav_enter_phone"
+        android:name="com.st.slex.common.messenger.auth.EnterPhoneFragment"
+        android:label="Sign In"
+        tools:layout="@layout/fragment_enter_phone" />
+    <fragment
+        android:id="@+id/nav_enter_code"
+        android:name="com.st.slex.common.messenger.auth.EnterCodeFragment"
+        android:label="Enter Code"
+        tools:layout="@layout/fragment_enter_code" />
 
 </navigation>
