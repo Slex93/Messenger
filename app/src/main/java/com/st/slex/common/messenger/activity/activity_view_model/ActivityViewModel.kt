@@ -13,8 +13,8 @@ class ActivityViewModel(private val repository: ActivityRepository) : ViewModel(
         repository.signOut()
     }
 
-    fun initUser(function: () -> Unit) {
-        repository.initUser(function)
+    fun initUser() {
+        repository.initUser()
     }
 
 

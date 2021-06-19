@@ -56,8 +56,6 @@ class AuthRepository {
         val dateMap = mutableMapOf<String, Any>()
         dateMap[CHILD_ID] = id
         dateMap[CHILD_PHONE] = phone
-        Log.i("AUTH:::", phone)
-        Log.i("AUTH::", id)
         REF_DATABASE_ROOT.child(NODE_PHONE).child(id).setValue(phone)
             .addOnSuccessListener {
                 REF_DATABASE_ROOT.child(NODE_USER).child(id).updateChildren(dateMap)

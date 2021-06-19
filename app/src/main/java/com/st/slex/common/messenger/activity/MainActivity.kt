@@ -26,6 +26,7 @@ import com.st.slex.common.messenger.utilites.AppValueEventListener
 import com.st.slex.common.messenger.utilites.downloadAndSet
 import com.st.slex.common.messenger.utilites.restartActivity
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -61,9 +62,9 @@ class MainActivity : AppCompatActivity() {
     private fun checkAuth() {
         if (AUTH.currentUser != null) {
             Log.i("UserMainPre", USER.toString())
-            activityViewModel.initUser{
-                initNavController()
-            }
+            //activityViewModel.initUser()
+            initUserNew()
+            initNavController()
             Log.i("UserMainPost", USER.toString())
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             navGraph.startDestination = R.id.nav_home
@@ -89,6 +90,20 @@ class MainActivity : AppCompatActivity() {
         headerBinding.navigationHeaderUserName.text = USER.username
         headerBinding.navigationHeaderPhoneNumber.text = USER.phone
 
+    }
+    fun initUserNew() {
+        ActivityConst.REF_DATABASE_ROOT.child(ActivityConst.NODE_USER).child(ActivityConst.CURRENT_UID)
+            .addListenerForSingleValueEvent(AppValueEventListener {
+                Log.i("AppValueEventListener", it.toString())
+                USER = it.getValue(User::class.java) ?: User()
+                if (USER.username.isEmpty()) {
+                    USER = User(ActivityConst.CURRENT_UID, USER.phone, USER.username, USER.url)
+                    ActivityConst.REF_DATABASE_ROOT.child(ActivityConst.NODE_USER).child(
+                        ActivityConst.CURRENT_UID
+                    ).child(ActivityConst.CHILD_USERNAME)
+                        .setValue(ActivityConst.CURRENT_UID)
+                }
+            })
     }
 
     private fun listenItemClick() {
