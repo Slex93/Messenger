@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Messenger</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="next_step">Next step</string>
+
+    <!--Enter code-->
+    <string name="enter_code">Code</string>
+
+    <!--Enter phone-->
+    <string name="phone_number">Phone number</string>
+    <string name="hint_phone_number">Phone number</string>
+    <string name="code">code</string>
+    <string name="country_code_ru">+7</string>
 </resources>
