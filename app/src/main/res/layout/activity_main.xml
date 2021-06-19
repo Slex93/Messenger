@@ -13,13 +13,11 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-            style="ThemeOverlay.AppCompat.Dark.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/main_activity_toolbar"
-                style="ThemeOverlay.AppCompat.Light"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

@@ -25,6 +25,7 @@ class EnterPhoneFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         binding.fragmentPhoneFab.setOnClickListener {
+            binding.fragmentPhoneProgressIndicator.visibility = View.VISIBLE
             findNavController().navigate(R.id.action_nav_enter_phone_to_nav_enter_code)
         }
     }

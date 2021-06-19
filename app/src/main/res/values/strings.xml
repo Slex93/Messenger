@@ -8,4 +8,7 @@
 
     <!--Enter phone-->
     <string name="phone_number">Phone number</string>
+    <string name="hint_phone_number">Phone number</string>
+    <string name="code">code</string>
+    <string name="country_code_ru">+7</string>
 </resources>
