@@ -6,13 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.navigation.NavigationView
 import com.st.slex.common.messenger.R
 import com.st.slex.common.messenger.activity.activity_model.AUTH
 import com.st.slex.common.messenger.activity.activity_model.ActivityRepository
@@ -38,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         activityViewModel.initFirebase()
         initNavigationFields()
         checkAuth()
@@ -53,11 +50,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAuth() {
-
         if (AUTH.currentUser == null) {
+            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             navGraph.startDestination = R.id.nav_enter_phone
         } else {
             setSupportActionBar(binding.mainActivityToolbar)
+            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             initNavController()
             navGraph.startDestination = R.id.nav_home
         }
