@@ -1,6 +1,7 @@
 package com.st.slex.common.messenger.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -11,13 +12,19 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.button.MaterialButton
 import com.st.slex.common.messenger.R
-import com.st.slex.common.messenger.activity.activity_model.AUTH
+import com.st.slex.common.messenger.activity.activity_model.ActivityConst
+import com.st.slex.common.messenger.activity.activity_model.ActivityConst.AUTH
+import com.st.slex.common.messenger.activity.activity_model.ActivityConst.USER
 import com.st.slex.common.messenger.activity.activity_model.ActivityRepository
+import com.st.slex.common.messenger.activity.activity_model.User
 import com.st.slex.common.messenger.activity.activity_view_model.ActivityViewModel
 import com.st.slex.common.messenger.activity.activity_view_model.ActivityViewModelFactory
 import com.st.slex.common.messenger.databinding.ActivityMainBinding
+import com.st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
+import com.st.slex.common.messenger.utilites.AppValueEventListener
+import com.st.slex.common.messenger.utilites.downloadAndSet
+import com.st.slex.common.messenger.utilites.restartActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -52,13 +59,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAuth() {
-        if (AUTH.currentUser == null) {
+        if (AUTH.currentUser != null) {
+            Log.i("UserMainPre", USER.toString())
+            activityViewModel.initUser{
+                initNavController()
+            }
+            Log.i("UserMainPost", USER.toString())
+            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            navGraph.startDestination = R.id.nav_home
+        } else {
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             navGraph.startDestination = R.id.nav_enter_phone
-        } else {
-            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-            initNavController()
-            navGraph.startDestination = R.id.nav_home
         }
         navController.graph = navGraph
     }
@@ -67,16 +78,29 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), binding.drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
-
         initDrawerHeader()
     }
 
     private fun initDrawerHeader() {
-        val header = binding.navView.inflateHeaderView(R.layout.navigation_drawer_header)
-        val button = header.findViewById<MaterialButton>(R.id.sign_out)
-        button.setOnClickListener {
-            activityViewModel.signOut()
-            recreate()
+        listenItemClick()
+        val headerView = binding.navView.getHeaderView(0)
+        val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
+        headerBinding.navigationHeaderImage.downloadAndSet(USER.url)
+        headerBinding.navigationHeaderUserName.text = USER.username
+        headerBinding.navigationHeaderPhoneNumber.text = USER.phone
+
+    }
+
+    private fun listenItemClick() {
+        binding.navView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.menu_nav_btn_sign_out -> {
+                    activityViewModel.signOut()
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                    this.restartActivity()
+                }
+            }
+            true
         }
     }
 

@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn = "navigation_view">
+    <group>
+        <item
+            android:id="@+id/nav_home"
+            android:title="All chats" />
+        <item
+            android:id="@+id/nav_contacts"
+            android:title="Contacts" />
+        <item
+            android:id="@+id/nav_settings"
+            android:title="Settings" />
+    </group>
 
+    <group android:id="@+id/group_menu">
+        <item
+            android:id="@+id/menu_nav_btn_sign_out"
+            android:title="Sign out" />
+        <item
+            android:id="@+id/menu_nav_btn_invite"
+            android:title="Invite Friends" />
+        <item
+            android:id="@+id/ic_menu_btn_help"
+            android:title="Help" />
+    </group>
 </menu>
