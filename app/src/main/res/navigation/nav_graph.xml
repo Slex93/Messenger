@@ -23,6 +23,12 @@
         android:id="@+id/nav_enter_code"
         android:name="com.st.slex.common.messenger.auth.EnterCodeFragment"
         android:label="Enter Code"
-        tools:layout="@layout/fragment_enter_code" />
+        tools:layout="@layout/fragment_enter_code" >
+
+        <argument
+            android:name="PhoneNumber"
+            app:argType="string"/>
+
+    </fragment>
 
 </navigation>
