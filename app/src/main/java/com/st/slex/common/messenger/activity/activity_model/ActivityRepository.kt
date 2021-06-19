@@ -12,4 +12,8 @@ class ActivityRepository {
         CURRENT_UID = AUTH.currentUser?.uid.toString()
     }
 
+    fun signOut(){
+        AUTH.signOut()
+    }
+
 }

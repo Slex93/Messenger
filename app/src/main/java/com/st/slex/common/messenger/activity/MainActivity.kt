@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.button.MaterialButton
 import com.st.slex.common.messenger.R
 import com.st.slex.common.messenger.activity.activity_model.AUTH
 import com.st.slex.common.messenger.activity.activity_model.ActivityRepository
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         activityViewModel.initFirebase()
+        setSupportActionBar(binding.mainActivityToolbar)
         initNavigationFields()
         checkAuth()
     }
@@ -54,7 +56,6 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             navGraph.startDestination = R.id.nav_enter_phone
         } else {
-            setSupportActionBar(binding.mainActivityToolbar)
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             initNavController()
             navGraph.startDestination = R.id.nav_home
@@ -66,6 +67,17 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), binding.drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
+
+        initDrawerHeader()
+    }
+
+    private fun initDrawerHeader() {
+        val header = binding.navView.inflateHeaderView(R.layout.navigation_drawer_header)
+        val button = header.findViewById<MaterialButton>(R.id.sign_out)
+        button.setOnClickListener {
+            activityViewModel.signOut()
+            recreate()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

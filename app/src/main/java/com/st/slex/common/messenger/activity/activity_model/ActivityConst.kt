@@ -2,9 +2,11 @@ package com.st.slex.common.messenger.activity.activity_model
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import com.st.slex.common.messenger.auth.model.base.AuthUser
 
 lateinit var AUTH: FirebaseAuth
 lateinit var USER: User
+lateinit var AUTH_USER: AuthUser
 lateinit var CURRENT_UID: String
 lateinit var REF_DATABASE_ROOT: DatabaseReference
 

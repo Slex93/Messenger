@@ -8,4 +8,8 @@ class ActivityViewModel(private val repository: ActivityRepository) : ViewModel(
     fun initFirebase(){
         repository.initFirebase()
     }
+
+    fun signOut(){
+        repository.signOut()
+    }
 }

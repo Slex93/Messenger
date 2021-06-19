@@ -6,9 +6,9 @@ import com.st.slex.common.messenger.auth.model.AuthRepository
 
 class AuthViewModelFactory(private val repository: AuthRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AuthViewModelFactory::class.java)) {
+        if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return AuthViewModelFactory(repository) as T
+            return AuthViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

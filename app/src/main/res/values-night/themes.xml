@@ -22,5 +22,8 @@
         <item name="android:background"> @color/black </item>
     </style>
 
+    <style name="MainAppBar" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="android:background"> @color/black </item>
+    </style>
 
 </resources>

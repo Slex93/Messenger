@@ -24,7 +24,11 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
-    <style name="MainToolBar" parent="Widget.MaterialComponents.Toolbar.Primary">
+    <style name="MainToolBar" parent="Widget.MaterialComponents.Toolbar">
+        <item name="android:background"> @color/white </item>
+    </style>
+
+    <style name="MainAppBar" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="android:background"> @color/white </item>
     </style>
 
