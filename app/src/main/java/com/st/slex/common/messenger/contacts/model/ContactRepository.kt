@@ -1,5 +1,6 @@
 package com.st.slex.common.messenger.contacts.model
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_PHONE_CONTACT
@@ -16,10 +17,11 @@ class ContactRepository {
             .child(NODE_PHONE_CONTACT)
             .child(ActivityConst.CURRENT_UID)
             .addListenerForSingleValueEvent(AppValueEventListener {
-                val lisOfPrimaryContacts = it.children.map { snapshot ->
+                val listOfPrimaryContacts = it.children.map { snapshot ->
                     snapshot.getValue(Contact::class.java) ?: Contact()
                 }
-                lisOfPrimaryContacts.forEach { itemContact->
+                Log.i("Transit::lisOfPContacts", listOfPrimaryContacts.toString())
+                listOfPrimaryContacts.forEach { itemContact->
                     REF_DATABASE_ROOT
                         .child(NODE_USER)
                         .child(itemContact.id)

@@ -48,7 +48,6 @@
     <fragment
         android:id="@+id/nav_contact"
         android:name="com.st.slex.common.messenger.contacts.ContactFragment"
-        android:label="fragment_contact"
         tools:layout="@layout/fragment_contact" >
         <action
             android:id="@+id/action_nav_contact_to_nav_single_chat"
@@ -57,11 +56,13 @@
     <fragment
         android:id="@+id/nav_single_chat"
         android:name="com.st.slex.common.messenger.single_chat.SingleChatFragment"
-        android:label="fragment_single_chat"
         tools:layout="@layout/fragment_single_chat">
         <argument
             android:name="contact"
             app:argType= "com.st.slex.common.messenger.contacts.model.Contact"/>
+        <argument
+            android:name="key"
+            app:argType="string"/>
     </fragment>
 
 </navigation>

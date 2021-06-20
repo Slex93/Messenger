@@ -1,5 +1,6 @@
 package com.st.slex.common.messenger.contacts.adapter
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.st.slex.common.messenger.contacts.ContactClickListener
@@ -12,11 +13,16 @@ class ContactViewHolder(private val binding: ItemRecyclerContactBinding) :
 
     private lateinit var contact: Contact
     private lateinit var clickListener: ContactClickListener
-    fun bind(contact: Contact) {
+    private lateinit var key: String
+
+    fun bind(contact: Contact, position: Int) {
         this.contact = contact
         binding.recyclerContactUsername.text = contact.fullname
         binding.recyclerContactPhone.text = contact.phone
         binding.recyclerContactImage.downloadAndSet(contact.url)
+        key = "card$position"
+        binding.itemContactCard.transitionName = key
+        Log.i("Transit::Bind", key)
     }
 
     fun clickListener(clickListener: ContactClickListener) {
@@ -25,7 +31,7 @@ class ContactViewHolder(private val binding: ItemRecyclerContactBinding) :
     }
 
     override fun onClick(v: View?) {
-        clickListener.onClick(binding.itemContactCard, contact)
+        clickListener.onClick(binding.itemContactCard, contact, key)
     }
 
 }

@@ -8,12 +8,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.*
 import com.st.slex.common.messenger.R
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.AUTH
 import com.st.slex.common.messenger.activity.activity_model.ActivityRepository
@@ -44,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         activityViewModel.initFirebase()
-        setSupportActionBar(binding.mainActivityToolbar)
         initNavigationFields()
         checkAuth()
     }
@@ -78,7 +75,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setNavController() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), binding.drawerLayout)
-        setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
     }
 
@@ -93,10 +89,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        navHostFragment =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-        navController = navHostFragment.navController
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
     }
 
     private fun initContacts() {

@@ -1,5 +1,6 @@
 package com.st.slex.common.messenger.contacts.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -19,14 +20,18 @@ class ContactAdapter(private val clickListener: ContactClickListener) :
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-        holder.bind(contactList[position])
+        holder.bind(contactList[position], position)
         holder.clickListener(clickListener)
     }
 
     override fun getItemCount(): Int = contactList.size
 
     fun addItems(contact: Contact) {
-        contactList.add(contact)
-        notifyDataSetChanged()
+        if (!contactList.contains(contact)){
+            contactList.add(contact)
+            notifyDataSetChanged()
+            //notifyItemChanged(contactList.size)
+            Log.i("Transit::AdapterAdd", contact.toString())
+        }
     }
 }
