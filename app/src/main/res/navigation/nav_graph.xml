@@ -9,7 +9,11 @@
         android:id="@+id/nav_home"
         android:name="com.st.slex.common.messenger.main_screen.MainFragment"
         android:label="Main screen"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_user_profile"
+            app:destination="@id/nav_user_profile" />
+    </fragment>
     <fragment
         android:id="@+id/nav_enter_phone"
         android:name="com.st.slex.common.messenger.auth.EnterPhoneFragment"
@@ -30,5 +34,10 @@
             app:argType="string"/>
 
     </fragment>
+    <fragment
+        android:id="@+id/nav_user_profile"
+        android:name="com.st.slex.common.messenger.user_profile.UserProfileFragment"
+        android:label="fragment_user_profile"
+        tools:layout="@layout/fragment_user_profile" />
 
 </navigation>

@@ -17,6 +17,7 @@ import com.st.slex.common.messenger.auth.model.AuthRepository
 import com.st.slex.common.messenger.auth.viewmodel.AuthViewModel
 import com.st.slex.common.messenger.auth.viewmodel.AuthViewModelFactory
 import com.st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
+import com.st.slex.common.messenger.utilites.restartActivity
 import com.st.slex.common.messenger.utilites.showPrimarySnackBar
 
 class EnterPhoneFragment : Fragment() {
@@ -60,7 +61,7 @@ class EnterPhoneFragment : Fragment() {
             when (it) {
                 "success" -> {
                     binding.root.showPrimarySnackBar(it)
-                    requireActivity().recreate()
+                    requireActivity().restartActivity()
                 }
                 "send" -> {
                     binding.root.showPrimarySnackBar(it)
@@ -91,6 +92,5 @@ class EnterPhoneFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), R.layout.sign_in_list_item, items)
         (binding.signInCountryCodeLayout.editText as AutoCompleteTextView).setAdapter(adapter)
     }
-
 
 }

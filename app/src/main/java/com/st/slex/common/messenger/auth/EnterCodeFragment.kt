@@ -2,7 +2,6 @@ package com.st.slex.common.messenger.auth
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import com.st.slex.common.messenger.auth.model.AuthRepository
 import com.st.slex.common.messenger.auth.viewmodel.AuthViewModel
 import com.st.slex.common.messenger.auth.viewmodel.AuthViewModelFactory
 import com.st.slex.common.messenger.databinding.FragmentEnterCodeBinding
+import com.st.slex.common.messenger.utilites.restartActivity
 import com.st.slex.common.messenger.utilites.showPrimarySnackBar
 
 class EnterCodeFragment : Fragment() {
@@ -49,13 +49,13 @@ class EnterCodeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         binding.fragmentCodeTextInput.editText?.addTextChangedListener {
-            if (it?.length == 6){
+            if (it?.length == 6) {
                 binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
                 authViewModel.callbackReturnStatus.observe(viewLifecycleOwner) {
                     when (it) {
                         "success" -> {
                             binding.root.showPrimarySnackBar(it)
-                            requireActivity().recreate()
+                            requireActivity().restartActivity()
                         }
                         else -> {
                             binding.root.showPrimarySnackBar(it)
