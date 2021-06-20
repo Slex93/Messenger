@@ -3,6 +3,7 @@ package com.st.slex.common.messenger.activity
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -59,10 +60,10 @@ class MainActivity : AppCompatActivity() {
     private fun checkAuth() {
         if (AUTH.currentUser != null) {
             activityViewModel.initUser()
-            initContacts()
-            initNavController()
             binding.drawerLayout.unlockDrawer()
             navGraph.startDestination = R.id.nav_home
+            initContacts()
+            initNavController()
         } else {
             binding.drawerLayout.lockDrawer()
             navGraph.startDestination = R.id.nav_enter_phone
@@ -72,18 +73,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun initNavController() {
         setNavController()
-        initDrawerHeader()
+        setUserInfoInHeader()
     }
 
     private fun setNavController() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), binding.drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
-    }
-
-    private fun initDrawerHeader() {
-        listenItemClick()
-        setUserInfoInHeader()
     }
 
     private fun setUserInfoInHeader() {
@@ -93,19 +89,6 @@ class MainActivity : AppCompatActivity() {
             headerBinding.navigationHeaderImage.downloadAndSet(it.url)
             headerBinding.navigationHeaderUserName.text = it.username
             headerBinding.navigationHeaderPhoneNumber.text = it.phone
-        }
-    }
-
-    private fun listenItemClick() {
-        binding.navView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.menu_nav_btn_sign_out -> {
-                    activityViewModel.signOut()
-                    binding.drawerLayout.lockDrawer()
-                    this.restartActivity()
-                }
-            }
-            true
         }
     }
 
@@ -120,21 +103,6 @@ class MainActivity : AppCompatActivity() {
         val contacts = getContacts()
         activityViewModel.updatePhoneToDatabase(contacts)
 
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (ContextCompat.checkSelfPermission(
-                this,
-                READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            initContacts()
-        }
     }
 
     private fun getContacts(): List<Contact> {
@@ -162,6 +130,21 @@ class MainActivity : AppCompatActivity() {
             cursor?.close()
         }
         return contactList
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (ContextCompat.checkSelfPermission(
+                this,
+                READ_CONTACTS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            initContacts()
+        }
     }
 
 }
