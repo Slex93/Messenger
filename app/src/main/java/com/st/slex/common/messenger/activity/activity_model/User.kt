@@ -9,3 +9,9 @@ data class User(
     val fullname: String = "",
     val state: String = "",
 )
+
+data class Contact(
+    val id: String = "",
+    val phone: String  = "",
+    val fullname: String = "",
+)

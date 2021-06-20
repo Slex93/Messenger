@@ -44,7 +44,7 @@ class ActivityRepository {
             })
     }
 
-    fun updatePhonesToDatabase(listContact: List<User>) {
+    fun updatePhonesToDatabase(listContact: List<Contact>) {
         REF_DATABASE_ROOT.child(NODE_PHONE)
             .addListenerForSingleValueEvent(AppValueEventListener { dataSnapshot ->
                 dataSnapshot.children.forEach { snapshot ->

@@ -16,15 +16,12 @@ import androidx.navigation.ui.setupWithNavController
 import com.st.slex.common.messenger.R
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.AUTH
 import com.st.slex.common.messenger.activity.activity_model.ActivityRepository
-import com.st.slex.common.messenger.activity.activity_model.User
+import com.st.slex.common.messenger.activity.activity_model.Contact
 import com.st.slex.common.messenger.activity.activity_view_model.ActivityViewModel
 import com.st.slex.common.messenger.activity.activity_view_model.ActivityViewModelFactory
 import com.st.slex.common.messenger.databinding.ActivityMainBinding
 import com.st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
 import com.st.slex.common.messenger.utilites.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -119,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    private fun initContacts(){
+    private fun initContacts() {
         val contacts = getContacts()
         activityViewModel.updatePhoneToDatabase(contacts)
 
@@ -140,10 +137,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getContacts():List<User> {
-        val contactList = mutableListOf<User>()
+    private fun getContacts(): List<Contact> {
+        val contactList = mutableListOf<Contact>()
 
-        if (this.checkPermission(READ_CONTACTS)){
+        if (this.checkPermission(READ_CONTACTS)) {
             val cursor = this.contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null,
@@ -158,7 +155,7 @@ class MainActivity : AppCompatActivity() {
                     val phone =
                         it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                     val setPhone = phone.replace(Regex("[\\s,-]"), "")
-                    val newModel = User(fullname = fullName, phone = setPhone)
+                    val newModel = Contact(fullname = fullName, phone = setPhone)
                     contactList.add(newModel)
                 }
             }
