@@ -58,22 +58,6 @@ class ContactFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val navBackStackEntry = findNavController().getBackStackEntry(R.id.nav_contact)
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME
-                && navBackStackEntry.savedStateHandle.contains("key")) {
-                val result = navBackStackEntry.savedStateHandle.get<String>("key");
-                Log.i("navBackStackEntry", result.toString())
-            }
-        }
-        navBackStackEntry.lifecycle.addObserver(observer)
-        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_DESTROY) {
-                navBackStackEntry.lifecycle.removeObserver(observer)
-            }
-        })
-
         initRecyclerView()
         setHasOptionsMenu(true)
         setTransitAnimation()
@@ -105,9 +89,10 @@ class ContactFragment : Fragment() {
 
     private fun initRecyclerView() {
         recycler = binding.fragmentContactRecycler
-        adapter = ContactAdapter(clickListener)
+        adapter = ContactAdapter(clickListener, this)
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         contactViewModel.initContact()
+
         contactViewModel.contact.observe(viewLifecycleOwner){
             adapter.addItems(it)
         }
@@ -117,15 +102,13 @@ class ContactFragment : Fragment() {
         }
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(requireContext())
+
+
     }
 
     private val clickListener = ContactClickListener { cardView, contact, key ->
         val directions = ContactFragmentDirections.actionNavContactToNavSingleChat(contact, key)
-        cardView.isTransitionGroup = true
-        cardView.transitionName = key
         val extras = FragmentNavigatorExtras(cardView to cardView.transitionName)
-        Log.i("Transit::Contact", key)
-
         findNavController().navigate(directions, extras)
     }
 

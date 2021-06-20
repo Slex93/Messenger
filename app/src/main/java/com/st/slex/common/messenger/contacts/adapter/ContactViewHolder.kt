@@ -14,7 +14,7 @@ class ContactViewHolder(private val binding: ItemRecyclerContactBinding) :
     private lateinit var contact: Contact
     private lateinit var clickListener: ContactClickListener
     private lateinit var key: String
-    val card = binding.itemContactCard
+    private val card = binding.itemContactCard
 
     fun bind(contact: Contact, position: Int) {
         this.contact = contact
@@ -22,8 +22,7 @@ class ContactViewHolder(private val binding: ItemRecyclerContactBinding) :
         binding.recyclerContactPhone.text = contact.phone
         binding.recyclerContactImage.downloadAndSet(contact.url)
         key = "card$position"
-        /*binding.itemContactCard.transitionName = key*/
-        Log.i("Transit::Bind", key)
+        binding.itemContactCard.transitionName = key
     }
 
     fun clickListener(clickListener: ContactClickListener) {

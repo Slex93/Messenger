@@ -33,7 +33,6 @@ class SingleChatFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setAnimation()
         setTransitAnimation()
 
     }
@@ -53,23 +52,10 @@ class SingleChatFragment : Fragment() {
         setActionBar()
     }
 
-    private fun setAnimation() {
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            duration = 1000
-        }
-        sharedElementReturnTransition = MaterialContainerTransform().apply {
-            duration = 1000
-        }
-        enterTransition = MaterialElevationScale(true).apply {
-            duration = 1000
-        }
-    }
-
     private fun takeExtras() {
         val args:SingleChatFragmentArgs by navArgs()
         val contact: Contact = args.contact
         val key = args.key
-        Log.i("Transit::Chat", key)
         binding.toolbarInfo.toolbarInfoCardView.transitionName = key
         binding.toolbarInfo.toolbarInfoUsername.text = contact.fullname
         findNavController().previousBackStackEntry?.savedStateHandle?.set("key", key)

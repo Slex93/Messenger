@@ -33,7 +33,6 @@ class ContactRepository {
                             val contactPrimary = upSnapshot.getValue(Contact::class.java)?:Contact()
                             val item = contactPrimary.copy(fullname = itemContact.fullname)
                             list.add(item)
-                            Log.i("Item", list.toString())
                             contact.value = item
                             if (list.size == listOfPrimaryContacts.size){
                                 flag.value = true

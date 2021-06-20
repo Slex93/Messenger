@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.st.slex.common.messenger.contacts.ContactClickListener
+import com.st.slex.common.messenger.contacts.ContactFragment
 import com.st.slex.common.messenger.contacts.model.Contact
 import com.st.slex.common.messenger.databinding.ItemRecyclerContactBinding
 
-class ContactAdapter(private val clickListener: ContactClickListener) :
+class ContactAdapter(private val clickListener: ContactClickListener, private val fragment: ContactFragment) :
     RecyclerView.Adapter<ContactViewHolder>() {
 
     private var contactList = mutableListOf<Contact>()
