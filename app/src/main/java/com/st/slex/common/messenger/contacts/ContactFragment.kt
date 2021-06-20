@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -17,9 +19,11 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.transition.MaterialContainerTransform
 import com.st.slex.common.messenger.R
 import com.st.slex.common.messenger.contacts.adapter.ContactAdapter
+import com.st.slex.common.messenger.contacts.model.Contact
 import com.st.slex.common.messenger.contacts.model.ContactRepository
 import com.st.slex.common.messenger.contacts.viewmodel.ContactViewModel
 import com.st.slex.common.messenger.contacts.viewmodel.ContactViewModelFactory
@@ -54,7 +58,22 @@ class ContactFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        contactViewModel.initContact()
+
+        val navBackStackEntry = findNavController().getBackStackEntry(R.id.nav_contact)
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME
+                && navBackStackEntry.savedStateHandle.contains("key")) {
+                val result = navBackStackEntry.savedStateHandle.get<String>("key");
+                Log.i("navBackStackEntry", result.toString())
+            }
+        }
+        navBackStackEntry.lifecycle.addObserver(observer)
+        viewLifecycleOwner.lifecycle.addObserver(LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                navBackStackEntry.lifecycle.removeObserver(observer)
+            }
+        })
+
         initRecyclerView()
         setHasOptionsMenu(true)
         setTransitAnimation()
@@ -88,19 +107,16 @@ class ContactFragment : Fragment() {
         recycler = binding.fragmentContactRecycler
         adapter = ContactAdapter(clickListener)
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-
-        contactViewModel.contactList.observe(viewLifecycleOwner) {
+        contactViewModel.initContact()
+        contactViewModel.contact.observe(viewLifecycleOwner){
             adapter.addItems(it)
-            Log.i("Transit::List", it.toString())
         }
-
-        recycler.adapter = adapter
-        recycler.layoutManager = LinearLayoutManager(requireContext())
-
         postponeEnterTransition()
         recycler.doOnPreDraw {
             startPostponedEnterTransition()
         }
+        recycler.adapter = adapter
+        recycler.layoutManager = LinearLayoutManager(requireContext())
     }
 
     private val clickListener = ContactClickListener { cardView, contact, key ->
@@ -116,5 +132,10 @@ class ContactFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_contact_appbar, menu)
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        contactViewModel.contact.removeObservers(viewLifecycleOwner)
     }
 }

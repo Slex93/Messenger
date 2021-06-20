@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -71,6 +72,7 @@ class SingleChatFragment : Fragment() {
         Log.i("Transit::Chat", key)
         binding.toolbarInfo.toolbarInfoCardView.transitionName = key
         binding.toolbarInfo.toolbarInfoUsername.text = contact.fullname
+        findNavController().previousBackStackEntry?.savedStateHandle?.set("key", key)
     }
 
     private fun setTransitAnimation() {

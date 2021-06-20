@@ -10,9 +10,13 @@ import com.st.slex.common.messenger.utilites.AppValueEventListener
 
 class ContactRepository {
 
-    val contactList = MutableLiveData<Contact>()
+    val contact = MutableLiveData<Contact>()
+    val flag = MutableLiveData<Boolean>()
+    init {
+        flag.value = false
+    }
 
-    fun initContact() {
+    fun getContacts(){
         REF_DATABASE_ROOT
             .child(NODE_PHONE_CONTACT)
             .child(ActivityConst.CURRENT_UID)
@@ -20,15 +24,21 @@ class ContactRepository {
                 val listOfPrimaryContacts = it.children.map { snapshot ->
                     snapshot.getValue(Contact::class.java) ?: Contact()
                 }
-                Log.i("Transit::lisOfPContacts", listOfPrimaryContacts.toString())
+                val list = mutableListOf<Contact>()
                 listOfPrimaryContacts.forEach { itemContact->
                     REF_DATABASE_ROOT
                         .child(NODE_USER)
                         .child(itemContact.id)
-                        .addValueEventListener(AppValueEventListener{
-                            val contactPrimary = it.getValue(Contact::class.java)?:Contact()
-                            val contact = contactPrimary.copy(fullname = itemContact.fullname)
-                            contactList.value = contact
+                        .addValueEventListener(AppValueEventListener{ upSnapshot->
+                            val contactPrimary = upSnapshot.getValue(Contact::class.java)?:Contact()
+                            val item = contactPrimary.copy(fullname = itemContact.fullname)
+                            list.add(item)
+                            Log.i("Item", list.toString())
+                            contact.value = item
+                            if (list.size == listOfPrimaryContacts.size){
+                                flag.value = true
+                            }
+
                         })
                 }
             })

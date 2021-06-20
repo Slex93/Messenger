@@ -12,6 +12,7 @@ class ContactAdapter(private val clickListener: ContactClickListener) :
     RecyclerView.Adapter<ContactViewHolder>() {
 
     private var contactList = mutableListOf<Contact>()
+    private var contactListNew = mutableListOf<Contact>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -27,11 +28,14 @@ class ContactAdapter(private val clickListener: ContactClickListener) :
     override fun getItemCount(): Int = contactList.size
 
     fun addItems(contact: Contact) {
-        if (!contactList.contains(contact)){
-            contactList.add(contact)
-            notifyDataSetChanged()
-            //notifyItemChanged(contactList.size)
+        if (!contactListNew.contains(contact)){
+            contactListNew.add(contact)
+            contactListNew.sortBy { it.fullname }
             Log.i("Transit::AdapterAdd", contact.toString())
         }
+        contactList = contactListNew
+        notifyDataSetChanged()
+
     }
+
 }
