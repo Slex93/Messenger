@@ -43,6 +43,7 @@ class MainFragment : Fragment() {
         initRecyclerView()
     }
 
+
     private fun initRecyclerView() {
         recyclerView = binding.fragmentMainRecyclerView
         adapter = MainAdapter()

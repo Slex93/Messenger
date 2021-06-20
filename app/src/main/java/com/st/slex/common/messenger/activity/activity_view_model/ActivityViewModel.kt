@@ -2,8 +2,11 @@ package com.st.slex.common.messenger.activity.activity_view_model
 
 import androidx.lifecycle.ViewModel
 import com.st.slex.common.messenger.activity.activity_model.ActivityRepository
+import com.st.slex.common.messenger.activity.activity_model.User
 
 class ActivityViewModel(private val repository: ActivityRepository) : ViewModel() {
+
+    val getUserForHeader = repository.getUserForHeader
 
     fun initFirebase() {
         repository.initFirebase()
@@ -17,5 +20,8 @@ class ActivityViewModel(private val repository: ActivityRepository) : ViewModel(
         repository.initUser()
     }
 
+    fun updatePhoneToDatabase(listContacts: List<User>) {
+        repository.updatePhonesToDatabase(listContacts)
+    }
 
 }

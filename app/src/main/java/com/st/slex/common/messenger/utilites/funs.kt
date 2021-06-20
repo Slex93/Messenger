@@ -2,8 +2,10 @@ package com.st.slex.common.messenger.utilites
 
 import android.app.Activity
 import android.content.Intent
+import android.provider.ContactsContract
 import android.view.View
 import android.widget.ImageView
+import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.imageview.ShapeableImageView
@@ -26,4 +28,11 @@ fun ImageView.downloadAndSet(url: String) {
         .load(url)
         .apply(RequestOptions.placeholderOf(R.drawable.girl_photo))
         .into(this)
+}
+
+fun DrawerLayout.lockDrawer(){
+    this.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+}
+fun DrawerLayout.unlockDrawer(){
+    this.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 }
