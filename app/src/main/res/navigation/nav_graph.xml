@@ -13,6 +13,12 @@
         <action
             android:id="@+id/action_nav_home_to_nav_user_profile"
             app:destination="@id/nav_user_profile" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_contact"
+            app:destination="@id/nav_contact" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_single_chat"
+            app:destination="@id/nav_single_chat" />
     </fragment>
     <fragment
         android:id="@+id/nav_enter_phone"
@@ -39,5 +45,24 @@
         android:name="com.st.slex.common.messenger.user_profile.UserProfileFragment"
         android:label="fragment_user_profile"
         tools:layout="@layout/fragment_user_profile" />
+    <fragment
+        android:id="@+id/nav_contact"
+        android:name="com.st.slex.common.messenger.contacts.ContactFragment"
+        tools:layout="@layout/fragment_contact" >
+        <action
+            android:id="@+id/action_nav_contact_to_nav_single_chat"
+            app:destination="@id/nav_single_chat" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_single_chat"
+        android:name="com.st.slex.common.messenger.single_chat.SingleChatFragment"
+        tools:layout="@layout/fragment_single_chat">
+        <argument
+            android:name="contact"
+            app:argType= "com.st.slex.common.messenger.contacts.model.Contact"/>
+        <argument
+            android:name="key"
+            app:argType="string"/>
+    </fragment>
 
 </navigation>

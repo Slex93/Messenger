@@ -3,16 +3,15 @@ package com.st.slex.common.messenger.activity
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.*
 import com.st.slex.common.messenger.R
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.AUTH
 import com.st.slex.common.messenger.activity.activity_model.ActivityRepository
@@ -43,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         activityViewModel.initFirebase()
-        setSupportActionBar(binding.mainActivityToolbar)
         initNavigationFields()
         checkAuth()
     }
@@ -59,10 +57,10 @@ class MainActivity : AppCompatActivity() {
     private fun checkAuth() {
         if (AUTH.currentUser != null) {
             activityViewModel.initUser()
-            initContacts()
-            initNavController()
             binding.drawerLayout.unlockDrawer()
             navGraph.startDestination = R.id.nav_home
+            initContacts()
+            initNavController()
         } else {
             binding.drawerLayout.lockDrawer()
             navGraph.startDestination = R.id.nav_enter_phone
@@ -72,18 +70,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun initNavController() {
         setNavController()
-        initDrawerHeader()
+        setUserInfoInHeader()
     }
 
     private fun setNavController() {
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), binding.drawerLayout)
-        setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
-    }
-
-    private fun initDrawerHeader() {
-        listenItemClick()
-        setUserInfoInHeader()
     }
 
     private fun setUserInfoInHeader() {
@@ -96,45 +88,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun listenItemClick() {
-        binding.navView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.menu_nav_btn_sign_out -> {
-                    activityViewModel.signOut()
-                    binding.drawerLayout.lockDrawer()
-                    this.restartActivity()
-                }
-            }
-            true
-        }
-    }
-
     override fun onSupportNavigateUp(): Boolean {
-        navHostFragment =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-        navController = navHostFragment.navController
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        return NavigationUI.navigateUp(navController, appBarConfiguration)
     }
 
     private fun initContacts() {
         val contacts = getContacts()
         activityViewModel.updatePhoneToDatabase(contacts)
 
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (ContextCompat.checkSelfPermission(
-                this,
-                READ_CONTACTS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            initContacts()
-        }
     }
 
     private fun getContacts(): List<Contact> {
@@ -162,6 +123,31 @@ class MainActivity : AppCompatActivity() {
             cursor?.close()
         }
         return contactList
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (ContextCompat.checkSelfPermission(
+                this,
+                READ_CONTACTS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            initContacts()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activityViewModel.statusOnline()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        activityViewModel.statusOffline()
     }
 
 }

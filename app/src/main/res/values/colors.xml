@@ -10,4 +10,7 @@
 
     <color name="blue_gray_300">#90A4AE</color>
     <color name="blue_gray_200">#9890A4AE</color>
+
+    <color name="colorGreen">#C2FBC5</color>
+    <color name="colorBlueLight">#BBDEFB</color>
 </resources>
