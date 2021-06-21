@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    android:id="@+id/chat_drawer_layout"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chat_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".single_chat.SingleChatFragment">
@@ -13,37 +12,76 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
+            style="@style/MainAppBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/MainAppBar">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/chat_toolbar"
+                style="@style/MainToolBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/MainToolBar">
+                android:layout_height="wrap_content">
 
                 <include
                     android:id="@+id/toolbar_info"
                     layout="@layout/toolbar_info"
-                    android:transitionGroup="true"/>
+                    android:transitionGroup="true" />
 
             </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.card.MaterialCardView
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="?actionBarSize">
+            android:layout_marginTop="?actionBarSize"
+            android:padding="@dimen/small_padding">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="CHHHHHHHAAAAAT"/>
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/single_chat_refresh_layout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/small_padding"
+                app:layout_constraintBottom_toTopOf="@+id/single_chat_recycler_text_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </com.google.android.material.card.MaterialCardView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/single_chat_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/item_recycler_single_chat" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/single_chat_recycler_text_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/small_padding"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/single_chat_recycler_button"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Input message..." />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/single_chat_recycler_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="send"
+                app:layout_constraintBottom_toBottomOf="@+id/single_chat_recycler_text_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/single_chat_recycler_text_input" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

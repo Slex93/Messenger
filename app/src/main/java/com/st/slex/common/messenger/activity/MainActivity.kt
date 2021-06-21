@@ -140,6 +140,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        activityViewModel.statusOnline()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        activityViewModel.statusOffline()
+    }
+
 }
 
 

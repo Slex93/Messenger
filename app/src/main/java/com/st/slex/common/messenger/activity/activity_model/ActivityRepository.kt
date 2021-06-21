@@ -7,6 +7,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.AUTH
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_FULLNAME
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_ID
+import com.st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_STATE
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_USERNAME
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.CURRENT_UID
 import com.st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_PHONE
@@ -60,6 +61,14 @@ class ActivityRepository {
                     }
                 }
             })
+    }
+
+    fun statusOnline(){
+        REF_DATABASE_ROOT.child(NODE_USER).child(CURRENT_UID).child(CHILD_STATE).setValue("Online")
+    }
+
+    fun statusOffline(){
+        REF_DATABASE_ROOT.child(NODE_USER).child(CURRENT_UID).child(CHILD_STATE).setValue("Offline")
     }
 
 }

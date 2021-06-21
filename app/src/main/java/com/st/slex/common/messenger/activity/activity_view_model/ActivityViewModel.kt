@@ -25,4 +25,12 @@ class ActivityViewModel(private val repository: ActivityRepository) : ViewModel(
         repository.updatePhonesToDatabase(listContacts)
     }
 
+    fun statusOnline(){
+        repository.statusOnline()
+    }
+
+    fun statusOffline(){
+        repository.statusOffline()
+    }
+
 }
