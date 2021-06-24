@@ -142,12 +142,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        activityViewModel.statusOnline()
+        if (AUTH.currentUser!=null) activityViewModel.statusOnline()
     }
 
     override fun onStop() {
         super.onStop()
-        activityViewModel.statusOffline()
+        if (AUTH.currentUser!=null) activityViewModel.statusOffline()
     }
 
 }
