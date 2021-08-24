@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.st.slex.common.messenger.main_screen.MainFragment"
+        android:name="st.slex.messenger.main_screen.MainFragment"
         android:label="Main screen"
-        tools:layout="@layout/fragment_main" >
+        tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_nav_home_to_nav_user_profile"
             app:destination="@id/nav_user_profile" />
@@ -22,47 +22,47 @@
     </fragment>
     <fragment
         android:id="@+id/nav_enter_phone"
-        android:name="com.st.slex.common.messenger.auth.EnterPhoneFragment"
+        android:name="st.slex.messenger.auth.EnterPhoneFragment"
         android:label="Sign In"
-        tools:layout="@layout/fragment_enter_phone" >
+        tools:layout="@layout/fragment_enter_phone">
         <action
             android:id="@+id/action_nav_enter_phone_to_nav_enter_code"
             app:destination="@id/nav_enter_code" />
     </fragment>
     <fragment
         android:id="@+id/nav_enter_code"
-        android:name="com.st.slex.common.messenger.auth.EnterCodeFragment"
+        android:name="st.slex.messenger.auth.EnterCodeFragment"
         android:label="Enter Code"
-        tools:layout="@layout/fragment_enter_code" >
+        tools:layout="@layout/fragment_enter_code">
 
         <argument
             android:name="PhoneNumber"
-            app:argType="string"/>
+            app:argType="string" />
 
     </fragment>
     <fragment
         android:id="@+id/nav_user_profile"
-        android:name="com.st.slex.common.messenger.user_profile.UserProfileFragment"
+        android:name="st.slex.messenger.user_profile.UserProfileFragment"
         android:label="fragment_user_profile"
         tools:layout="@layout/fragment_user_profile" />
     <fragment
         android:id="@+id/nav_contact"
-        android:name="com.st.slex.common.messenger.contacts.ContactFragment"
-        tools:layout="@layout/fragment_contact" >
+        android:name="st.slex.messenger.contacts.ContactFragment"
+        tools:layout="@layout/fragment_contact">
         <action
             android:id="@+id/action_nav_contact_to_nav_single_chat"
             app:destination="@id/nav_single_chat" />
     </fragment>
     <fragment
         android:id="@+id/nav_single_chat"
-        android:name="com.st.slex.common.messenger.single_chat.SingleChatFragment"
+        android:name="st.slex.messenger.single_chat.SingleChatFragment"
         tools:layout="@layout/fragment_single_chat">
         <argument
             android:name="contact"
-            app:argType= "com.st.slex.common.messenger.contacts.model.Contact"/>
+            app:argType="st.slex.common.messenger.contacts.model.Contact" />
         <argument
             android:name="key"
-            app:argType="string"/>
+            app:argType="string" />
     </fragment>
 
 </navigation>
