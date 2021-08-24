@@ -1,21 +1,21 @@
-package st.slex.messenger.activity.activity_model
+package st.slex.messenger.activity_model
 
 
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import st.slex.common.messenger.activity.activity_model.ActivityConst.AUTH
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_FULLNAME
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_ID
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_STATE
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_USERNAME
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CURRENT_UID
-import st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_PHONE
-import st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_PHONE_CONTACT
-import st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_USER
-import st.slex.common.messenger.activity.activity_model.ActivityConst.REF_DATABASE_ROOT
-import st.slex.common.messenger.activity.activity_model.ActivityConst.USER
-import st.slex.common.messenger.utilites.AppValueEventListener
+import st.slex.messenger.activity_model.ActivityConst.AUTH
+import st.slex.messenger.activity_model.ActivityConst.CHILD_FULLNAME
+import st.slex.messenger.activity_model.ActivityConst.CHILD_ID
+import st.slex.messenger.activity_model.ActivityConst.CHILD_STATE
+import st.slex.messenger.activity_model.ActivityConst.CHILD_USERNAME
+import st.slex.messenger.activity_model.ActivityConst.CURRENT_UID
+import st.slex.messenger.activity_model.ActivityConst.NODE_PHONE
+import st.slex.messenger.activity_model.ActivityConst.NODE_PHONE_CONTACT
+import st.slex.messenger.activity_model.ActivityConst.NODE_USER
+import st.slex.messenger.activity_model.ActivityConst.REF_DATABASE_ROOT
+import st.slex.messenger.activity_model.ActivityConst.USER
+import st.slex.messenger.utilites.AppValueEventListener
 
 class ActivityRepository {
 
@@ -63,11 +63,11 @@ class ActivityRepository {
             })
     }
 
-    fun statusOnline(){
+    fun statusOnline() {
         REF_DATABASE_ROOT.child(NODE_USER).child(CURRENT_UID).child(CHILD_STATE).setValue("Online")
     }
 
-    fun statusOffline(){
+    fun statusOffline() {
         REF_DATABASE_ROOT.child(NODE_USER).child(CURRENT_UID).child(CHILD_STATE).setValue("Offline")
     }
 

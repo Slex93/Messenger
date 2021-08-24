@@ -1,8 +1,8 @@
-package st.slex.messenger.activity.activity_view_model
+package st.slex.messenger.activity_view_model
 
 import androidx.lifecycle.ViewModel
-import st.slex.common.messenger.activity.activity_model.ActivityRepository
-import st.slex.common.messenger.activity.activity_model.Contact
+import st.slex.messenger.activity_model.ActivityRepository
+import st.slex.messenger.activity_model.Contact
 
 class ActivityViewModel(private val repository: ActivityRepository) : ViewModel() {
 
@@ -24,11 +24,11 @@ class ActivityViewModel(private val repository: ActivityRepository) : ViewModel(
         repository.updatePhonesToDatabase(listContacts)
     }
 
-    fun statusOnline(){
+    fun statusOnline() {
         repository.statusOnline()
     }
 
-    fun statusOffline(){
+    fun statusOffline() {
         repository.statusOffline()
     }
 

@@ -1,4 +1,4 @@
-package st.slex.messenger.activity.activity_model
+package st.slex.messenger.activity_model
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference

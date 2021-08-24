@@ -1,5 +1,6 @@
 package st.slex.messenger
 
+import android.Manifest.permission.READ_CONTACTS
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -9,16 +10,21 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.*
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupWithNavController
 import st.slex.common.messenger.R
-import st.slex.common.messenger.activity.activity_model.ActivityConst.AUTH
-import st.slex.common.messenger.activity.activity_model.ActivityRepository
-import st.slex.common.messenger.activity.activity_model.Contact
-import st.slex.common.messenger.activity.activity_view_model.ActivityViewModel
-import st.slex.common.messenger.activity.activity_view_model.ActivityViewModelFactory
 import st.slex.common.messenger.databinding.ActivityMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
-import st.slex.common.messenger.utilites.*
+import st.slex.messenger.activity_model.ActivityConst.AUTH
+import st.slex.messenger.activity_model.ActivityRepository
+import st.slex.messenger.activity_model.Contact
+import st.slex.messenger.activity_view_model.ActivityViewModel
+import st.slex.messenger.activity_view_model.ActivityViewModelFactory
+import st.slex.messenger.utilites.checkPermission
+import st.slex.messenger.utilites.downloadAndSet
+import st.slex.messenger.utilites.lockDrawer
+import st.slex.messenger.utilites.unlockDrawer
 
 
 class MainActivity : AppCompatActivity() {
@@ -79,7 +85,7 @@ class MainActivity : AppCompatActivity() {
     private fun setUserInfoInHeader() {
         val headerView = binding.navView.getHeaderView(0)
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
-        activityViewModel.getUserForHeader.observe(this) {
+        activityViewModel.getUserForHeader.observe(this) { it ->
             headerBinding.navigationHeaderImage.downloadAndSet(it.url)
             headerBinding.navigationHeaderUserName.text = it.username
             headerBinding.navigationHeaderPhoneNumber.text = it.phone
@@ -140,12 +146,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (AUTH.currentUser!=null) activityViewModel.statusOnline()
+        if (AUTH.currentUser != null) activityViewModel.statusOnline()
     }
 
     override fun onStop() {
         super.onStop()
-        if (AUTH.currentUser!=null) activityViewModel.statusOffline()
+        if (AUTH.currentUser != null) activityViewModel.statusOffline()
     }
 
 }

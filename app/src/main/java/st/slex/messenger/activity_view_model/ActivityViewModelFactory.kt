@@ -1,4 +1,4 @@
-package st.slex.messenger.activity.activity_view_model
+package st.slex.messenger.activity_view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

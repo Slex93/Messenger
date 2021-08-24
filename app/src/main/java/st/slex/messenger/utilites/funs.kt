@@ -26,7 +26,7 @@ fun Activity.restartActivity() {
 fun ImageView.downloadAndSet(url: String) {
     Glide.with(this)
         .load(url)
-        .apply(RequestOptions.placeholderOf(R.drawable.girl_photo))
+        .apply(RequestOptions.placeholderOf(R.drawable.ic_default_photo))
         .into(this)
 }
 
