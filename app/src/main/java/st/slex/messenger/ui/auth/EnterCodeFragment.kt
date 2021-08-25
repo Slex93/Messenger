@@ -21,7 +21,8 @@ import st.slex.messenger.utilites.showPrimarySnackBar
 
 class EnterCodeFragment : Fragment() {
 
-    private lateinit var binding: FragmentEnterCodeBinding
+    private var _binding: FragmentEnterCodeBinding? = null
+    private val binding get() = _binding!!
 
     private val repository = AuthRepositoryImpl()
     private val authViewModel: AuthViewModel by viewModels {
@@ -43,7 +44,7 @@ class EnterCodeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentEnterCodeBinding.inflate(inflater, container, false)
+        _binding = FragmentEnterCodeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,4 +77,9 @@ class EnterCodeFragment : Fragment() {
             else -> {
             }
         }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

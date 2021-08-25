@@ -23,7 +23,7 @@ import st.slex.messenger.utilites.showPrimarySnackBar
 class EnterPhoneFragment : Fragment() {
 
     private var _binding: FragmentEnterPhoneBinding? = null
-    private val binding: FragmentEnterPhoneBinding get() = _binding!!
+    private val binding get() = _binding!!
 
     private val repository = AuthRepositoryImpl()
     private val viewModel: AuthViewModel by viewModels {

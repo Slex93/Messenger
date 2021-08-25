@@ -23,10 +23,13 @@ import st.slex.messenger.ui.main_screen.model.MainScreenRepository
 import st.slex.messenger.ui.main_screen.model.base.MainMessage
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModel
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModelFactory
+import st.slex.messenger.utilites.Const.AUTH
+import st.slex.messenger.utilites.restartActivity
 
 class MainFragment : Fragment() {
 
-    private lateinit var binding: FragmentMainBinding
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var navGraph: NavGraph
     private lateinit var navHostFragment: NavHostFragment
@@ -39,7 +42,7 @@ class MainFragment : Fragment() {
     private val database = MainScreenDatabase()
     private val repository by lazy { MainScreenRepository(database) }
 
-    private val mainScreenViewModel: MainScreenViewModel by viewModels {
+    private val viewModel: MainScreenViewModel by viewModels {
         MainScreenViewModelFactory(repository)
     }
 
@@ -48,7 +51,7 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -68,16 +71,26 @@ class MainFragment : Fragment() {
             appBarConfiguration
         )
         binding.navView.setupWithNavController(navController)
-        /*binding.navView.setNavigationItemSelectedListener {
+        binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_nav_btn_sign_out -> {
-                    ActivityConst.AUTH.signOut()
+                    AUTH.signOut()
                     requireActivity().restartActivity()
                 }
             }
             false
-        }*/
+        }
     }
+
+    /*private fun setUserInfoInHeader() {
+        val headerView = binding.navView.getHeaderView(0)
+        val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
+        activityViewModel.getUserForHeader.observe(this) {
+            headerBinding.navigationHeaderImage.downloadAndSet(it.url)
+            headerBinding.navigationHeaderUserName.text = it.username
+            headerBinding.navigationHeaderPhoneNumber.text = it.phone
+        }
+    }*/
 
     private fun initNavigationFields() {
         navHostFragment =
@@ -94,9 +107,14 @@ class MainFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
 
-        mainScreenViewModel.mainMessage.observe(viewLifecycleOwner) {
+        viewModel.mainMessage.observe(viewLifecycleOwner) {
             adapter.makeMainList(it as MutableList<MainMessage>)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }
