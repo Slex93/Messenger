@@ -2,7 +2,7 @@ package st.slex.messenger.activity_model
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import st.slex.common.messenger.auth.model.base.AuthUser
+import st.slex.messenger.auth.model.base.AuthUser
 
 object ActivityConst {
     lateinit var AUTH: FirebaseAuth

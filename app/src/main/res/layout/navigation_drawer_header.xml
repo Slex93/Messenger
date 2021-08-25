@@ -11,7 +11,7 @@
         android:layout_height="200dp"
         android:layout_gravity="center"
         android:cropToPadding="true"
-        android:src="@drawable/girl_photo" />
+        android:src="@drawable/ic_default_photo" />
 
     <LinearLayout
         android:layout_width="200dp"

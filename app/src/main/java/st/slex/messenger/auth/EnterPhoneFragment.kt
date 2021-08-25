@@ -13,12 +13,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import st.slex.common.messenger.R
-import st.slex.common.messenger.auth.model.AuthRepository
-import st.slex.common.messenger.auth.viewmodel.AuthViewModel
-import st.slex.common.messenger.auth.viewmodel.AuthViewModelFactory
 import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
-import st.slex.common.messenger.utilites.restartActivity
-import st.slex.common.messenger.utilites.showPrimarySnackBar
+import st.slex.messenger.auth.model.AuthRepository
+import st.slex.messenger.auth.viewmodel.AuthViewModel
+import st.slex.messenger.auth.viewmodel.AuthViewModelFactory
+import st.slex.messenger.utilites.restartActivity
+import st.slex.messenger.utilites.showPrimarySnackBar
 
 class EnterPhoneFragment : Fragment() {
 

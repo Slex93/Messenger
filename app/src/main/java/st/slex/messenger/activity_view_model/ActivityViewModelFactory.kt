@@ -2,7 +2,7 @@ package st.slex.messenger.activity_view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import st.slex.common.messenger.activity.activity_model.ActivityRepository
+import st.slex.messenger.activity_model.ActivityRepository
 
 class ActivityViewModelFactory(private val repository: ActivityRepository) :
     ViewModelProvider.Factory {

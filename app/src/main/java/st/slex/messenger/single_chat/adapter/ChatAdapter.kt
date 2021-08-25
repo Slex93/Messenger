@@ -3,11 +3,11 @@ package st.slex.messenger.single_chat.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CURRENT_UID
 import st.slex.common.messenger.databinding.ItemRecyclerSingleChatBinding
-import st.slex.common.messenger.single_chat.model.Message
+import st.slex.messenger.activity_model.ActivityConst.CURRENT_UID
+import st.slex.messenger.single_chat.model.Message
 
-class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
+class ChatAdapter : RecyclerView.Adapter<ChatViewHolder>() {
 
     private var listMessages = mutableListOf<Message>()
 
@@ -19,7 +19,7 @@ class ChatAdapter: RecyclerView.Adapter<ChatViewHolder>() {
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val message = listMessages[position]
-        if (message.from == CURRENT_UID){
+        if (message.from == CURRENT_UID) {
             holder.bindUser(message)
         } else {
             holder.bindReceiver(message)

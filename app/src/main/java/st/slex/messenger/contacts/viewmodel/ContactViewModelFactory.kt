@@ -2,7 +2,7 @@ package st.slex.messenger.contacts.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import st.slex.common.messenger.contacts.model.ContactRepository
+import st.slex.messenger.contacts.model.ContactRepository
 
 class ContactViewModelFactory(private val repository: ContactRepository) :
     ViewModelProvider.Factory {

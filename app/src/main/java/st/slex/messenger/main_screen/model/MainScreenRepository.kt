@@ -1,7 +1,7 @@
 package st.slex.messenger.main_screen.model
 
 import androidx.lifecycle.LiveData
-import st.slex.common.messenger.main_screen.model.base.MainMessage
+import st.slex.messenger.main_screen.model.base.MainMessage
 
 class MainScreenRepository(db: MainScreenDatabase) {
 

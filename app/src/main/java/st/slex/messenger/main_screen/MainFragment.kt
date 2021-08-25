@@ -17,12 +17,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
-import st.slex.common.messenger.main_screen.adapter.MainAdapter
-import st.slex.common.messenger.main_screen.model.MainScreenDatabase
-import st.slex.common.messenger.main_screen.model.MainScreenRepository
-import st.slex.common.messenger.main_screen.model.base.MainMessage
-import st.slex.common.messenger.main_screen.viewmodel.MainScreenViewModel
-import st.slex.common.messenger.main_screen.viewmodel.MainScreenViewModelFactory
+import st.slex.messenger.main_screen.adapter.MainAdapter
+import st.slex.messenger.main_screen.model.MainScreenDatabase
+import st.slex.messenger.main_screen.model.MainScreenRepository
+import st.slex.messenger.main_screen.model.base.MainMessage
+import st.slex.messenger.main_screen.viewmodel.MainScreenViewModel
+import st.slex.messenger.main_screen.viewmodel.MainScreenViewModelFactory
 
 class MainFragment : Fragment() {
 

@@ -17,7 +17,7 @@
             android:id="@+id/shapeableImageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/girl_photo"
+            android:src="@drawable/ic_default_photo"
             android:layout_gravity="start|center_vertical" />
 
     </com.google.android.material.card.MaterialCardView>

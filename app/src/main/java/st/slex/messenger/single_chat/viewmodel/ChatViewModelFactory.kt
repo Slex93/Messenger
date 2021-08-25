@@ -2,7 +2,7 @@ package st.slex.messenger.single_chat.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import st.slex.common.messenger.single_chat.model.ChatRepository
+import st.slex.messenger.single_chat.model.ChatRepository
 
 class ChatViewModelFactory(private val repository: ChatRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

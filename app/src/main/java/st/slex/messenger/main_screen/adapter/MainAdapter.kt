@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
-import st.slex.common.messenger.main_screen.model.base.MainMessage
+import st.slex.messenger.main_screen.model.base.MainMessage
 
 class MainAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
@@ -25,6 +25,6 @@ class MainAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
     fun makeMainList(message: MutableList<MainMessage>) {
         mainList = message
-        notifyDataSetChanged() //TODO
+        notifyDataSetChanged()
     }
 }

@@ -7,17 +7,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
-import st.slex.common.messenger.activity.activity_model.ActivityConst.AUTH
-import st.slex.common.messenger.activity.activity_model.ActivityConst.AUTH_USER
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_ID
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_PHONE
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CURRENT_UID
-import st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_PHONE
-import st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_USER
-import st.slex.common.messenger.activity.activity_model.ActivityConst.REF_DATABASE_ROOT
-import st.slex.common.messenger.activity.activity_model.ActivityConst.USER
-import st.slex.common.messenger.activity.activity_model.User
-import st.slex.common.messenger.auth.model.base.AuthUser
+import st.slex.messenger.activity_model.ActivityConst.AUTH
+import st.slex.messenger.activity_model.ActivityConst.AUTH_USER
+import st.slex.messenger.activity_model.ActivityConst.CHILD_ID
+import st.slex.messenger.activity_model.ActivityConst.CHILD_PHONE
+import st.slex.messenger.activity_model.ActivityConst.CURRENT_UID
+import st.slex.messenger.activity_model.ActivityConst.NODE_PHONE
+import st.slex.messenger.activity_model.ActivityConst.NODE_USER
+import st.slex.messenger.activity_model.ActivityConst.REF_DATABASE_ROOT
+import st.slex.messenger.activity_model.ActivityConst.USER
+import st.slex.messenger.activity_model.User
+import st.slex.messenger.auth.model.base.AuthUser
 import java.util.concurrent.TimeUnit
 
 class AuthRepository {

@@ -18,11 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.transition.MaterialContainerTransform
 import st.slex.common.messenger.R
-import st.slex.common.messenger.contacts.adapter.ContactAdapter
-import st.slex.common.messenger.contacts.model.ContactRepository
-import st.slex.common.messenger.contacts.viewmodel.ContactViewModel
-import st.slex.common.messenger.contacts.viewmodel.ContactViewModelFactory
 import st.slex.common.messenger.databinding.FragmentContactBinding
+import st.slex.messenger.contacts.adapter.ContactAdapter
+import st.slex.messenger.contacts.model.ContactRepository
+import st.slex.messenger.contacts.viewmodel.ContactViewModel
+import st.slex.messenger.contacts.viewmodel.ContactViewModelFactory
 
 class ContactFragment : Fragment() {
 
@@ -88,7 +88,7 @@ class ContactFragment : Fragment() {
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         contactViewModel.initContact()
 
-        contactViewModel.contact.observe(viewLifecycleOwner){
+        contactViewModel.contact.observe(viewLifecycleOwner) { it ->
             adapter.addItems(it)
         }
         postponeEnterTransition()

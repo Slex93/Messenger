@@ -11,12 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.transition.MaterialContainerTransform
 import st.slex.common.messenger.R
-import st.slex.common.messenger.auth.model.AuthRepository
-import st.slex.common.messenger.auth.viewmodel.AuthViewModel
-import st.slex.common.messenger.auth.viewmodel.AuthViewModelFactory
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
-import st.slex.common.messenger.utilites.restartActivity
-import st.slex.common.messenger.utilites.showPrimarySnackBar
+import st.slex.messenger.auth.model.AuthRepository
+import st.slex.messenger.auth.viewmodel.AuthViewModel
+import st.slex.messenger.auth.viewmodel.AuthViewModelFactory
+import st.slex.messenger.utilites.restartActivity
+import st.slex.messenger.utilites.showPrimarySnackBar
 
 class EnterCodeFragment : Fragment() {
 

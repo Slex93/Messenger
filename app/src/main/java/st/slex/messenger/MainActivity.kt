@@ -1,6 +1,7 @@
 package st.slex.messenger
 
 import android.Manifest.permission.READ_CONTACTS
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
@@ -85,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     private fun setUserInfoInHeader() {
         val headerView = binding.navView.getHeaderView(0)
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
-        activityViewModel.getUserForHeader.observe(this) { it ->
+        activityViewModel.getUserForHeader.observe(this) {
             headerBinding.navigationHeaderImage.downloadAndSet(it.url)
             headerBinding.navigationHeaderUserName.text = it.username
             headerBinding.navigationHeaderPhoneNumber.text = it.phone
@@ -102,6 +103,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("Range")
     private fun getContacts(): List<Contact> {
         val contactList = mutableListOf<Contact>()
 

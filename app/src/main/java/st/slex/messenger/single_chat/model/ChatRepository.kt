@@ -2,18 +2,18 @@ package st.slex.messenger.single_chat.model
 
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.ServerValue
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_FROM
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_ID
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_STATE
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_TEXT
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CHILD_TIMESTAMP
-import st.slex.common.messenger.activity.activity_model.ActivityConst.CURRENT_UID
-import st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_MAIN_LIST
-import st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_MESSAGES
-import st.slex.common.messenger.activity.activity_model.ActivityConst.NODE_USER
-import st.slex.common.messenger.activity.activity_model.ActivityConst.REF_DATABASE_ROOT
-import st.slex.common.messenger.utilites.AppChildEventListener
-import st.slex.common.messenger.utilites.AppValueEventListener
+import st.slex.messenger.activity_model.ActivityConst.CHILD_FROM
+import st.slex.messenger.activity_model.ActivityConst.CHILD_ID
+import st.slex.messenger.activity_model.ActivityConst.CHILD_STATE
+import st.slex.messenger.activity_model.ActivityConst.CHILD_TEXT
+import st.slex.messenger.activity_model.ActivityConst.CHILD_TIMESTAMP
+import st.slex.messenger.activity_model.ActivityConst.CURRENT_UID
+import st.slex.messenger.activity_model.ActivityConst.NODE_MAIN_LIST
+import st.slex.messenger.activity_model.ActivityConst.NODE_MESSAGES
+import st.slex.messenger.activity_model.ActivityConst.NODE_USER
+import st.slex.messenger.activity_model.ActivityConst.REF_DATABASE_ROOT
+import st.slex.messenger.utilites.AppChildEventListener
+import st.slex.messenger.utilites.AppValueEventListener
 
 class ChatRepository {
 
@@ -26,7 +26,7 @@ class ChatRepository {
             .child(uid)
             .child(CHILD_STATE)
             .addValueEventListener(AppValueEventListener {
-                status.value = it.value
+                status.value = it.value.toString()
             })
     }
 

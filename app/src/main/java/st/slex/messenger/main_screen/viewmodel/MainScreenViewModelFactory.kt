@@ -2,7 +2,7 @@ package st.slex.messenger.main_screen.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import st.slex.common.messenger.main_screen.model.MainScreenRepository
+import st.slex.messenger.main_screen.model.MainScreenRepository
 
 class MainScreenViewModelFactory(private val repository: MainScreenRepository) :
     ViewModelProvider.Factory {

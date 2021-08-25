@@ -1,7 +1,7 @@
 package st.slex.messenger.single_chat.viewmodel
 
 import androidx.lifecycle.ViewModel
-import st.slex.common.messenger.single_chat.model.ChatRepository
+import st.slex.messenger.single_chat.model.ChatRepository
 
 class ChatViewModel(private val repository: ChatRepository) : ViewModel() {
 

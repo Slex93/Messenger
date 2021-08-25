@@ -21,12 +21,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import st.slex.common.messenger.R
-import st.slex.common.messenger.contacts.model.Contact
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
-import st.slex.common.messenger.single_chat.adapter.ChatAdapter
-import st.slex.common.messenger.single_chat.model.ChatRepository
-import st.slex.common.messenger.single_chat.viewmodel.ChatViewModel
-import st.slex.common.messenger.single_chat.viewmodel.ChatViewModelFactory
+import st.slex.messenger.contacts.model.Contact
+import st.slex.messenger.single_chat.adapter.ChatAdapter
+import st.slex.messenger.single_chat.model.ChatRepository
+import st.slex.messenger.single_chat.viewmodel.ChatViewModel
+import st.slex.messenger.single_chat.viewmodel.ChatViewModelFactory
 
 
 class SingleChatFragment : Fragment() {
