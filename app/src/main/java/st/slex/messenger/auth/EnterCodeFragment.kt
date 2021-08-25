@@ -15,6 +15,7 @@ import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.auth.model.AuthRepository
 import st.slex.messenger.auth.viewmodel.AuthViewModel
 import st.slex.messenger.auth.viewmodel.AuthViewModelFactory
+import st.slex.messenger.data.repository.AuthRepositoryImpl
 import st.slex.messenger.utilites.restartActivity
 import st.slex.messenger.utilites.showPrimarySnackBar
 
@@ -22,9 +23,10 @@ class EnterCodeFragment : Fragment() {
 
     private lateinit var binding: FragmentEnterCodeBinding
 
+    private val repoNew = AuthRepositoryImpl()
     private val repository = AuthRepository()
     private val authViewModel: AuthViewModel by viewModels {
-        AuthViewModelFactory(repository)
+        AuthViewModelFactory(repository, repoNew)
     }
 
     override fun onCreateView(

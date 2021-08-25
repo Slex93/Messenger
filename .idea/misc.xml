@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.2259963768115942" />
+        <entry key="app/src/main/res/layout/fragment_enter_phone.xml" value="0.2265193370165746" />
         <entry key="app/src/main/res/layout/fragment_user_profile.xml" value="0.2259963768115942" />
         <entry key="app/src/main/res/layout/item_recycler_contact.xml" value="0.3401015228426396" />
         <entry key="app/src/main/res/layout/item_recycler_main.xml" value="0.2259963768115942" />

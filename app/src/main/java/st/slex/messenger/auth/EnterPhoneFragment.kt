@@ -17,16 +17,19 @@ import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
 import st.slex.messenger.auth.model.AuthRepository
 import st.slex.messenger.auth.viewmodel.AuthViewModel
 import st.slex.messenger.auth.viewmodel.AuthViewModelFactory
+import st.slex.messenger.data.repository.AuthRepositoryImpl
 import st.slex.messenger.utilites.restartActivity
+import st.slex.messenger.utilites.result.AuthResult
 import st.slex.messenger.utilites.showPrimarySnackBar
 
 class EnterPhoneFragment : Fragment() {
 
     private lateinit var binding: FragmentEnterPhoneBinding
 
+    private val repositoryNew = AuthRepositoryImpl()
     private val repository = AuthRepository()
     private val authViewModel: AuthViewModel by viewModels {
-        AuthViewModelFactory(repository)
+        AuthViewModelFactory(repository, repositoryNew)
     }
 
     override fun onCreateView(
@@ -57,22 +60,23 @@ class EnterPhoneFragment : Fragment() {
     }
 
     private fun sendCode(phoneNumber: String) {
-        authViewModel.callbackReturnStatus.observe(viewLifecycleOwner) {
+        authViewModel.authResult.observe(viewLifecycleOwner) {
             when (it) {
-                "success" -> {
-                    binding.root.showPrimarySnackBar(it)
+                is AuthResult.Success -> {
+                    binding.root.showPrimarySnackBar("Succes")
                     requireActivity().restartActivity()
                 }
-                "send" -> {
-                    binding.root.showPrimarySnackBar(it)
+                is AuthResult.Send -> {
+                    binding.root.showPrimarySnackBar("Send")
                     navigate(phoneNumber)
                 }
-                else -> {
-                    binding.root.showPrimarySnackBar(it)
+                is AuthResult.Failure -> {
+                    binding.root.showPrimarySnackBar(it.exception)
                 }
             }
         }
-        authViewModel.initPhoneNumber(phoneNumber, requireActivity())
+        authViewModel.authPhone(requireActivity(), phoneNumber)
+
     }
 
     private fun navigate(phoneNumber: String) {
