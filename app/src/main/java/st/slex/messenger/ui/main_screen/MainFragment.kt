@@ -23,6 +23,8 @@ import st.slex.messenger.ui.main_screen.model.MainScreenRepository
 import st.slex.messenger.ui.main_screen.model.base.MainMessage
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModel
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModelFactory
+import st.slex.messenger.utilites.Const.AUTH
+import st.slex.messenger.utilites.restartActivity
 
 class MainFragment : Fragment() {
 
@@ -69,16 +71,26 @@ class MainFragment : Fragment() {
             appBarConfiguration
         )
         binding.navView.setupWithNavController(navController)
-        /*binding.navView.setNavigationItemSelectedListener {
+        binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_nav_btn_sign_out -> {
-                    ActivityConst.AUTH.signOut()
+                    AUTH.signOut()
                     requireActivity().restartActivity()
                 }
             }
             false
-        }*/
+        }
     }
+
+    /*private fun setUserInfoInHeader() {
+        val headerView = binding.navView.getHeaderView(0)
+        val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
+        activityViewModel.getUserForHeader.observe(this) {
+            headerBinding.navigationHeaderImage.downloadAndSet(it.url)
+            headerBinding.navigationHeaderUserName.text = it.username
+            headerBinding.navigationHeaderPhoneNumber.text = it.phone
+        }
+    }*/
 
     private fun initNavigationFields() {
         navHostFragment =

@@ -5,32 +5,23 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.impl.ActivityRepositoryImpl
 import st.slex.messenger.utilites.Const.AUTH
 import st.slex.messenger.utilites.checkPermission
-import st.slex.messenger.utilites.lockDrawer
 
 
 class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
-
-    private lateinit var navGraph: NavGraph
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
 
     private val repository = ActivityRepositoryImpl()
     private val viewModel: ActivityViewModel by viewModels {
@@ -52,43 +43,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initNavigationFields() {
-        navHostFragment =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-        navController = navHostFragment.navController
-        val navInflater = navHostFragment.navController.navInflater
-        navGraph = navInflater.inflate(R.navigation.nav_graph)
+
     }
 
-    private fun checkAuth() {
+    private fun checkAuth() = try {
+        val navController =
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
         if (AUTH.currentUser == null) {
-            binding.drawerLayout.lockDrawer()
             navGraph.startDestination = R.id.nav_enter_phone
         }
         navController.graph = navGraph
-    }
-
-    /*private fun initNavController() {
-        setNavController()
-        setUserInfoInHeader()
-    }*/
-
-    /* private fun setNavController() {
-         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), binding.drawerLayout)
-         binding.navView.setupWithNavController(navController)
-     }
-
-     private fun setUserInfoInHeader() {
-         val headerView = binding.navView.getHeaderView(0)
-         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
-         activityViewModel.getUserForHeader.observe(this) {
-             headerBinding.navigationHeaderImage.downloadAndSet(it.url)
-             headerBinding.navigationHeaderUserName.text = it.username
-             headerBinding.navigationHeaderPhoneNumber.text = it.phone
-         }
-     }*/
-
-    override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
+    } catch (e: Exception) {
+        Log.i("MainActivity:", e.toString())
     }
 
     @SuppressLint("Range")
@@ -129,7 +96,8 @@ class MainActivity : AppCompatActivity() {
                 READ_CONTACTS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            viewModel.updatePhoneToDatabase(getContacts())
+            val contacts = getContacts()
+            viewModel.updatePhoneToDatabase(contacts)
         }
     }
 
