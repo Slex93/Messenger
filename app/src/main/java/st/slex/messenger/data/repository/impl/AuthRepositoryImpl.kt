@@ -1,4 +1,4 @@
-package st.slex.messenger.data.repository
+package st.slex.messenger.data.repository.impl
 
 import android.app.Activity
 import androidx.lifecycle.LiveData
@@ -10,11 +10,12 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import st.slex.messenger.activity_model.ActivityConst
-import st.slex.messenger.activity_model.ActivityConst.AUTH
-import st.slex.messenger.activity_model.ActivityConst.authUserModel
-import st.slex.messenger.activity_model.User
 import st.slex.messenger.data.model.AuthUserModel
+import st.slex.messenger.data.model.UserModel
+import st.slex.messenger.data.repository.interf.AuthRepository
+import st.slex.messenger.utilites.Const
+import st.slex.messenger.utilites.Const.AUTH
+import st.slex.messenger.utilites.Const.authUserModel
 import st.slex.messenger.utilites.result.AuthResult
 import java.util.concurrent.TimeUnit
 
@@ -61,18 +62,18 @@ class AuthRepositoryImpl : AuthRepository {
             val id = AUTH.currentUser?.uid.toString()
             val phone = authUserModel.phoneNumber
             val dateMap = mutableMapOf<String, Any>()
-            dateMap[ActivityConst.CHILD_ID] = id
-            dateMap[ActivityConst.CHILD_PHONE] = phone
-            ActivityConst.REF_DATABASE_ROOT.child(ActivityConst.NODE_PHONE).child(id)
+            dateMap[Const.CHILD_ID] = id
+            dateMap[Const.CHILD_PHONE] = phone
+            Const.REF_DATABASE_ROOT.child(Const.NODE_PHONE).child(id)
                 .setValue(phone)
                 .addOnSuccessListener {
-                    ActivityConst.REF_DATABASE_ROOT.child(ActivityConst.NODE_USER).child(id)
+                    Const.REF_DATABASE_ROOT.child(Const.NODE_USER).child(id)
                         .updateChildren(dateMap)
                         .addOnSuccessListener {
                             val user =
-                                User(authUserModel.id, authUserModel.phoneNumber)
+                                UserModel(authUserModel.id, authUserModel.phoneNumber)
                             AuthResult.Success(user)
-                            ActivityConst.USER = user
+                            Const.USER = user
                         }
                 }
         }
@@ -83,7 +84,7 @@ class AuthRepositoryImpl : AuthRepository {
                 AUTH.signInWithCredential(credential).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val authUser =
-                            AuthUserModel(id = ActivityConst.CURRENT_UID, phoneNumber = phone)
+                            AuthUserModel(id = Const.CURRENT_UID, phoneNumber = phone)
                         authUserModel = authUser
                         _user.value = AuthResult.Success(authUser)
                     }

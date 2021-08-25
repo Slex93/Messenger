@@ -1,11 +1,11 @@
 package st.slex.messenger.ui.contacts.model
 
 import androidx.lifecycle.MutableLiveData
-import st.slex.messenger.activity_model.ActivityConst
-import st.slex.messenger.activity_model.ActivityConst.NODE_PHONE_CONTACT
-import st.slex.messenger.activity_model.ActivityConst.NODE_USER
-import st.slex.messenger.activity_model.ActivityConst.REF_DATABASE_ROOT
 import st.slex.messenger.utilites.AppValueEventListener
+import st.slex.messenger.utilites.Const
+import st.slex.messenger.utilites.Const.NODE_PHONE_CONTACT
+import st.slex.messenger.utilites.Const.NODE_USER
+import st.slex.messenger.utilites.Const.REF_DATABASE_ROOT
 
 class ContactRepository {
 
@@ -19,7 +19,7 @@ class ContactRepository {
     fun getContacts() {
         REF_DATABASE_ROOT
             .child(NODE_PHONE_CONTACT)
-            .child(ActivityConst.CURRENT_UID)
+            .child(Const.CURRENT_UID)
             .addListenerForSingleValueEvent(AppValueEventListener {
                 val listOfPrimaryContacts = it.children.map { snapshot ->
                     snapshot.getValue(Contact::class.java) ?: Contact()

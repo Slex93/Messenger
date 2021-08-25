@@ -13,19 +13,13 @@ import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
-import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
-import st.slex.messenger.activity_model.ActivityConst.AUTH
-import st.slex.messenger.activity_model.ActivityRepository
-import st.slex.messenger.activity_model.Contact
-import st.slex.messenger.activity_view_model.ActivityViewModel
-import st.slex.messenger.activity_view_model.ActivityViewModelFactory
+import st.slex.messenger.data.model.ContactModel
+import st.slex.messenger.data.repository.impl.ActivityRepositoryImpl
+import st.slex.messenger.utilites.Const.AUTH
 import st.slex.messenger.utilites.checkPermission
-import st.slex.messenger.utilites.downloadAndSet
 import st.slex.messenger.utilites.lockDrawer
-import st.slex.messenger.utilites.unlockDrawer
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,8 +32,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    private val repository = ActivityRepository()
-    private val activityViewModel: ActivityViewModel by viewModels {
+    private val repository = ActivityRepositoryImpl()
+    private val viewModel: ActivityViewModel by viewModels {
         ActivityViewModelFactory(repository)
     }
 
@@ -47,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        activityViewModel.initFirebase()
+        viewModel.initFirebase()
         initNavigationFields()
         checkAuth()
     }
@@ -66,53 +60,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAuth() {
-        if (AUTH.currentUser != null) {
-            activityViewModel.initUser()
-            binding.drawerLayout.unlockDrawer()
-            navGraph.startDestination = R.id.nav_home
-            initContacts()
-            initNavController()
-        } else {
+        if (AUTH.currentUser == null) {
             binding.drawerLayout.lockDrawer()
             navGraph.startDestination = R.id.nav_enter_phone
         }
         navController.graph = navGraph
     }
 
-    private fun initNavController() {
+    /*private fun initNavController() {
         setNavController()
         setUserInfoInHeader()
-    }
+    }*/
 
-    private fun setNavController() {
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), binding.drawerLayout)
-        binding.navView.setupWithNavController(navController)
-    }
+    /* private fun setNavController() {
+         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home), binding.drawerLayout)
+         binding.navView.setupWithNavController(navController)
+     }
 
-    private fun setUserInfoInHeader() {
-        val headerView = binding.navView.getHeaderView(0)
-        val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
-        activityViewModel.getUserForHeader.observe(this) {
-            headerBinding.navigationHeaderImage.downloadAndSet(it.url)
-            headerBinding.navigationHeaderUserName.text = it.username
-            headerBinding.navigationHeaderPhoneNumber.text = it.phone
-        }
-    }
+     private fun setUserInfoInHeader() {
+         val headerView = binding.navView.getHeaderView(0)
+         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
+         activityViewModel.getUserForHeader.observe(this) {
+             headerBinding.navigationHeaderImage.downloadAndSet(it.url)
+             headerBinding.navigationHeaderUserName.text = it.username
+             headerBinding.navigationHeaderPhoneNumber.text = it.phone
+         }
+     }*/
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
     }
 
-    private fun initContacts() {
-        val contacts = getContacts()
-        activityViewModel.updatePhoneToDatabase(contacts)
-
-    }
-
     @SuppressLint("Range")
-    private fun getContacts(): List<Contact> {
-        val contactList = mutableListOf<Contact>()
-
+    private fun getContacts(): List<ContactModel> {
+        val contactList = mutableListOf<ContactModel>()
         if (this.checkPermission(READ_CONTACTS)) {
             val cursor = this.contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -128,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                     val phone =
                         it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                     val setPhone = phone.replace(Regex("[\\s,-]"), "")
-                    val newModel = Contact(fullname = fullName, phone = setPhone)
+                    val newModel = ContactModel(fullname = fullName, phone = setPhone)
                     contactList.add(newModel)
                 }
             }
@@ -148,18 +129,18 @@ class MainActivity : AppCompatActivity() {
                 READ_CONTACTS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            initContacts()
+            viewModel.updatePhoneToDatabase(getContacts())
         }
     }
 
     override fun onStart() {
         super.onStart()
-        if (AUTH.currentUser != null) activityViewModel.statusOnline()
+        if (AUTH.currentUser != null) viewModel.statusOnline()
     }
 
     override fun onStop() {
         super.onStop()
-        if (AUTH.currentUser != null) activityViewModel.statusOffline()
+        if (AUTH.currentUser != null) viewModel.statusOffline()
     }
 
 }

@@ -2,18 +2,18 @@ package st.slex.messenger.ui.single_chat.model
 
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.ServerValue
-import st.slex.messenger.activity_model.ActivityConst.CHILD_FROM
-import st.slex.messenger.activity_model.ActivityConst.CHILD_ID
-import st.slex.messenger.activity_model.ActivityConst.CHILD_STATE
-import st.slex.messenger.activity_model.ActivityConst.CHILD_TEXT
-import st.slex.messenger.activity_model.ActivityConst.CHILD_TIMESTAMP
-import st.slex.messenger.activity_model.ActivityConst.CURRENT_UID
-import st.slex.messenger.activity_model.ActivityConst.NODE_MAIN_LIST
-import st.slex.messenger.activity_model.ActivityConst.NODE_MESSAGES
-import st.slex.messenger.activity_model.ActivityConst.NODE_USER
-import st.slex.messenger.activity_model.ActivityConst.REF_DATABASE_ROOT
 import st.slex.messenger.utilites.AppChildEventListener
 import st.slex.messenger.utilites.AppValueEventListener
+import st.slex.messenger.utilites.Const.CHILD_FROM
+import st.slex.messenger.utilites.Const.CHILD_ID
+import st.slex.messenger.utilites.Const.CHILD_STATE
+import st.slex.messenger.utilites.Const.CHILD_TEXT
+import st.slex.messenger.utilites.Const.CHILD_TIMESTAMP
+import st.slex.messenger.utilites.Const.CURRENT_UID
+import st.slex.messenger.utilites.Const.NODE_MAIN_LIST
+import st.slex.messenger.utilites.Const.NODE_MESSAGES
+import st.slex.messenger.utilites.Const.NODE_USER
+import st.slex.messenger.utilites.Const.REF_DATABASE_ROOT
 
 class ChatRepository {
 

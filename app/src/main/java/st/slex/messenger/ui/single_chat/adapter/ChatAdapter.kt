@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerSingleChatBinding
-import st.slex.messenger.activity_model.ActivityConst.CURRENT_UID
 import st.slex.messenger.ui.single_chat.model.Message
+import st.slex.messenger.utilites.Const.CURRENT_UID
 
 class ChatAdapter : RecyclerView.Adapter<ChatViewHolder>() {
 

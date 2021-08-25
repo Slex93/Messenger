@@ -2,7 +2,7 @@ package st.slex.messenger.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import st.slex.messenger.data.repository.AuthRepositoryImpl
+import st.slex.messenger.data.repository.impl.AuthRepositoryImpl
 
 class AuthViewModelFactory(
     private val repository: AuthRepositoryImpl

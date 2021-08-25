@@ -1,6 +1,6 @@
-package st.slex.messenger.activity_model
+package st.slex.messenger.data.model
 
-data class User(
+data class UserModel(
     val id: String = "",
     val phone: String = "",
     val username: String = "",
@@ -8,10 +8,4 @@ data class User(
     val bio: String = "",
     val fullname: String = "",
     val state: String = "",
-)
-
-data class Contact(
-    val id: String = "",
-    val phone: String  = "",
-    val fullname: String = "",
 )

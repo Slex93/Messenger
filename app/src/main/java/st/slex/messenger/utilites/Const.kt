@@ -1,12 +1,13 @@
-package st.slex.messenger.activity_model
+package st.slex.messenger.utilites
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import st.slex.messenger.data.model.AuthUserModel
+import st.slex.messenger.data.model.UserModel
 
-object ActivityConst {
+object Const {
     lateinit var AUTH: FirebaseAuth
-    lateinit var USER: User
+    lateinit var USER: UserModel
     lateinit var authUserModel: AuthUserModel
     lateinit var CURRENT_UID: String
     lateinit var REF_DATABASE_ROOT: DatabaseReference

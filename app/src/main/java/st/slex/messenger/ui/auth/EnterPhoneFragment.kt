@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
 import st.slex.messenger.data.model.AuthUserModel
-import st.slex.messenger.data.repository.AuthRepositoryImpl
+import st.slex.messenger.data.repository.impl.AuthRepositoryImpl
 import st.slex.messenger.utilites.restartActivity
 import st.slex.messenger.utilites.result.AuthResult
 import st.slex.messenger.utilites.showPrimarySnackBar

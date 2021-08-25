@@ -17,14 +17,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
-import st.slex.messenger.activity_model.ActivityConst
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.ui.main_screen.model.MainScreenDatabase
 import st.slex.messenger.ui.main_screen.model.MainScreenRepository
 import st.slex.messenger.ui.main_screen.model.base.MainMessage
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModel
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModelFactory
-import st.slex.messenger.utilites.restartActivity
 
 class MainFragment : Fragment() {
 
@@ -70,7 +68,7 @@ class MainFragment : Fragment() {
             appBarConfiguration
         )
         binding.navView.setupWithNavController(navController)
-        binding.navView.setNavigationItemSelectedListener {
+        /*binding.navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_nav_btn_sign_out -> {
                     ActivityConst.AUTH.signOut()
@@ -78,7 +76,7 @@ class MainFragment : Fragment() {
                 }
             }
             false
-        }
+        }*/
     }
 
     private fun initNavigationFields() {

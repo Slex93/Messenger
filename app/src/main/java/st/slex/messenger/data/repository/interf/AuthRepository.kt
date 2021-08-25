@@ -1,4 +1,4 @@
-package st.slex.messenger.data.repository
+package st.slex.messenger.data.repository.interf
 
 import android.app.Activity
 import androidx.lifecycle.LiveData
