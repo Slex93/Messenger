@@ -5,6 +5,7 @@
 
     <!--Title-->
     <string name="title_code">Enter code</string>
+    <string name="title_contacts">Contacts</string>
 
     <!--Snack-->
     <string name="snack_success">Success</string>

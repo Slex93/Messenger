@@ -26,7 +26,8 @@ import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModelFactory
 
 class MainFragment : Fragment() {
 
-    private lateinit var binding: FragmentMainBinding
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var navGraph: NavGraph
     private lateinit var navHostFragment: NavHostFragment
@@ -39,7 +40,7 @@ class MainFragment : Fragment() {
     private val database = MainScreenDatabase()
     private val repository by lazy { MainScreenRepository(database) }
 
-    private val mainScreenViewModel: MainScreenViewModel by viewModels {
+    private val viewModel: MainScreenViewModel by viewModels {
         MainScreenViewModelFactory(repository)
     }
 
@@ -48,7 +49,7 @@ class MainFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -94,9 +95,14 @@ class MainFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
 
-        mainScreenViewModel.mainMessage.observe(viewLifecycleOwner) {
+        viewModel.mainMessage.observe(viewLifecycleOwner) {
             adapter.makeMainList(it as MutableList<MainMessage>)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

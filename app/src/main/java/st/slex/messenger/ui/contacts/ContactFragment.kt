@@ -16,7 +16,6 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.google.android.material.transition.MaterialContainerTransform
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
@@ -26,7 +25,8 @@ import st.slex.messenger.ui.contacts.viewmodel.ContactViewModelFactory
 
 class ContactFragment : Fragment() {
 
-    private lateinit var binding: FragmentContactBinding
+    private var _binding: FragmentContactBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var navGraph: NavGraph
     private lateinit var navHostFragment: NavHostFragment
@@ -47,7 +47,7 @@ class ContactFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentContactBinding.inflate(inflater, container, false)
+        _binding = FragmentContactBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -55,21 +55,14 @@ class ContactFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
         setHasOptionsMenu(true)
-        setTransitAnimation()
         initNavigationFields()
         setActionBar()
-    }
-
-    private fun setTransitAnimation() {
-        enterTransition = MaterialContainerTransform().apply {
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-        }
     }
 
     private fun setActionBar() {
         val toolbar = binding.fragmentContactToolbar
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        toolbar.title = "Contacts"
+        toolbar.title = getString(R.string.title_contacts)
         appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home))
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
     }
@@ -115,5 +108,10 @@ class ContactFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         contactViewModel.contact.removeObservers(viewLifecycleOwner)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

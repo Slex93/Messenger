@@ -31,7 +31,8 @@ import st.slex.messenger.ui.single_chat.viewmodel.ChatViewModelFactory
 
 class SingleChatFragment : Fragment() {
 
-    private lateinit var binding: FragmentSingleChatBinding
+    private var _binding: FragmentSingleChatBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var navGraph: NavGraph
     private lateinit var navHostFragment: NavHostFragment
@@ -50,7 +51,7 @@ class SingleChatFragment : Fragment() {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private val repository = ChatRepository()
-    private val chatViewModel: ChatViewModel by viewModels {
+    private val viewModel: ChatViewModel by viewModels {
         ChatViewModelFactory(repository)
     }
 
@@ -64,7 +65,7 @@ class SingleChatFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSingleChatBinding.inflate(inflater, container, false)
+        _binding = FragmentSingleChatBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -88,15 +89,15 @@ class SingleChatFragment : Fragment() {
                 snackBar.setAction("Ok") {}
                 snackBar.show()
             } else {
-                chatViewModel.sendMessage(message, chatUserId)
+                viewModel.sendMessage(message, chatUserId)
                 binding.singleChatRecyclerTextInput.editText?.setText("")
             }
         }
     }
 
     private fun initStatus() {
-        chatViewModel.initStatus(chatUserId)
-        chatViewModel.status.observe(viewLifecycleOwner) {
+        viewModel.initStatus(chatUserId)
+        viewModel.status.observe(viewLifecycleOwner) {
             binding.toolbarInfo.toolbarInfoStatus.text = it
         }
     }
@@ -109,9 +110,9 @@ class SingleChatFragment : Fragment() {
         recycler.adapter = adapter
         recycler.isNestedScrollingEnabled = false
         swipeRefreshLayout = binding.singleChatRefreshLayout
-        chatViewModel.initMessage(chatUserId, countMessage)
+        viewModel.initMessage(chatUserId, countMessage)
 
-        chatViewModel.message.observe(viewLifecycleOwner) { message ->
+        viewModel.message.observe(viewLifecycleOwner) { message ->
             if (isScrollToPosition) {
                 adapter.addItemToBottom(message) {
                     recycler.smoothScrollToPosition(adapter.itemCount)
@@ -152,7 +153,7 @@ class SingleChatFragment : Fragment() {
         isScrollToPosition = false
         isScrolling = false
         countMessage += 10
-        chatViewModel.initMessage(chatUserId, countMessage)
+        viewModel.initMessage(chatUserId, countMessage)
     }
 
     private fun takeExtras() {
@@ -189,6 +190,11 @@ class SingleChatFragment : Fragment() {
         navController = navHostFragment.navController
         val navInflater = navHostFragment.navController.navInflater
         navGraph = navInflater.inflate(R.navigation.nav_graph)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }
