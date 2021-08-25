@@ -1,6 +1,7 @@
 package st.slex.messenger.ui.main_screen
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,9 +16,11 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
+import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.impl.MainRepositoryImpl
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.ui.main_screen.model.base.MainMessage
@@ -26,6 +29,7 @@ import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModelFactory
 import st.slex.messenger.utilites.Const.AUTH
 import st.slex.messenger.utilites.downloadAndSet
 import st.slex.messenger.utilites.restartActivity
+import st.slex.messenger.utilites.result.EventResponse
 
 class MainFragment : Fragment() {
 
@@ -84,15 +88,23 @@ class MainFragment : Fragment() {
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun setUserInfoInHeader() {
         val headerView = binding.navView.getHeaderView(0)
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
         viewModel.currentUser.observe(viewLifecycleOwner) {
-            headerBinding.navigationHeaderImage.downloadAndSet(it.url)
-            headerBinding.navigationHeaderUserName.text = it.username
-            headerBinding.navigationHeaderPhoneNumber.text = it.phone
+            when (it) {
+                is EventResponse.Success -> {
+                    val user = it.snapshot.getValue(UserModel::class.java) as UserModel
+                    headerBinding.navigationHeaderImage.downloadAndSet(user.url)
+                    headerBinding.navigationHeaderUserName.text = user.username
+                    headerBinding.navigationHeaderPhoneNumber.text = user.phone
+                }
+                is EventResponse.Cancelled -> {
+                    Log.i("Cancelled", it.databaseError.message)
+                }
+            }
         }
-        viewModel.getCurrentUser()
     }
 
     private fun initNavigationFields() {
