@@ -17,13 +17,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
+import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
+import st.slex.messenger.data.repository.impl.MainRepositoryImpl
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
-import st.slex.messenger.ui.main_screen.model.MainScreenDatabase
-import st.slex.messenger.ui.main_screen.model.MainScreenRepository
 import st.slex.messenger.ui.main_screen.model.base.MainMessage
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModel
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModelFactory
 import st.slex.messenger.utilites.Const.AUTH
+import st.slex.messenger.utilites.downloadAndSet
 import st.slex.messenger.utilites.restartActivity
 
 class MainFragment : Fragment() {
@@ -39,8 +40,8 @@ class MainFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MainAdapter
     private lateinit var layoutManager: RecyclerView.LayoutManager
-    private val database = MainScreenDatabase()
-    private val repository by lazy { MainScreenRepository(database) }
+
+    private val repository by lazy { MainRepositoryImpl() }
 
     private val viewModel: MainScreenViewModel by viewModels {
         MainScreenViewModelFactory(repository)
@@ -57,6 +58,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUserInfoInHeader()
         initNavigationFields()
         setActionBar()
         initRecyclerView()
@@ -82,15 +84,16 @@ class MainFragment : Fragment() {
         }
     }
 
-    /*private fun setUserInfoInHeader() {
+    private fun setUserInfoInHeader() {
         val headerView = binding.navView.getHeaderView(0)
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
-        activityViewModel.getUserForHeader.observe(this) {
+        viewModel.currentUser.observe(viewLifecycleOwner) {
             headerBinding.navigationHeaderImage.downloadAndSet(it.url)
             headerBinding.navigationHeaderUserName.text = it.username
             headerBinding.navigationHeaderPhoneNumber.text = it.phone
         }
-    }*/
+        viewModel.getCurrentUser()
+    }
 
     private fun initNavigationFields() {
         navHostFragment =
@@ -106,7 +109,6 @@ class MainFragment : Fragment() {
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
-
         viewModel.mainMessage.observe(viewLifecycleOwner) {
             adapter.makeMainList(it as MutableList<MainMessage>)
         }
