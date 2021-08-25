@@ -2,9 +2,9 @@ package st.slex.messenger.ui.main_screen.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import st.slex.messenger.ui.main_screen.model.MainScreenRepository
+import st.slex.messenger.data.repository.impl.MainRepositoryImpl
 
-class MainScreenViewModelFactory(private val repository: MainScreenRepository) :
+class MainScreenViewModelFactory(private val repository: MainRepositoryImpl) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainScreenViewModel::class.java)) {
