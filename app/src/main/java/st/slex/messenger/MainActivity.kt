@@ -30,7 +30,8 @@ import st.slex.messenger.utilites.unlockDrawer
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private var _binding: ActivityMainBinding? = null
+    private val binding: ActivityMainBinding get() = _binding!!
 
     private lateinit var navGraph: NavGraph
     private lateinit var navHostFragment: NavHostFragment
@@ -44,11 +45,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         activityViewModel.initFirebase()
         initNavigationFields()
         checkAuth()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     private fun initNavigationFields() {

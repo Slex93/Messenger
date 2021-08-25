@@ -3,6 +3,14 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="next_step">Next step</string>
 
+    <!--Title-->
+    <string name="title_code">Enter code</string>
+
+    <!--Snack-->
+    <string name="snack_success">Success</string>
+    <string name="snack_failure">Failure</string>
+    <string name="snack_code_send">Code send</string>
+
     <!--Enter code-->
     <string name="enter_code">Code</string>
 
@@ -12,4 +20,5 @@
     <string name="code">code</string>
     <string name="country_code_ru">+7</string>
     <string name="search">search</string>
+
 </resources>

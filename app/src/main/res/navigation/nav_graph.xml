@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="st.slex.messenger.main_screen.MainFragment"
+        android:name="st.slex.messenger.ui.main_screen.MainFragment"
         android:label="Main screen"
         tools:layout="@layout/fragment_main">
         <action
@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_enter_phone"
-        android:name="st.slex.messenger.auth.EnterPhoneFragment"
+        android:name="st.slex.messenger.ui.auth.EnterPhoneFragment"
         android:label="Sign In"
         tools:layout="@layout/fragment_enter_phone">
         <action
@@ -31,23 +31,21 @@
     </fragment>
     <fragment
         android:id="@+id/nav_enter_code"
-        android:name="st.slex.messenger.auth.EnterCodeFragment"
+        android:name="st.slex.messenger.ui.auth.EnterCodeFragment"
         android:label="Enter Code"
         tools:layout="@layout/fragment_enter_code">
-
         <argument
-            android:name="PhoneNumber"
+            android:name="id"
             app:argType="string" />
-
     </fragment>
     <fragment
         android:id="@+id/nav_user_profile"
-        android:name="st.slex.messenger.user_profile.UserProfileFragment"
+        android:name="st.slex.messenger.ui.user_profile.UserProfileFragment"
         android:label="fragment_user_profile"
         tools:layout="@layout/fragment_user_profile" />
     <fragment
         android:id="@+id/nav_contact"
-        android:name="st.slex.messenger.contacts.ContactFragment"
+        android:name="st.slex.messenger.ui.contacts.ContactFragment"
         tools:layout="@layout/fragment_contact">
         <action
             android:id="@+id/action_nav_contact_to_nav_single_chat"
@@ -55,11 +53,11 @@
     </fragment>
     <fragment
         android:id="@+id/nav_single_chat"
-        android:name="st.slex.messenger.single_chat.SingleChatFragment"
+        android:name="st.slex.messenger.ui.single_chat.SingleChatFragment"
         tools:layout="@layout/fragment_single_chat">
         <argument
             android:name="contact"
-            app:argType="st.slex.messenger.contacts.model.Contact" />
+            app:argType="st.slex.messenger.ui.contacts.model.Contact" />
         <argument
             android:name="key"
             app:argType="string" />

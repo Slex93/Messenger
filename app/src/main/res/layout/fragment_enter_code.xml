@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="st.slex.messenger.auth.EnterCodeFragment">
+    tools:context="st.slex.messenger.ui.auth.EnterCodeFragment">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/fragment_code_layout"
