@@ -41,6 +41,8 @@ suspend fun DatabaseReference.valueEventFlow(): Flow<EventResponse> = callbackFl
     }
 }
 
+inline fun <reified T> DataSnapshot.getThisValue(): T = getValue(T::class.java) as T
+
 fun View.showPrimarySnackBar(it: String) {
     Snackbar.make(this, it, Snackbar.LENGTH_SHORT).show()
 }

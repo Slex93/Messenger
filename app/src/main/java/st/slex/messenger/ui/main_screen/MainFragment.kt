@@ -20,16 +20,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
-import st.slex.messenger.data.model.UserModel
+import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.repository.impl.MainRepositoryImpl
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
-import st.slex.messenger.ui.main_screen.model.base.MainMessage
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModel
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModelFactory
 import st.slex.messenger.utilites.Const.AUTH
 import st.slex.messenger.utilites.downloadAndSet
 import st.slex.messenger.utilites.restartActivity
-import st.slex.messenger.utilites.result.EventResponse
+import st.slex.messenger.utilites.result.Resource
 
 class MainFragment : Fragment() {
 
@@ -94,14 +93,16 @@ class MainFragment : Fragment() {
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
         viewModel.currentUser.observe(viewLifecycleOwner) {
             when (it) {
-                is EventResponse.Success -> {
-                    val user = it.snapshot.getValue(UserModel::class.java) as UserModel
-                    headerBinding.navigationHeaderImage.downloadAndSet(user.url)
-                    headerBinding.navigationHeaderUserName.text = user.username
-                    headerBinding.navigationHeaderPhoneNumber.text = user.phone
+                is Resource.Success -> {
+                    headerBinding.navigationHeaderImage.downloadAndSet(it.data.url)
+                    headerBinding.navigationHeaderUserName.text = it.data.username
+                    headerBinding.navigationHeaderPhoneNumber.text = it.data.phone
                 }
-                is EventResponse.Cancelled -> {
-                    Log.i("Cancelled", it.databaseError.message)
+                is Resource.Failure -> {
+                    Log.i("Cancelled", it.exception.message.toString())
+                }
+                is Resource.Loading -> {
+                    Log.i("Loading", it.toString())
                 }
             }
         }
@@ -122,7 +123,7 @@ class MainFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = layoutManager
         viewModel.mainMessage.observe(viewLifecycleOwner) {
-            adapter.makeMainList(it as MutableList<MainMessage>)
+            adapter.makeMainList(it as MutableList<MessageModel>)
         }
     }
 
