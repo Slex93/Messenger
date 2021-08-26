@@ -1,6 +1,6 @@
-package st.slex.messenger.ui.main_screen.model.base
+package st.slex.messenger.data.model
 
-data class MainMessage(
+data class MessageModel(
     val uid: String = "",
     val username: String = "",
     val content: String = "",
