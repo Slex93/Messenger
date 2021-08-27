@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -30,22 +28,16 @@ import st.slex.messenger.utilites.downloadAndSet
 import st.slex.messenger.utilites.restartActivity
 import st.slex.messenger.utilites.result.Resource
 
+@ExperimentalCoroutinesApi
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var navGraph: NavGraph
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MainAdapter
-    private lateinit var layoutManager: RecyclerView.LayoutManager
 
     private val repository by lazy { MainRepositoryImpl() }
-
     private val viewModel: MainScreenViewModel by viewModels {
         MainScreenViewModelFactory(repository)
     }
@@ -62,13 +54,16 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUserInfoInHeader()
-        initNavigationFields()
         setActionBar()
         initRecyclerView()
     }
 
     private fun setActionBar() {
-        appBarConfiguration =
+        val navController = ((activity as AppCompatActivity)
+            .supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
+            .navController
+        val appBarConfiguration =
             AppBarConfiguration(setOf(R.id.nav_home), binding.mainScreenDrawerLayout)
         NavigationUI.setupWithNavController(
             binding.mainScreenToolbar,
@@ -87,7 +82,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    @ExperimentalCoroutinesApi
     private fun setUserInfoInHeader() {
         val headerView = binding.navView.getHeaderView(0)
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
@@ -108,20 +102,12 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun initNavigationFields() {
-        navHostFragment =
-            ((activity as AppCompatActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-        navController = navHostFragment.navController
-        val navInflater = navHostFragment.navController.navInflater
-        navGraph = navInflater.inflate(R.navigation.nav_graph)
-    }
-
     private fun initRecyclerView() {
         recyclerView = binding.fragmentMainRecyclerView
         adapter = MainAdapter()
-        layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager =
+            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         viewModel.mainMessage.observe(viewLifecycleOwner) {
             adapter.makeMainList(it as MutableList<MessageModel>)
         }
