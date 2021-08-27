@@ -2,17 +2,11 @@ package st.slex.messenger.ui.contacts
 
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph
 import androidx.navigation.fragment.FragmentNavigatorExtras
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -22,16 +16,12 @@ import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.ui.contacts.model.ContactRepository
 import st.slex.messenger.ui.contacts.viewmodel.ContactViewModel
 import st.slex.messenger.ui.contacts.viewmodel.ContactViewModelFactory
+import st.slex.messenger.utilites.setSupportActionBar
 
 class ContactFragment : Fragment() {
 
     private var _binding: FragmentContactBinding? = null
     private val binding get() = _binding!!
-
-    private lateinit var navGraph: NavGraph
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
 
     private val repository = ContactRepository()
     private val contactViewModel: ContactViewModel by viewModels {
@@ -53,26 +43,10 @@ class ContactFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
         setHasOptionsMenu(true)
-        initNavigationFields()
-        setActionBar()
-    }
-
-    private fun setActionBar() {
-        val toolbar = binding.fragmentContactToolbar
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        toolbar.title = getString(R.string.title_contacts)
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_home))
-        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
-    }
-
-    private fun initNavigationFields() {
-        navHostFragment =
-            ((activity as AppCompatActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-        navController = navHostFragment.navController
-        val navInflater = navHostFragment.navController.navInflater
-        navGraph = navInflater.inflate(R.navigation.nav_graph)
+        initRecyclerView()
+        binding.fragmentContactToolbar.title = getString(R.string.title_contacts)
+        setSupportActionBar(binding.fragmentContactToolbar)
     }
 
     private fun initRecyclerView() {
@@ -80,8 +54,7 @@ class ContactFragment : Fragment() {
         adapter = ContactAdapter(clickListener, this)
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         contactViewModel.initContact()
-
-        contactViewModel.contact.observe(viewLifecycleOwner) { it ->
+        contactViewModel.contact.observe(viewLifecycleOwner) {
             adapter.addItems(it)
         }
         postponeEnterTransition()

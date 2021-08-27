@@ -5,10 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
@@ -23,9 +22,7 @@ import st.slex.messenger.data.repository.impl.MainRepositoryImpl
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModel
 import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModelFactory
-import st.slex.messenger.utilites.Const.AUTH
 import st.slex.messenger.utilites.downloadAndSet
-import st.slex.messenger.utilites.restartActivity
 import st.slex.messenger.utilites.result.Resource
 
 @ExperimentalCoroutinesApi
@@ -37,7 +34,7 @@ class MainFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MainAdapter
 
-    private val repository by lazy { MainRepositoryImpl() }
+    private val repository = MainRepositoryImpl()
     private val viewModel: MainScreenViewModel by viewModels {
         MainScreenViewModelFactory(repository)
     }
@@ -54,32 +51,13 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUserInfoInHeader()
-        setActionBar()
-        initRecyclerView()
-    }
-
-    private fun setActionBar() {
-        val navController = ((activity as AppCompatActivity)
-            .supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-            .navController
-        val appBarConfiguration =
-            AppBarConfiguration(setOf(R.id.nav_home), binding.mainScreenDrawerLayout)
         NavigationUI.setupWithNavController(
             binding.mainScreenToolbar,
-            navController,
-            appBarConfiguration
+            findNavController(),
+            AppBarConfiguration(setOf(R.id.nav_home), binding.mainScreenDrawerLayout)
         )
-        binding.navView.setupWithNavController(navController)
-        binding.navView.setNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.menu_nav_btn_sign_out -> {
-                    AUTH.signOut()
-                    requireActivity().restartActivity()
-                }
-            }
-            false
-        }
+        binding.navView.setupWithNavController(findNavController())
+        initRecyclerView()
     }
 
     private fun setUserInfoInHeader() {

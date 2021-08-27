@@ -21,5 +21,6 @@
     <string name="code">code</string>
     <string name="country_code_ru">+7</string>
     <string name="search">search</string>
+    <string name="label_sign_out">Sign out</string>
 
 </resources>

@@ -4,9 +4,15 @@ import android.app.Activity
 import android.content.Intent
 import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -42,6 +48,15 @@ suspend fun DatabaseReference.valueEventFlow(): Flow<EventResponse> = callbackFl
 }
 
 inline fun <reified T> DataSnapshot.getThisValue(): T = getValue(T::class.java) as T
+
+fun Fragment.setSupportActionBar(toolbar: MaterialToolbar) {
+    (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+    NavigationUI.setupWithNavController(
+        toolbar,
+        findNavController(),
+        AppBarConfiguration(setOf(R.id.nav_home))
+    )
+}
 
 fun View.showPrimarySnackBar(it: String) {
     Snackbar.make(this, it, Snackbar.LENGTH_SHORT).show()

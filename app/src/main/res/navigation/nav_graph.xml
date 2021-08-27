@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_nav_home_to_nav_single_chat"
             app:destination="@id/nav_single_chat" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_settings"
+            app:destination="@id/nav_settings" />
     </fragment>
     <fragment
         android:id="@+id/nav_enter_phone"
@@ -62,5 +65,10 @@
             android:name="key"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="st.slex.messenger.ui.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
 
 </navigation>
