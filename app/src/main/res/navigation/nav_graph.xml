@@ -23,6 +23,7 @@
             android:id="@+id/action_nav_home_to_nav_settings"
             app:destination="@id/nav_settings" />
     </fragment>
+
     <fragment
         android:id="@+id/nav_enter_phone"
         android:name="st.slex.messenger.ui.auth.EnterPhoneFragment"

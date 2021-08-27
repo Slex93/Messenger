@@ -1,28 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn = "navigation_view">
+    tools:showIn="navigation_view">
     <group>
         <item
             android:id="@+id/nav_home"
+            android:icon="@drawable/ic_baseline_home_24"
             android:title="All chats" />
         <item
             android:id="@+id/nav_contact"
+            android:icon="@drawable/ic_baseline_contacts_24"
             android:title="Contacts" />
         <item
             android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_baseline_settings_24"
             android:title="Settings" />
     </group>
 
     <group android:id="@+id/group_menu">
         <item
-            android:id="@+id/menu_nav_btn_sign_out"
-            android:title="Sign out" />
+            android:id="@+id/nav_connect"
+            android:icon="@drawable/ic_baseline_connect_without_contact_24"
+            android:title="Connect me" />
         <item
-            android:id="@+id/menu_nav_btn_invite"
-            android:title="Invite Friends" />
-        <item
-            android:id="@+id/ic_menu_btn_help"
+            android:id="@+id/nav_help"
+            android:icon="@drawable/ic_baseline_help_24"
             android:title="Help" />
     </group>
 </menu>
