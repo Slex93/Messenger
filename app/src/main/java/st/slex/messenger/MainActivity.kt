@@ -9,6 +9,8 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
@@ -23,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
 
+    private lateinit var navController: NavController
+    private lateinit var navGraph: NavGraph
+
     private val repository = ActivityRepositoryImpl()
     private val viewModel: ActivityViewModel by viewModels {
         ActivityViewModelFactory(repository)
@@ -33,7 +38,9 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.initFirebase()
-        initNavigationFields()
+        navController =
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
+        navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
         checkAuth()
     }
 
@@ -42,20 +49,15 @@ class MainActivity : AppCompatActivity() {
         _binding = null
     }
 
-    private fun initNavigationFields() {
-
-    }
-
     private fun checkAuth() = try {
-        val navController =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
-        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
-        if (AUTH.currentUser == null) {
+        if (AUTH.currentUser?.uid.isNullOrEmpty()) {
             navGraph.startDestination = R.id.nav_enter_phone
         }
         navController.graph = navGraph
     } catch (e: Exception) {
         Log.i("MainActivity:", e.toString())
+        navGraph.startDestination = R.id.nav_enter_phone
+        navController.graph = navGraph
     }
 
     @SuppressLint("Range")
