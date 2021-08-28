@@ -1,6 +1,7 @@
 package st.slex.messenger.utilites
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.ImageView
@@ -25,10 +26,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.common.messenger.R
 import st.slex.messenger.MainActivity
+import st.slex.messenger.MessengerApplication
+import st.slex.messenger.di.component.AppComponent
 import st.slex.messenger.utilites.result.EventResponse
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 @ExperimentalCoroutinesApi
 suspend fun DatabaseReference.valueEventFlow(): Flow<EventResponse> = callbackFlow {
@@ -48,6 +50,12 @@ suspend fun DatabaseReference.valueEventFlow(): Flow<EventResponse> = callbackFl
 }
 
 inline fun <reified T> DataSnapshot.getThisValue(): T = getValue(T::class.java) as T
+
+val Context.appComponent: AppComponent
+    get() = when (this) {
+        is MessengerApplication -> appComponent
+        else -> this.applicationContext.appComponent
+    }
 
 fun Fragment.setSupportActionBar(toolbar: MaterialToolbar) {
     (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)

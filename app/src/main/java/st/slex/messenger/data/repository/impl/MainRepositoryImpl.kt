@@ -11,9 +11,10 @@ import st.slex.messenger.utilites.Const.NODE_USER
 import st.slex.messenger.utilites.Const.REF_DATABASE_ROOT
 import st.slex.messenger.utilites.result.EventResponse
 import st.slex.messenger.utilites.valueEventFlow
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class MainRepositoryImpl : MainRepository {
+class MainRepositoryImpl @Inject constructor() : MainRepository {
 
     override suspend fun getCurrentUser(): Flow<EventResponse> =
         REF_DATABASE_ROOT.child(NODE_USER).child(CURRENT_UID).valueEventFlow()

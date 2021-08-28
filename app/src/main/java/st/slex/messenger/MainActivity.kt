@@ -9,18 +9,23 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
+import dagger.Lazy
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
 import st.slex.messenger.data.model.ContactModel
-import st.slex.messenger.data.repository.impl.ActivityRepositoryImpl
 import st.slex.messenger.utilites.Const.AUTH
+import st.slex.messenger.utilites.appComponent
 import st.slex.messenger.utilites.checkPermission
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
 
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
@@ -28,15 +33,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var navGraph: NavGraph
 
-    private val repository = ActivityRepositoryImpl()
     private val viewModel: ActivityViewModel by viewModels {
-        ActivityViewModelFactory(repository)
+        viewModelFactory.get()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        applicationContext.appComponent.inject(this)
         viewModel.initFirebase()
         navController =
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController

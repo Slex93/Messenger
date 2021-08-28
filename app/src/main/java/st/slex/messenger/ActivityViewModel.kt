@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import st.slex.messenger.data.model.ContactModel
-import st.slex.messenger.data.repository.impl.ActivityRepositoryImpl
+import st.slex.messenger.data.repository.interf.ActivityRepository
+import javax.inject.Inject
 
-class ActivityViewModel(private val repository: ActivityRepositoryImpl) : ViewModel() {
+class ActivityViewModel @Inject constructor(private val repository: ActivityRepository) :
+    ViewModel() {
 
     fun initFirebase() = viewModelScope.launch {
         repository.initFirebase()

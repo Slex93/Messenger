@@ -1,11 +1,11 @@
 package st.slex.messenger.ui.contacts.model
 
 import androidx.lifecycle.MutableLiveData
-import st.slex.messenger.utilites.AppValueEventListener
 import st.slex.messenger.utilites.Const
 import st.slex.messenger.utilites.Const.NODE_PHONE_CONTACT
 import st.slex.messenger.utilites.Const.NODE_USER
 import st.slex.messenger.utilites.Const.REF_DATABASE_ROOT
+import st.slex.messenger.utilites.base.AppValueEventListener
 
 class ContactRepository {
 

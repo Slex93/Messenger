@@ -8,26 +8,24 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
 import st.slex.messenger.data.model.AuthUserModel
-import st.slex.messenger.data.repository.impl.AuthRepositoryImpl
+import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.restartActivity
 import st.slex.messenger.utilites.result.AuthResult
 import st.slex.messenger.utilites.showPrimarySnackBar
 
-class EnterPhoneFragment : Fragment() {
+class EnterPhoneFragment : BaseFragment() {
 
     private var _binding: FragmentEnterPhoneBinding? = null
     private val binding get() = _binding!!
 
-    private val repository = AuthRepositoryImpl()
     private val viewModel: AuthViewModel by viewModels {
-        AuthViewModelFactory(repository)
+        viewModelFactory.get()
     }
 
     override fun onCreateView(

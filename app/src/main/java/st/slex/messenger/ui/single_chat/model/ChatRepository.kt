@@ -2,8 +2,6 @@ package st.slex.messenger.ui.single_chat.model
 
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.ServerValue
-import st.slex.messenger.utilites.AppChildEventListener
-import st.slex.messenger.utilites.AppValueEventListener
 import st.slex.messenger.utilites.Const.CHILD_FROM
 import st.slex.messenger.utilites.Const.CHILD_ID
 import st.slex.messenger.utilites.Const.CHILD_STATE
@@ -14,6 +12,8 @@ import st.slex.messenger.utilites.Const.NODE_MAIN_LIST
 import st.slex.messenger.utilites.Const.NODE_MESSAGES
 import st.slex.messenger.utilites.Const.NODE_USER
 import st.slex.messenger.utilites.Const.REF_DATABASE_ROOT
+import st.slex.messenger.utilites.base.AppChildEventListener
+import st.slex.messenger.utilites.base.AppValueEventListener
 
 class ChatRepository {
 

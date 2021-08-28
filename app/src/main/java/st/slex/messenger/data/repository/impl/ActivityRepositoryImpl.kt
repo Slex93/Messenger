@@ -7,7 +7,6 @@ import kotlinx.coroutines.withContext
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
-import st.slex.messenger.utilites.AppValueEventListener
 import st.slex.messenger.utilites.Const.AUTH
 import st.slex.messenger.utilites.Const.CHILD_FULLNAME
 import st.slex.messenger.utilites.Const.CHILD_ID
@@ -18,8 +17,10 @@ import st.slex.messenger.utilites.Const.NODE_PHONE_CONTACT
 import st.slex.messenger.utilites.Const.NODE_USER
 import st.slex.messenger.utilites.Const.REF_DATABASE_ROOT
 import st.slex.messenger.utilites.Const.USER
+import st.slex.messenger.utilites.base.AppValueEventListener
+import javax.inject.Inject
 
-class ActivityRepositoryImpl : ActivityRepository {
+class ActivityRepositoryImpl @Inject constructor() : ActivityRepository {
 
     override suspend fun initFirebase() = withContext(Dispatchers.IO) {
         AUTH = FirebaseAuth.getInstance()
