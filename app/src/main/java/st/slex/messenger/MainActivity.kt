@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Lazy
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
@@ -20,6 +21,7 @@ import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.utilites.Const.AUTH
 import st.slex.messenger.utilites.appComponent
 import st.slex.messenger.utilites.checkPermission
+import st.slex.messenger.utilites.result.Resource
 import javax.inject.Inject
 
 
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         navController =
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
         navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
-        checkAuth()
+        viewModel.isAuthorise().observe(this) { it.observer }
     }
 
     override fun onDestroy() {
@@ -54,22 +56,27 @@ class MainActivity : AppCompatActivity() {
         _binding = null
     }
 
-    private fun checkAuth() = try {
-        if (AUTH.currentUser?.uid.isNullOrEmpty()) {
-            navGraph.startDestination = R.id.nav_enter_phone
+    private val Resource<FirebaseAuth>.observer: Any
+        get() = when (this) {
+            is Resource.Success -> {
+                navGraph.startDestination = R.id.nav_home
+                checkPermission(READ_CONTACTS)
+                navController.graph = navGraph
+            }
+            is Resource.Failure -> {
+                navGraph.startDestination = R.id.nav_enter_phone
+                navController.graph = navGraph
+            }
+            is Resource.Loading -> {
+                Log.i("loading", "loading")
+            }
         }
-        navController.graph = navGraph
-    } catch (e: Exception) {
-        Log.i("MainActivity:", e.toString())
-        navGraph.startDestination = R.id.nav_enter_phone
-        navController.graph = navGraph
-    }
 
     @SuppressLint("Range")
     private fun getContacts(): List<ContactModel> {
-        val contactList = mutableListOf<ContactModel>()
-        if (this.checkPermission(READ_CONTACTS)) {
-            val cursor = this.contentResolver.query(
+        val contactList = emptyList<ContactModel>()
+        if (checkPermission(READ_CONTACTS)) {
+            val cursor = contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null,
                 null,
@@ -84,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                         it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                     val setPhone = phone.replace(Regex("[\\s,-]"), "")
                     val newModel = ContactModel(fullname = fullName, phone = setPhone)
-                    contactList.add(newModel)
+                    contactList.toMutableList().add(newModel)
                 }
             }
             cursor?.close()

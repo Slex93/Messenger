@@ -3,6 +3,11 @@ package st.slex.messenger.data.repository.impl
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.model.UserModel
@@ -18,9 +23,21 @@ import st.slex.messenger.utilites.Const.NODE_USER
 import st.slex.messenger.utilites.Const.REF_DATABASE_ROOT
 import st.slex.messenger.utilites.Const.USER
 import st.slex.messenger.utilites.base.AppValueEventListener
+import st.slex.messenger.utilites.result.Resource
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 class ActivityRepositoryImpl @Inject constructor() : ActivityRepository {
+
+    override suspend fun isAuthorise(): Flow<Resource<FirebaseAuth>> = callbackFlow {
+        val auth = FirebaseAuth.getInstance()
+        val event = if (auth.currentUser != null) {
+            trySendBlocking(Resource.Success(auth)).isSuccess
+        } else {
+            trySendBlocking(Resource.Failure(Exception("Current user is null"))).isFailure
+        }
+        awaitClose { event }
+    }
 
     override suspend fun initFirebase() = withContext(Dispatchers.IO) {
         AUTH = FirebaseAuth.getInstance()

@@ -49,12 +49,12 @@ class ContactFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         recycler = binding.fragmentContactRecycler
-        adapter = ContactAdapter(clickListener, this)
+        adapter = ContactAdapter(clickListener)
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         contactViewModel.initContact().observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Success -> {
-                    it.data.forEach { item -> adapter.addItems(item) }
+                    adapter.addItems(it.data)
                 }
                 is Resource.Failure -> {
                     Log.i("ContactFragmentException", it.exception.toString())

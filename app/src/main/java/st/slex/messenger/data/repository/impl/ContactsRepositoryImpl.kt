@@ -1,11 +1,12 @@
 package st.slex.messenger.data.repository.impl
 
+import android.util.Log
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
-import st.slex.messenger.data.model.Contact
+import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.interf.ContactsRepository
 import st.slex.messenger.utilites.Const
 import st.slex.messenger.utilites.Const.AUTH
@@ -18,16 +19,16 @@ import javax.inject.Inject
 
 class ContactsRepositoryImpl @Inject constructor() : ContactsRepository {
 
-    override suspend fun getContacts(): Flow<Resource<List<Contact>>> = callbackFlow {
+    override suspend fun getContacts(): Flow<Resource<ContactModel>> = channelFlow {
         Const.REF_DATABASE_ROOT
             .child(Const.NODE_PHONE_CONTACT)
             .child(AUTH.uid.toString()).valueEventFlow().collect {
                 when (it) {
                     is EventResponse.Success -> {
                         val listOfPrimaryContacts = it.snapshot.children.map { snapshot ->
-                            snapshot.getValue(Contact::class.java) ?: Contact()
+                            snapshot.getValue(ContactModel::class.java) ?: ContactModel()
                         }
-                        val list = mutableListOf<Contact>()
+                        val list = mutableListOf<ContactModel>()
 
                         listOfPrimaryContacts.forEach { itemContact ->
                             Const.REF_DATABASE_ROOT
@@ -37,18 +38,18 @@ class ContactsRepositoryImpl @Inject constructor() : ContactsRepository {
                                     when (eventResponse) {
                                         is EventResponse.Success -> {
                                             val contactPrimary =
-                                                eventResponse.snapshot.getValue(Contact::class.java)
-                                                    ?: Contact()
+                                                eventResponse.snapshot.getValue(ContactModel::class.java)
+                                                    ?: ContactModel()
                                             val item =
                                                 contactPrimary.copy(fullname = itemContact.fullname)
                                             list.add(item)
-                                            trySendBlocking(Resource.Success(list))
+                                            Log.i("List of contacts:", list.toString())
+                                            trySendBlocking(Resource.Success(item))
                                         }
                                         is EventResponse.Cancelled -> {
                                             trySendBlocking(Resource.Failure(eventResponse.databaseError.toException()))
                                         }
                                     }
-
 
                                 }
                         }
