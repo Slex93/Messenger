@@ -3,8 +3,8 @@ package st.slex.messenger.ui.contacts.adapter
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
+import st.slex.messenger.data.model.Contact
 import st.slex.messenger.ui.contacts.ContactClickListener
-import st.slex.messenger.ui.contacts.model.Contact
 import st.slex.messenger.utilites.downloadAndSet
 
 class ContactViewHolder(private val binding: ItemRecyclerContactBinding) :

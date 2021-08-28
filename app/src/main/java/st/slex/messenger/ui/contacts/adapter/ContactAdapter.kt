@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
+import st.slex.messenger.data.model.Contact
 import st.slex.messenger.ui.contacts.ContactClickListener
 import st.slex.messenger.ui.contacts.ContactFragment
-import st.slex.messenger.ui.contacts.model.Contact
 
 class ContactAdapter(
     private val clickListener: ContactClickListener,

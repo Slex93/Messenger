@@ -1,7 +1,7 @@
 package st.slex.messenger.ui.contacts
 
 import com.google.android.material.card.MaterialCardView
-import st.slex.messenger.ui.contacts.model.Contact
+import st.slex.messenger.data.model.Contact
 
 class ContactClickListener(
     val clickListener: (MaterialCardView, Contact, String) -> Unit

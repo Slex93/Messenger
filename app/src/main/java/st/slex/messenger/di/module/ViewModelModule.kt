@@ -7,6 +7,7 @@ import dagger.multibindings.IntoMap
 import st.slex.messenger.ActivityViewModel
 import st.slex.messenger.di.key.ViewModelKey
 import st.slex.messenger.ui.auth.AuthViewModel
+import st.slex.messenger.ui.contacts.ContactViewModel
 import st.slex.messenger.ui.main_screen.MainScreenViewModel
 
 @Module
@@ -26,4 +27,9 @@ interface ViewModelModule {
     @Binds
     @ViewModelKey(AuthViewModel::class)
     fun bindsAuthViewModel(viewModel: AuthViewModel): ViewModel
+
+    @IntoMap
+    @Binds
+    @ViewModelKey(ContactViewModel::class)
+    fun bindsContactViewModel(viewModel: ContactViewModel): ViewModel
 }

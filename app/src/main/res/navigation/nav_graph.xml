@@ -61,7 +61,7 @@
         tools:layout="@layout/fragment_single_chat">
         <argument
             android:name="contact"
-            app:argType="st.slex.messenger.ui.contacts.model.Contact" />
+            app:argType="st.slex.messenger.data.model.Contact" />
         <argument
             android:name="key"
             app:argType="string" />

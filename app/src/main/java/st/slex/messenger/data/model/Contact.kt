@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.contacts.model
+package st.slex.messenger.data.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
