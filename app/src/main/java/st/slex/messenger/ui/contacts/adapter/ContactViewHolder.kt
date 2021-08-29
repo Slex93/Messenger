@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.ui.contacts.ContactClickListener
-import st.slex.messenger.utilites.downloadAndSet
+import st.slex.messenger.utilites.funs.downloadAndSet
 
 class ContactViewHolder(private val binding: ItemRecyclerContactBinding) :
     RecyclerView.ViewHolder(binding.root), View.OnClickListener {

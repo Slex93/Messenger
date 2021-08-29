@@ -19,7 +19,7 @@ import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.downloadAndSet
+import st.slex.messenger.utilites.funs.downloadAndSet
 import st.slex.messenger.utilites.result.Resource
 
 @ExperimentalCoroutinesApi

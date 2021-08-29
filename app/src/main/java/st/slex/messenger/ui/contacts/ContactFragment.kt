@@ -14,8 +14,8 @@ import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.utilites.funs.setSupportActionBar
 import st.slex.messenger.utilites.result.Resource
-import st.slex.messenger.utilites.setSupportActionBar
 
 class ContactFragment : BaseFragment() {
 

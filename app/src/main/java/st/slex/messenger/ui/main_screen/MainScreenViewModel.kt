@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.collect
 import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.MainRepository
-import st.slex.messenger.utilites.getThisValue
+import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.EventResponse
 import st.slex.messenger.utilites.result.Resource
 import javax.inject.Inject

@@ -5,9 +5,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Lazy
-import st.slex.messenger.utilites.appComponent
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import st.slex.messenger.utilites.funs.appComponent
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 open class BaseFragment : Fragment() {
     @Inject
     open lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>

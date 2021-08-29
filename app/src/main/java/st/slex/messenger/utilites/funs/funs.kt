@@ -1,4 +1,4 @@
-package st.slex.messenger.utilites
+package st.slex.messenger.utilites.funs
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -21,7 +21,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.database.DataSnapshot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
@@ -30,10 +29,9 @@ import st.slex.messenger.MainActivity
 import st.slex.messenger.MessengerApplication
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.di.component.AppComponent
+import st.slex.messenger.utilites.PERMISSION_REQUEST
 import java.text.SimpleDateFormat
 import java.util.*
-
-inline fun <reified T> DataSnapshot.getThisValue(): T = getValue(T::class.java) as T
 
 @ExperimentalCoroutinesApi
 val Context.appComponent: AppComponent

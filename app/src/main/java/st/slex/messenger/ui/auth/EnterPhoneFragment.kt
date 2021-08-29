@@ -11,14 +11,16 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
 import st.slex.messenger.data.model.AuthUserModel
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.restartActivity
+import st.slex.messenger.utilites.funs.restartActivity
+import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.result.AuthResult
-import st.slex.messenger.utilites.showPrimarySnackBar
 
+@ExperimentalCoroutinesApi
 class EnterPhoneFragment : BaseFragment() {
 
     private var _binding: FragmentEnterPhoneBinding? = null

@@ -4,7 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerSingleChatBinding
 import st.slex.messenger.data.model.Message
-import st.slex.messenger.utilites.asTime
+import st.slex.messenger.utilites.funs.asTime
 
 class ChatViewHolder(private val binding: ItemRecyclerSingleChatBinding) :
     RecyclerView.ViewHolder(binding.root) {

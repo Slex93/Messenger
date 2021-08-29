@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.messenger.data.model.Message
 import st.slex.messenger.data.repository.interf.SingleChatRepository
-import st.slex.messenger.utilites.getThisValue
+import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.ChildEventResponse
 import st.slex.messenger.utilites.result.EventResponse
 import st.slex.messenger.utilites.result.Resource

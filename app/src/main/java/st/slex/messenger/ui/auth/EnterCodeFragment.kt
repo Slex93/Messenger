@@ -10,14 +10,16 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.data.model.AuthUserModel
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.restartActivity
+import st.slex.messenger.utilites.funs.restartActivity
+import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.result.AuthResult
-import st.slex.messenger.utilites.showPrimarySnackBar
 
+@ExperimentalCoroutinesApi
 class EnterCodeFragment : BaseFragment() {
 
     private var _binding: FragmentEnterCodeBinding? = null

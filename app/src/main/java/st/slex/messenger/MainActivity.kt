@@ -7,25 +7,22 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph
 import androidx.navigation.fragment.NavHostFragment
 import com.google.firebase.auth.FirebaseAuth
-import dagger.Lazy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
-import st.slex.messenger.utilites.appComponent
-import st.slex.messenger.utilites.setContacts
+import st.slex.messenger.utilites.funs.appComponent
+import st.slex.messenger.utilites.funs.setContacts
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
     @Inject
-    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     @Inject
     lateinit var auth: FirebaseAuth
@@ -33,21 +30,16 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
 
-    private lateinit var navController: NavController
-    private lateinit var navGraph: NavGraph
-
-    private val viewModel: ActivityViewModel by viewModels {
-        viewModelFactory.get()
-    }
+    private val viewModel: ActivityViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applicationContext.appComponent.inject(this)
-        navController =
+        val navController =
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
-        navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
+        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
         if (auth.currentUser != null) {
             navGraph.startDestination = R.id.nav_home
             CoroutineScope(Dispatchers.IO).launch {
@@ -60,6 +52,16 @@ class MainActivity : AppCompatActivity() {
             navGraph.startDestination = R.id.nav_enter_phone
             navController.graph = navGraph
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (auth.currentUser != null) viewModel.statusOnline()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (auth.currentUser != null) viewModel.statusOffline()
     }
 
     override fun onDestroy() {
@@ -84,16 +86,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (auth.currentUser != null) viewModel.statusOnline()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (auth.currentUser != null) viewModel.statusOffline()
     }
 
 }

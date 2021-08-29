@@ -13,20 +13,18 @@ import st.slex.messenger.data.repository.interf.ContactsRepository
 import st.slex.messenger.data.service.DatabaseSnapshot
 import st.slex.messenger.utilites.NODE_PHONE_CONTACT
 import st.slex.messenger.utilites.NODE_USER
-import st.slex.messenger.utilites.getThisValue
+import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.EventResponse
 import st.slex.messenger.utilites.result.Resource
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-
 class ContactsRepositoryImpl @Inject constructor(
     private val service: DatabaseSnapshot,
     private val databaseReference: DatabaseReference,
     private val auth: FirebaseAuth
 ) :
     ContactsRepository {
-
     override suspend fun getContacts(): Flow<Resource<ContactModel>> = channelFlow {
         val event = service.valueEventFlow(
             databaseReference.child(NODE_PHONE_CONTACT).child(auth.uid.toString())

@@ -19,6 +19,7 @@ class ViewModelFactory @Inject constructor(
             }
         }
         if (viewModel == null) throw IllegalArgumentException("Unknown model class $modelClass")
+        @Suppress("UNCHECKED_CAST")
         return viewModel.get() as T
     }
 }
