@@ -6,18 +6,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.repository.interf.MainRepository
+import st.slex.messenger.data.service.DatabaseSnapshot
 import st.slex.messenger.utilites.Const.CURRENT_UID
 import st.slex.messenger.utilites.Const.NODE_USER
 import st.slex.messenger.utilites.Const.REF_DATABASE_ROOT
 import st.slex.messenger.utilites.result.EventResponse
-import st.slex.messenger.utilites.valueEventFlow
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class MainRepositoryImpl @Inject constructor() : MainRepository {
+class MainRepositoryImpl @Inject constructor(private val service: DatabaseSnapshot) :
+    MainRepository {
 
     override suspend fun getCurrentUser(): Flow<EventResponse> =
-        REF_DATABASE_ROOT.child(NODE_USER).child(CURRENT_UID).valueEventFlow()
+        service.valueEventFlow(REF_DATABASE_ROOT.child(NODE_USER).child(CURRENT_UID))
 
     override suspend fun getTestList(): Flow<List<MessageModel>> = callbackFlow {
         val event = trySend(
