@@ -24,6 +24,7 @@ import st.slex.common.messenger.databinding.FragmentSingleChatBinding
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.ui.single_chat.adapter.ChatAdapter
 import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.utilites.result.Resource
 
 
 class SingleChatFragment : BaseFragment() {
@@ -92,30 +93,47 @@ class SingleChatFragment : BaseFragment() {
     }
 
     private fun initStatus() {
-        viewModel.initStatus(chatUserId)
-        viewModel.status.observe(viewLifecycleOwner) {
-            binding.toolbarInfo.toolbarInfoStatus.text = it
+        viewModel.getStatus(chatUserId).observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    binding.toolbarInfo.toolbarInfoStatus.text = it.data
+                }
+                is Resource.Failure -> {
+
+                }
+                is Resource.Loading -> {
+
+                }
+            }
         }
     }
 
     private fun initRecyclerView() {
         recycler = binding.singleChatRecycler
-        adapter = ChatAdapter()
+        adapter = ChatAdapter(auth.currentUser?.uid.toString())
         layoutManager = LinearLayoutManager(requireContext())
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
         recycler.isNestedScrollingEnabled = false
         swipeRefreshLayout = binding.singleChatRefreshLayout
-        viewModel.initMessage(chatUserId, countMessage)
-
-        viewModel.message.observe(viewLifecycleOwner) { message ->
-            if (isScrollToPosition) {
-                adapter.addItemToBottom(message) {
-                    recycler.smoothScrollToPosition(adapter.itemCount)
+        viewModel.getMessages(countMessage).observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    if (isScrollToPosition) {
+                        adapter.addItemToBottom(it.data) {
+                            recycler.smoothScrollToPosition(adapter.itemCount)
+                        }
+                    } else {
+                        adapter.addItemToTop(it.data) {
+                            swipeRefreshLayout.isRefreshing = false
+                        }
+                    }
                 }
-            } else {
-                adapter.addItemToTop(message) {
-                    swipeRefreshLayout.isRefreshing = false
+                is Resource.Failure -> {
+
+                }
+                is Resource.Loading -> {
+
                 }
             }
         }
@@ -149,7 +167,6 @@ class SingleChatFragment : BaseFragment() {
         isScrollToPosition = false
         isScrolling = false
         countMessage += 10
-        viewModel.initMessage(chatUserId, countMessage)
     }
 
     private fun takeExtras() {

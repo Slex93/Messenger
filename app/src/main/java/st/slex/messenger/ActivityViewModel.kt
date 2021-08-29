@@ -36,10 +36,6 @@ class ActivityViewModel @Inject constructor(private val repository: ActivityRepo
         }
     }
 
-    fun initFirebase() = viewModelScope.launch {
-        repository.initFirebase()
-    }
-
     fun updatePhoneToDatabase(listContacts: List<ContactModel>) = viewModelScope.launch {
         repository.updatePhonesToDatabase(listContacts)
     }

@@ -4,12 +4,15 @@ import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.ActivityViewModel
 import st.slex.messenger.di.key.ViewModelKey
 import st.slex.messenger.ui.auth.AuthViewModel
 import st.slex.messenger.ui.contacts.ContactViewModel
 import st.slex.messenger.ui.main_screen.MainScreenViewModel
+import st.slex.messenger.ui.single_chat.SingleChatViewModel
 
+@ExperimentalCoroutinesApi
 @Module
 interface ViewModelModule {
 
@@ -32,4 +35,9 @@ interface ViewModelModule {
     @Binds
     @ViewModelKey(ContactViewModel::class)
     fun bindsContactViewModel(viewModel: ContactViewModel): ViewModel
+
+    @IntoMap
+    @Binds
+    @ViewModelKey(SingleChatViewModel::class)
+    fun bindsSingleChatViewModel(viewModel: SingleChatViewModel): ViewModel
 }

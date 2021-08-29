@@ -3,17 +3,22 @@ package st.slex.messenger.ui.single_chat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import st.slex.messenger.data.model.Message
 import st.slex.messenger.data.repository.interf.SingleChatRepository
 import st.slex.messenger.utilites.getThisValue
+import st.slex.messenger.utilites.result.ChildEventResponse
 import st.slex.messenger.utilites.result.EventResponse
 import st.slex.messenger.utilites.result.Resource
+import javax.inject.Inject
 
-class SingleChatViewModel(private val repository: SingleChatRepository) : ViewModel() {
+class SingleChatViewModel @Inject constructor(private val repository: SingleChatRepository) :
+    ViewModel() {
 
-    fun initStatus(uid: String): LiveData<Resource<String>> = liveData(Dispatchers.IO) {
+    fun getStatus(uid: String): LiveData<Resource<String>> = liveData(Dispatchers.IO) {
         emit(Resource.Loading)
         try {
             repository.getStatus(uid = uid).collect {
@@ -27,21 +32,35 @@ class SingleChatViewModel(private val repository: SingleChatRepository) : ViewMo
         }
     }
 
-    private inline fun <reified T> collector(): FlowCollector<T> = object : FlowCollector<T> {
-        override suspend fun emit(value: T) {
-            when (value) {
-                is EventResponse.Success -> Resource.Success(value.snapshot.getThisValue<T>())
-                is EventResponse.Cancelled -> Resource.Failure(value.databaseError.toException())
+    fun getMessages(limitToLast: Int): LiveData<Resource<Message>> = liveData(Dispatchers.IO) {
+        emit(Resource.Loading)
+        try {
+            repository.getMessages(limitToLast = limitToLast).collect {
+                when (it) {
+                    is ChildEventResponse.Added -> {
+                        Resource.Success(it.snapshot.getThisValue<Message>())
+                    }
+                    is ChildEventResponse.Moved -> {
+
+                    }
+                    is ChildEventResponse.Changed -> {
+                        Resource.Success(it.snapshot.getThisValue<Message>())
+                    }
+                    is ChildEventResponse.Removed -> {
+
+                    }
+                    is ChildEventResponse.Cancelled -> {
+                        Resource.Failure(it.databaseError.toException())
+                    }
+                }
             }
+        } catch (exception: Exception) {
+            emit(Resource.Failure(exception = exception))
         }
     }
 
-    fun initMessage(uid: String, countMessage: Int) {
-        repository.initMessages(uid, countMessage)
-    }
-
-    fun sendMessage(message: String, uid: String) {
-        repository.sendMessage(message, uid)
+    fun sendMessage(message: String, uid: String) = viewModelScope.launch {
+        repository.sendMessage(message = message, uid = uid)
     }
 
 }
