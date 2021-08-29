@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ServerValue
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.repository.interf.SingleChatRepository
@@ -47,13 +46,11 @@ class SingleChatRepositoryImpl @Inject constructor(
             databaseReference
                 .updateChildren(mapDialog)
                 .addOnSuccessListener {
-                    this.async(Dispatchers.IO) {
-                        setInMainList(uid)
-                    }
+                    setInMainList(uid)
                 }
         }
 
-    private suspend fun setInMainList(uid: String) = withContext(Dispatchers.IO) {
+    private fun setInMainList(uid: String) {
         databaseReference.child(NODE_MAIN_LIST).child(auth.currentUser?.uid.toString()).child(uid)
             .addListenerForSingleValueEvent(AppValueEventListener {
                 var refUser = "$NODE_MAIN_LIST/${auth.currentUser?.uid}/$uid"

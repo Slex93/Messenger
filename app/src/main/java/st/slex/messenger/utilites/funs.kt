@@ -1,12 +1,17 @@
 package st.slex.messenger.utilites
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.ContactsContract
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,15 +21,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.withContext
 import st.slex.common.messenger.R
 import st.slex.messenger.MainActivity
 import st.slex.messenger.MessengerApplication
+import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.di.component.AppComponent
 import java.text.SimpleDateFormat
 import java.util.*
 
 inline fun <reified T> DataSnapshot.getThisValue(): T = getValue(T::class.java) as T
 
+@ExperimentalCoroutinesApi
 val Context.appComponent: AppComponent
     get() = when (this) {
         is MessengerApplication -> appComponent
@@ -40,10 +50,50 @@ fun Fragment.setSupportActionBar(toolbar: MaterialToolbar) {
     )
 }
 
+fun Activity.checkPermission(permission: String): Boolean {
+    return if (Build.VERSION.SDK_INT >= 23
+        && ContextCompat.checkSelfPermission(
+            this,
+            permission
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        ActivityCompat.requestPermissions(this, arrayOf(permission), PERMISSION_REQUEST)
+        false
+    } else true
+}
+
+suspend inline fun Activity.setContacts(crossinline function: (list: List<ContactModel>) -> Unit) =
+    withContext(Dispatchers.IO) {
+        if (checkPermission(Manifest.permission.READ_CONTACTS)) {
+            val list = mutableListOf<ContactModel>()
+            val cursor = contentResolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                null,
+                null,
+                null,
+                null
+            )
+            cursor?.let {
+                while (it.moveToNext()) {
+                    val fullName =
+                        it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME).toString()
+                    val phone =
+                        it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER).toString()
+                    val setPhone = phone.replace(Regex("[\\s,-]"), "")
+                    val newModel = ContactModel(fullname = fullName, phone = setPhone)
+                    list.add(newModel)
+                }
+            }
+            cursor?.close()
+            function(list)
+        }
+    }
+
 fun View.showPrimarySnackBar(it: String) {
     Snackbar.make(this, it, Snackbar.LENGTH_SHORT).show()
 }
 
+@ExperimentalCoroutinesApi
 fun Activity.restartActivity() {
     val intent = Intent(this, MainActivity::class.java)
     this.startActivity(intent)
@@ -55,14 +105,6 @@ fun ImageView.downloadAndSet(url: String) {
         .load(url)
         .apply(RequestOptions.placeholderOf(R.drawable.ic_default_photo))
         .into(this)
-}
-
-fun DrawerLayout.lockDrawer() {
-    this.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-}
-
-fun DrawerLayout.unlockDrawer() {
-    this.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
 }
 
 fun String.asTime(): CharSequence? {

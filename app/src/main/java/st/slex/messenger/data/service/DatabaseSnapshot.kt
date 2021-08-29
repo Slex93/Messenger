@@ -7,6 +7,7 @@ import st.slex.messenger.utilites.result.EventResponse
 
 interface DatabaseSnapshot {
     suspend fun valueEventFlow(databaseReference: DatabaseReference): Flow<EventResponse>
+    suspend fun singleValueEventFlow(databaseReference: DatabaseReference): Flow<EventResponse>
     suspend fun childEventFlow(
         databaseReference: DatabaseReference,
         limitToLast: Int

@@ -41,13 +41,10 @@ class SingleChatViewModel @Inject constructor(private val repository: SingleChat
                         Resource.Success(it.snapshot.getThisValue<Message>())
                     }
                     is ChildEventResponse.Moved -> {
-
                     }
                     is ChildEventResponse.Changed -> {
-                        Resource.Success(it.snapshot.getThisValue<Message>())
                     }
                     is ChildEventResponse.Removed -> {
-
                     }
                     is ChildEventResponse.Cancelled -> {
                         Resource.Failure(it.databaseError.toException())

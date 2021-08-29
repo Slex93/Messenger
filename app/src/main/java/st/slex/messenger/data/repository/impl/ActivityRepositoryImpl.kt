@@ -1,5 +1,6 @@
 package st.slex.messenger.data.repository.impl
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
+import st.slex.messenger.data.service.DatabaseSnapshot
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.base.AppValueEventListener
 import st.slex.messenger.utilites.result.Resource
@@ -18,6 +20,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class ActivityRepositoryImpl @Inject constructor(
+    private val service: DatabaseSnapshot,
     private val databaseReference: DatabaseReference,
     private val auth: FirebaseAuth
 ) : ActivityRepository {
@@ -51,15 +54,19 @@ class ActivityRepositoryImpl @Inject constructor(
             databaseReference.child(NODE_PHONE)
                 .addListenerForSingleValueEvent(AppValueEventListener { dataSnapshot ->
                     dataSnapshot.children.forEach { snapshot ->
+                        Log.i("TestDebug.snapshot", snapshot.toString())
+                        Log.i("TestDebug.list", listContact.toString())
                         listContact.forEach { contact ->
-                            if (auth.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
+                            if (auth.currentUser?.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
                                 databaseReference.child(NODE_PHONE_CONTACT)
-                                    .child(auth.uid.toString())
-                                    .child(snapshot.value.toString()).child(CHILD_ID)
+                                    .child(auth.currentUser?.uid.toString())
+                                    .child(snapshot.value.toString())
+                                    .child(CHILD_ID)
                                     .setValue(snapshot.key.toString())
                                 databaseReference.child(NODE_PHONE_CONTACT)
-                                    .child(auth.uid.toString())
-                                    .child(snapshot.value.toString()).child(auth.uid.toString())
+                                    .child(auth.currentUser?.uid.toString())
+                                    .child(snapshot.value.toString())
+                                    .child(auth.currentUser?.uid.toString())
                                     .setValue(contact.fullname)
                             }
                         }
