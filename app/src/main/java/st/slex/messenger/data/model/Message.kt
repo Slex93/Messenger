@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.single_chat.model
+package st.slex.messenger.data.model
 
 data class Message(
     val id: String = "",

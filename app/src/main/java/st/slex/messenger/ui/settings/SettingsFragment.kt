@@ -4,14 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSettingsBinding
-import st.slex.messenger.utilites.Const.AUTH
+import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.restartActivity
 import st.slex.messenger.utilites.setSupportActionBar
 
-class SettingsFragment : Fragment() {
+class SettingsFragment : BaseFragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
@@ -29,7 +28,7 @@ class SettingsFragment : Fragment() {
         binding.settingsToolbar.title = getString(R.string.title_contacts)
         setSupportActionBar(binding.settingsToolbar)
         binding.settingsSignOut.setOnClickListener {
-            AUTH.signOut()
+            auth.signOut()
             requireActivity().restartActivity()
         }
     }

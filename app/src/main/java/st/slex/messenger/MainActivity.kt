@@ -18,7 +18,6 @@ import dagger.Lazy
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
 import st.slex.messenger.data.model.ContactModel
-import st.slex.messenger.utilites.Const.AUTH
 import st.slex.messenger.utilites.appComponent
 import st.slex.messenger.utilites.checkPermission
 import st.slex.messenger.utilites.result.Resource
@@ -28,6 +27,9 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+
+    @Inject
+    lateinit var auth: FirebaseAuth
 
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
@@ -44,7 +46,6 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applicationContext.appComponent.inject(this)
-        viewModel.initFirebase()
         navController =
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
         navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
@@ -117,12 +118,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (AUTH.currentUser != null) viewModel.statusOnline()
+        if (auth.currentUser != null) viewModel.statusOnline()
     }
 
     override fun onStop() {
         super.onStop()
-        if (AUTH.currentUser != null) viewModel.statusOffline()
+        if (auth.currentUser != null) viewModel.statusOffline()
     }
 
 }

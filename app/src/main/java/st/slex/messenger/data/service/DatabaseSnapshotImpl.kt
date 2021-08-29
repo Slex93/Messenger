@@ -30,7 +30,10 @@ class DatabaseSnapshotImpl @Inject constructor() : DatabaseSnapshot {
             }
         }
 
-    override suspend fun childEventFlow(databaseReference: DatabaseReference): Flow<ChildEventResponse> =
+    override suspend fun childEventFlow(
+        databaseReference: DatabaseReference,
+        limitToLast: Int
+    ): Flow<ChildEventResponse> =
         callbackFlow {
             val eventListener = object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -53,7 +56,7 @@ class DatabaseSnapshotImpl @Inject constructor() : DatabaseSnapshot {
                     trySendBlocking(ChildEventResponse.Cancelled(error)).isFailure
                 }
             }
-            databaseReference.addChildEventListener(eventListener)
+            databaseReference.limitToLast(limitToLast).addChildEventListener(eventListener)
             awaitClose {
                 databaseReference.removeEventListener(eventListener)
             }
