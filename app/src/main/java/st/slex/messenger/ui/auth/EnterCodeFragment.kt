@@ -7,26 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.data.model.AuthUserModel
-import st.slex.messenger.data.repository.impl.AuthRepositoryImpl
+import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.restartActivity
 import st.slex.messenger.utilites.result.AuthResult
 import st.slex.messenger.utilites.showPrimarySnackBar
 
-class EnterCodeFragment : Fragment() {
+class EnterCodeFragment : BaseFragment() {
 
     private var _binding: FragmentEnterCodeBinding? = null
     private val binding get() = _binding!!
 
-    private val repository = AuthRepositoryImpl()
     private val authViewModel: AuthViewModel by viewModels {
-        AuthViewModelFactory(repository)
+        viewModelFactory.get()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -18,8 +18,9 @@ import st.slex.messenger.utilites.Const.AUTH
 import st.slex.messenger.utilites.Const.authUserModel
 import st.slex.messenger.utilites.result.AuthResult
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class AuthRepositoryImpl : AuthRepository {
+class AuthRepositoryImpl @Inject constructor() : AuthRepository {
 
     private var _user = MutableLiveData<AuthResult<AuthUserModel>>()
     override val userModel: LiveData<AuthResult<AuthUserModel>> get() = _user

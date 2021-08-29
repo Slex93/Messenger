@@ -1,4 +1,4 @@
-package st.slex.messenger.utilites
+package st.slex.messenger.utilites.base
 
 import android.util.Log
 import com.google.firebase.database.DataSnapshot

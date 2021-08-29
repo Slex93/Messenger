@@ -1,6 +1,7 @@
 package st.slex.messenger.utilites
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.ImageView
@@ -15,39 +16,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import st.slex.common.messenger.R
 import st.slex.messenger.MainActivity
-import st.slex.messenger.utilites.result.EventResponse
+import st.slex.messenger.MessengerApplication
+import st.slex.messenger.di.component.AppComponent
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-@ExperimentalCoroutinesApi
-suspend fun DatabaseReference.valueEventFlow(): Flow<EventResponse> = callbackFlow {
-    val valueEventListener = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            trySendBlocking(EventResponse.Success(snapshot)).isSuccess
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            trySendBlocking(EventResponse.Cancelled(error)).isFailure
-        }
-    }
-    addValueEventListener(valueEventListener)
-    awaitClose {
-        removeEventListener(valueEventListener)
-    }
-}
-
 inline fun <reified T> DataSnapshot.getThisValue(): T = getValue(T::class.java) as T
+
+val Context.appComponent: AppComponent
+    get() = when (this) {
+        is MessengerApplication -> appComponent
+        else -> this.applicationContext.appComponent
+    }
 
 fun Fragment.setSupportActionBar(toolbar: MaterialToolbar) {
     (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)

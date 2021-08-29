@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -18,15 +17,13 @@ import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.data.model.MessageModel
-import st.slex.messenger.data.repository.impl.MainRepositoryImpl
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
-import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModel
-import st.slex.messenger.ui.main_screen.viewmodel.MainScreenViewModelFactory
+import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.downloadAndSet
 import st.slex.messenger.utilites.result.Resource
 
 @ExperimentalCoroutinesApi
-class MainFragment : Fragment() {
+class MainFragment : BaseFragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -34,9 +31,8 @@ class MainFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MainAdapter
 
-    private val repository = MainRepositoryImpl()
     private val viewModel: MainScreenViewModel by viewModels {
-        MainScreenViewModelFactory(repository)
+        viewModelFactory.get()
     }
 
     override fun onCreateView(

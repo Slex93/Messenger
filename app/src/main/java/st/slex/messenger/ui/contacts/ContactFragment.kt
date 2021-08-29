@@ -1,9 +1,9 @@
 package st.slex.messenger.ui.contacts
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -13,19 +13,17 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
-import st.slex.messenger.ui.contacts.model.ContactRepository
-import st.slex.messenger.ui.contacts.viewmodel.ContactViewModel
-import st.slex.messenger.ui.contacts.viewmodel.ContactViewModelFactory
+import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.utilites.result.Resource
 import st.slex.messenger.utilites.setSupportActionBar
 
-class ContactFragment : Fragment() {
+class ContactFragment : BaseFragment() {
 
     private var _binding: FragmentContactBinding? = null
     private val binding get() = _binding!!
 
-    private val repository = ContactRepository()
     private val contactViewModel: ContactViewModel by viewModels {
-        ContactViewModelFactory(repository)
+        viewModelFactory.get()
     }
 
     private lateinit var recycler: RecyclerView
@@ -51,20 +49,28 @@ class ContactFragment : Fragment() {
 
     private fun initRecyclerView() {
         recycler = binding.fragmentContactRecycler
-        adapter = ContactAdapter(clickListener, this)
+        adapter = ContactAdapter(clickListener)
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        contactViewModel.initContact()
-        contactViewModel.contact.observe(viewLifecycleOwner) {
-            adapter.addItems(it)
+        contactViewModel.initContact().observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Success -> {
+                    adapter.addItems(it.data)
+                }
+                is Resource.Failure -> {
+                    Log.i("ContactFragmentException", it.exception.toString())
+                }
+                is Resource.Loading -> {
+                    Log.i("ContactFragmentLoading", "loading")
+                }
+            }
         }
+
         postponeEnterTransition()
         recycler.doOnPreDraw {
             startPostponedEnterTransition()
         }
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(requireContext())
-
-
     }
 
     private val clickListener = ContactClickListener { cardView, contact, key ->
@@ -76,11 +82,6 @@ class ContactFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_contact_appbar, menu)
         super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        contactViewModel.contact.removeObservers(viewLifecycleOwner)
     }
 
     override fun onDestroyView() {

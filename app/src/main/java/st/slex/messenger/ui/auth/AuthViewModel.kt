@@ -6,10 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import st.slex.messenger.data.model.AuthUserModel
-import st.slex.messenger.data.repository.impl.AuthRepositoryImpl
+import st.slex.messenger.data.repository.interf.AuthRepository
 import st.slex.messenger.utilites.result.AuthResult
+import javax.inject.Inject
 
-class AuthViewModel(private val repository: AuthRepositoryImpl) : ViewModel() {
+class AuthViewModel @Inject constructor(private val repository: AuthRepository) : ViewModel() {
 
     val authResultModel: LiveData<AuthResult<AuthUserModel>> get() = repository.userModel
 
