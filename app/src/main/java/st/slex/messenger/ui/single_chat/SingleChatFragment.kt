@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph
@@ -24,12 +23,10 @@ import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.ui.single_chat.adapter.ChatAdapter
-import st.slex.messenger.ui.single_chat.model.ChatRepository
-import st.slex.messenger.ui.single_chat.viewmodel.ChatViewModel
-import st.slex.messenger.ui.single_chat.viewmodel.ChatViewModelFactory
+import st.slex.messenger.utilites.base.BaseFragment
 
 
-class SingleChatFragment : Fragment() {
+class SingleChatFragment : BaseFragment() {
 
     private var _binding: FragmentSingleChatBinding? = null
     private val binding get() = _binding!!
@@ -50,9 +47,8 @@ class SingleChatFragment : Fragment() {
     private var isScrollToPosition = true
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-    private val repository = ChatRepository()
-    private val viewModel: ChatViewModel by viewModels {
-        ChatViewModelFactory(repository)
+    private val viewModel: SingleChatViewModel by viewModels {
+        viewModelFactory.get()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

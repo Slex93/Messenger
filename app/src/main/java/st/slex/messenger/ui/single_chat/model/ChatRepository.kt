@@ -2,6 +2,7 @@ package st.slex.messenger.ui.single_chat.model
 
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.ServerValue
+import st.slex.messenger.data.model.Message
 import st.slex.messenger.utilites.Const.CHILD_FROM
 import st.slex.messenger.utilites.Const.CHILD_ID
 import st.slex.messenger.utilites.Const.CHILD_STATE

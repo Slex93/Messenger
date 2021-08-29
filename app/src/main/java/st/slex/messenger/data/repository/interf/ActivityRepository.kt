@@ -7,7 +7,6 @@ import st.slex.messenger.utilites.result.Resource
 
 interface ActivityRepository {
     suspend fun isAuthorise(): Flow<Resource<FirebaseAuth>>
-    suspend fun initFirebase()
     suspend fun signOut()
     suspend fun statusOnline()
     suspend fun statusOffline()
