@@ -9,12 +9,13 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
 import st.slex.messenger.data.service.DatabaseSnapshot
 import st.slex.messenger.utilites.*
-import st.slex.messenger.utilites.base.AppValueEventListener
+import st.slex.messenger.utilites.result.EventResponse
 import st.slex.messenger.utilites.result.Resource
 import javax.inject.Inject
 
@@ -49,14 +50,12 @@ class ActivityRepositoryImpl @Inject constructor(
             .child(CHILD_STATE).setValue("Offline")
     }
 
-    override suspend fun updatePhonesToDatabase(listContact: List<ContactModel>) =
-        withContext(Dispatchers.IO) {
-            databaseReference.child(NODE_PHONE)
-                .addListenerForSingleValueEvent(AppValueEventListener { dataSnapshot ->
-                    dataSnapshot.children.forEach { snapshot ->
-                        Log.i("TestDebug.snapshot", snapshot.toString())
-                        Log.i("TestDebug.list", listContact.toString())
-                        listContact.forEach { contact ->
+    override suspend fun updateContacts(list: List<ContactModel>) = withContext(Dispatchers.IO) {
+        service.singleValueEventFlow(databaseReference.child(NODE_PHONE)).collect {
+            when (it) {
+                is EventResponse.Success -> {
+                    it.snapshot.children.forEach { snapshot ->
+                        list.forEach { contact ->
                             if (auth.currentUser?.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
                                 databaseReference.child(NODE_PHONE_CONTACT)
                                     .child(auth.currentUser?.uid.toString())
@@ -66,11 +65,16 @@ class ActivityRepositoryImpl @Inject constructor(
                                 databaseReference.child(NODE_PHONE_CONTACT)
                                     .child(auth.currentUser?.uid.toString())
                                     .child(snapshot.value.toString())
-                                    .child(auth.currentUser?.uid.toString())
+                                    .child(CHILD_FULLNAME)
                                     .setValue(contact.fullname)
                             }
                         }
                     }
-                })
+                }
+                is EventResponse.Cancelled -> {
+                    Log.e("$this", it.databaseError.toString())
+                }
+            }
         }
+    }
 }

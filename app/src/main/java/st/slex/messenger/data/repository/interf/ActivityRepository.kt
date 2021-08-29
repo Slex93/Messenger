@@ -10,5 +10,5 @@ interface ActivityRepository {
     suspend fun signOut()
     suspend fun statusOnline()
     suspend fun statusOffline()
-    suspend fun updatePhonesToDatabase(listContact: List<ContactModel>)
+    suspend fun updateContacts(list: List<ContactModel>)
 }

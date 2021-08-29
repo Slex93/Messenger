@@ -1,6 +1,7 @@
 package st.slex.messenger.utilites
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -50,18 +51,23 @@ fun Fragment.setSupportActionBar(toolbar: MaterialToolbar) {
     )
 }
 
-fun Activity.checkPermission(permission: String): Boolean {
-    return if (Build.VERSION.SDK_INT >= 23
+suspend fun Activity.checkPermission(permission: String): Boolean = withContext(Dispatchers.IO) {
+    return@withContext if (Build.VERSION.SDK_INT >= 23
         && ContextCompat.checkSelfPermission(
-            this,
+            this@checkPermission,
             permission
         ) != PackageManager.PERMISSION_GRANTED
     ) {
-        ActivityCompat.requestPermissions(this, arrayOf(permission), PERMISSION_REQUEST)
+        ActivityCompat.requestPermissions(
+            this@checkPermission,
+            arrayOf(permission),
+            PERMISSION_REQUEST
+        )
         false
     } else true
 }
 
+@SuppressLint("Range")
 suspend inline fun Activity.setContacts(crossinline function: (list: List<ContactModel>) -> Unit) =
     withContext(Dispatchers.IO) {
         if (checkPermission(Manifest.permission.READ_CONTACTS)) {
@@ -76,9 +82,9 @@ suspend inline fun Activity.setContacts(crossinline function: (list: List<Contac
             cursor?.let {
                 while (it.moveToNext()) {
                     val fullName =
-                        it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME).toString()
+                        it.getString(it.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
                     val phone =
-                        it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER).toString()
+                        it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                     val setPhone = phone.replace(Regex("[\\s,-]"), "")
                     val newModel = ContactModel(fullname = fullName, phone = setPhone)
                     list.add(newModel)

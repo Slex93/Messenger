@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             navGraph.startDestination = R.id.nav_home
             CoroutineScope(Dispatchers.IO).launch {
                 this@MainActivity.setContacts {
-                    viewModel.updatePhoneToDatabase(it)
+                    viewModel.updateContacts(it)
                 }
             }
             navController.graph = navGraph
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         ) {
             CoroutineScope(Dispatchers.IO).launch {
                 this@MainActivity.setContacts {
-                    viewModel.updatePhoneToDatabase(it)
+                    viewModel.updateContacts(it)
                 }
             }
         }

@@ -36,8 +36,8 @@ class ActivityViewModel @Inject constructor(private val repository: ActivityRepo
         }
     }
 
-    fun updatePhoneToDatabase(listContacts: List<ContactModel>) = viewModelScope.launch {
-        repository.updatePhonesToDatabase(listContacts)
+    fun updateContacts(listContacts: List<ContactModel>) = viewModelScope.launch {
+        repository.updateContacts(listContacts)
     }
 
     fun statusOnline() = viewModelScope.launch {
