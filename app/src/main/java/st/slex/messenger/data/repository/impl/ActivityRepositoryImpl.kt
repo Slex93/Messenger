@@ -41,7 +41,7 @@ class ActivityRepositoryImpl @Inject constructor(
                                 )
                                 databaseReference.child(NODE_CONTACT)
                                     .child(auth.currentUser?.uid.toString())
-                                    .child(snapshot.value.toString())
+                                    .child(snapshot.key.toString())
                                     .updateChildren(map)
                             }
                         }

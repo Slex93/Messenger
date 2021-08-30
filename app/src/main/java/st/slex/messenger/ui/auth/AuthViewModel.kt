@@ -1,13 +1,13 @@
 package st.slex.messenger.ui.auth
 
 import android.app.Activity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import st.slex.messenger.data.repository.interf.AuthRepository
+import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(private val repository: AuthRepository) : ViewModel() {
@@ -24,8 +24,8 @@ class AuthViewModel @Inject constructor(private val repository: AuthRepository) 
         }
     }
 
-    fun authUser() = viewModelScope.launch {
-        repository.authUser()
+    fun authUser(): LiveData<VoidResponse> = liveData(Dispatchers.IO) {
+        repository.authUser().collect { emit(it) }
     }
 
 }

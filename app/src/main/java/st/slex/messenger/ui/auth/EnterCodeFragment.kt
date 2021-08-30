@@ -2,6 +2,7 @@ package st.slex.messenger.ui.auth
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.result.AuthResponse
+import st.slex.messenger.utilites.result.VoidResponse
 
 @ExperimentalCoroutinesApi
 class EnterCodeFragment : BaseFragment() {
@@ -59,15 +61,15 @@ class EnterCodeFragment : BaseFragment() {
 
     private fun String.textListener(id: String) {
         binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
-        authViewModel.sendCode(id = id, code = this).observe(viewLifecycleOwner, observer)
+        authViewModel.sendCode(id = id, code = this).observe(viewLifecycleOwner, sendCodeObserver)
     }
 
-    private val observer: Observer<AuthResponse>
+    private val sendCodeObserver: Observer<AuthResponse>
         get() = Observer<AuthResponse> {
             when (it) {
                 is AuthResponse.Success -> {
                     binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                    authViewModel.authUser()
+                    authViewModel.authUser().observe(viewLifecycleOwner, authObserver)
                     requireActivity().recreate()
                 }
                 is AuthResponse.Failure -> {
@@ -77,6 +79,10 @@ class EnterCodeFragment : BaseFragment() {
                 }
             }
         }
+
+    private val authObserver: Observer<VoidResponse> = Observer {
+        if (it is VoidResponse.Failure) Log.e("$this", it.exception.toString())
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
