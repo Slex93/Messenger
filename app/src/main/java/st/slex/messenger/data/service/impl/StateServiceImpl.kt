@@ -2,6 +2,7 @@ package st.slex.messenger.data.service.impl
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
@@ -16,6 +17,7 @@ class StateServiceImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : StateService {
 
+    @ExperimentalCoroutinesApi
     override suspend fun changeState(state: String) = callbackFlow {
         val event = databaseReference.child(NODE_USER).child(auth.uid.toString())
             .child(CHILD_STATE).setValue(state).addOnSuccessListener {

@@ -9,48 +9,43 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
-import st.slex.messenger.data.service.interf.DatabaseSnapshot
 import st.slex.messenger.data.service.interf.StateService
 import st.slex.messenger.utilites.*
-import st.slex.messenger.utilites.result.ValueEventResponse
+import st.slex.messenger.utilites.base.AppValueEventListener
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class ActivityRepositoryImpl @Inject constructor(
-    private val service: DatabaseSnapshot,
     private val databaseReference: DatabaseReference,
     private val auth: FirebaseAuth,
     private val stateService: StateService
 ) : ActivityRepository {
-
     override suspend fun changeState(state: String): Unit = withContext(Dispatchers.IO) {
         stateService.changeState(state).collect()
     }
 
-    override suspend fun updateContacts(list: List<ContactModel>) = withContext(Dispatchers.IO) {
-        service.singleValueEventFlow(databaseReference.child(NODE_PHONE)).collect {
-            when (it) {
-                is ValueEventResponse.Success -> {
-                    it.snapshot.children.forEach { snapshot ->
-                        list.forEach { contact ->
-                            if (auth.currentUser?.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
-                                val map = mapOf(
-                                    CHILD_ID to snapshot.key.toString(),
-                                    CHILD_FULL_NAME to contact.full_name,
-                                    CHILD_PHONE to contact.phone
-                                )
-                                databaseReference.child(NODE_CONTACT)
-                                    .child(auth.currentUser?.uid.toString())
-                                    .child(snapshot.key.toString())
-                                    .updateChildren(map)
-                            }
+    override suspend fun updateContacts(list: List<ContactModel>): Unit =
+        withContext(Dispatchers.IO) {
+            val reference = databaseReference.child(NODE_PHONE)
+            val listener = AppValueEventListener({ snapshotParent ->
+                snapshotParent.children.forEach { snapshot ->
+                    list.forEach { contact ->
+                        if (auth.currentUser?.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
+                            val map = mapOf(
+                                CHILD_ID to snapshot.key.toString(),
+                                CHILD_FULL_NAME to contact.full_name,
+                                CHILD_PHONE to contact.phone
+                            )
+                            databaseReference.child(NODE_CONTACT)
+                                .child(auth.currentUser?.uid.toString())
+                                .child(snapshot.key.toString())
+                                .updateChildren(map)
                         }
                     }
                 }
-                is ValueEventResponse.Cancelled -> {
-                    Log.e("$this", it.databaseError.toString())
-                }
-            }
+            }, { exception ->
+                Log.e("$this", exception.toString())
+            })
+            reference.addListenerForSingleValueEvent(listener)
         }
-    }
 }

@@ -4,7 +4,10 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 
-class AppChildEventListener(val onSuccess: (DataSnapshot) -> Unit) : ChildEventListener {
+class AppChildEventListener(
+    val onSuccess: (DataSnapshot) -> Unit,
+    val onFailure: (Exception) -> Unit
+) : ChildEventListener {
     override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
         onSuccess(snapshot)
     }
@@ -19,6 +22,7 @@ class AppChildEventListener(val onSuccess: (DataSnapshot) -> Unit) : ChildEventL
     }
 
     override fun onCancelled(error: DatabaseError) {
+        onFailure(error.toException())
     }
 
 }
