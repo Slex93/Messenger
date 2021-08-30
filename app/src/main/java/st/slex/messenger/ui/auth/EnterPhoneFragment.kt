@@ -9,6 +9,7 @@ import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -62,29 +63,31 @@ class EnterPhoneFragment : BaseFragment() {
             val countryCode = binding.signInCountryCodeLayout.editText?.text.toString()
             val phonePostfix = binding.fragmentPhoneInput.editText?.text.toString()
             viewModel.authPhone(requireActivity(), countryCode + phonePostfix)
-                .observe(viewLifecycleOwner) { it.observer }
+                .observe(viewLifecycleOwner, observer)
         }
     }
 
-    private val AuthResult.observer: Unit
-        get() = when (this) {
-            is AuthResult.Success -> {
-                binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                viewModel.authUser()
-                requireActivity().restartActivity()
-            }
-            is AuthResult.Send -> {
-                binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
-                navigate()
-            }
-            is AuthResult.Failure -> {
-                binding.root.showPrimarySnackBar(exception.toString())
+    private val observer: Observer<AuthResult>
+        get() = Observer {
+            when (it) {
+                is AuthResult.Success -> {
+                    binding.root.showPrimarySnackBar(getString(R.string.snack_success))
+                    viewModel.authUser()
+                    requireActivity().restartActivity()
+                }
+                is AuthResult.Send -> {
+                    binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
+                    it.id.navigate()
+                }
+                is AuthResult.Failure -> {
+                    binding.root.showPrimarySnackBar(it.exception.toString())
+                }
             }
         }
 
-    private fun navigate() {
+    private fun String.navigate() {
         val direction =
-            EnterPhoneFragmentDirections.actionNavEnterPhoneToNavEnterCode(auth.currentUser?.uid.toString())
+            EnterPhoneFragmentDirections.actionNavEnterPhoneToNavEnterCode(this)
         val extras =
             FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
         findNavController().navigate(direction, extras)

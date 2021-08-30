@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,20 +60,22 @@ class EnterCodeFragment : BaseFragment() {
 
     private fun String.textListener(id: String) {
         binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
-        authViewModel.sendCode(id = id, code = this).observe(viewLifecycleOwner) { it.observer }
+        authViewModel.sendCode(id = id, code = this).observe(viewLifecycleOwner, observer)
     }
 
-    private val AuthResult.observer: Unit
-        get() = when (this) {
-            is AuthResult.Success -> {
-                binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                authViewModel.authUser()
-                requireActivity().restartActivity()
-            }
-            is AuthResult.Failure -> {
-                binding.root.showPrimarySnackBar(exception.toString())
-            }
-            else -> {
+    private val observer: Observer<AuthResult>
+        get() = Observer<AuthResult> {
+            when (it) {
+                is AuthResult.Success -> {
+                    binding.root.showPrimarySnackBar(getString(R.string.snack_success))
+                    authViewModel.authUser()
+                    requireActivity().restartActivity()
+                }
+                is AuthResult.Failure -> {
+                    binding.root.showPrimarySnackBar(it.exception.toString())
+                }
+                else -> {
+                }
             }
         }
 
