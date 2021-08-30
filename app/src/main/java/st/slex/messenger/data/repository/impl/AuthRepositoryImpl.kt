@@ -18,7 +18,7 @@ import st.slex.messenger.utilites.NODE_PHONE
 import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.funs.callback
 import st.slex.messenger.utilites.funs.signInWithPhone
-import st.slex.messenger.utilites.result.AuthResult
+import st.slex.messenger.utilites.result.AuthResponse
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -31,14 +31,14 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signInWithPhone(phone: String, activity: Activity) = callbackFlow {
         val callback = callback({ credential ->
             auth.signInWithPhone(credential, {
-                trySendBlocking(AuthResult.Success).isSuccess
+                trySendBlocking(AuthResponse.Success).isSuccess
             }, {
-                trySendBlocking(AuthResult.Failure(it)).isFailure
+                trySendBlocking(AuthResponse.Failure(it)).isFailure
             })
         }, { exception ->
-            trySendBlocking(AuthResult.Failure(exception)).isFailure
+            trySendBlocking(AuthResponse.Failure(exception)).isFailure
         }, { id, _ ->
-            trySendBlocking(AuthResult.Send(id)).isSuccess
+            trySendBlocking(AuthResponse.Send(id)).isSuccess
         })
         val phoneOptions = PhoneAuthOptions
             .newBuilder(FirebaseAuth.getInstance())
@@ -54,9 +54,9 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun sendCode(id: String, code: String) = callbackFlow {
         val credential = PhoneAuthProvider.getCredential(id, code)
         val event = auth.signInWithPhone(credential, {
-            trySendBlocking(AuthResult.Success)
+            trySendBlocking(AuthResponse.Success)
         }, {
-            trySendBlocking(AuthResult.Failure(it))
+            trySendBlocking(AuthResponse.Failure(it))
         })
         awaitClose { event }
     }

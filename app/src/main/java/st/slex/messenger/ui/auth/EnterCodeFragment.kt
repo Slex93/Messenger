@@ -15,9 +15,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.funs.restartActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
-import st.slex.messenger.utilites.result.AuthResult
+import st.slex.messenger.utilites.result.AuthResponse
 
 @ExperimentalCoroutinesApi
 class EnterCodeFragment : BaseFragment() {
@@ -63,15 +62,15 @@ class EnterCodeFragment : BaseFragment() {
         authViewModel.sendCode(id = id, code = this).observe(viewLifecycleOwner, observer)
     }
 
-    private val observer: Observer<AuthResult>
-        get() = Observer<AuthResult> {
+    private val observer: Observer<AuthResponse>
+        get() = Observer<AuthResponse> {
             when (it) {
-                is AuthResult.Success -> {
+                is AuthResponse.Success -> {
                     binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                     authViewModel.authUser()
-                    requireActivity().restartActivity()
+                    requireActivity().recreate()
                 }
-                is AuthResult.Failure -> {
+                is AuthResponse.Failure -> {
                     binding.root.showPrimarySnackBar(it.exception.toString())
                 }
                 else -> {

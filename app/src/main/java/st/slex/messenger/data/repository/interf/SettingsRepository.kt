@@ -4,5 +4,5 @@ import kotlinx.coroutines.flow.Flow
 import st.slex.messenger.utilites.result.VoidResponse
 
 interface SettingsRepository {
-    suspend fun signOut(): Flow<VoidResponse>
+    suspend fun signOut(state: String): Flow<VoidResponse>
 }

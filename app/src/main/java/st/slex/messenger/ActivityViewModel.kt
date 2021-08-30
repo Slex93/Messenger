@@ -2,6 +2,7 @@ package st.slex.messenger
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
@@ -14,12 +15,8 @@ class ActivityViewModel @Inject constructor(private val repository: ActivityRepo
         repository.updateContacts(listContacts)
     }
 
-    fun statusOnline() = viewModelScope.launch {
-        repository.statusOnline()
-    }
-
-    fun statusOffline() = viewModelScope.launch {
-        repository.statusOffline()
+    fun changeState(state: String) = viewModelScope.launch(Dispatchers.IO) {
+        repository.changeState(state)
     }
 
 }

@@ -1,9 +1,9 @@
 package st.slex.messenger.utilites.result
 
-sealed class AuthResult {
-    object Success : AuthResult()
-    class Send(val id: String) : AuthResult()
-    class Failure(val exception: Exception) : AuthResult()
+sealed class AuthResponse {
+    object Success : AuthResponse()
+    class Send(val id: String) : AuthResponse()
+    class Failure(val exception: Exception) : AuthResponse()
 
     override fun toString(): String {
         return when (this) {

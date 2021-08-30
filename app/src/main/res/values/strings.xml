@@ -23,4 +23,8 @@
     <string name="search">search</string>
     <string name="label_sign_out">Sign out</string>
 
+    <!--State-->
+    <string name="state_online">Online</string>
+    <string name="state_offline">Offline</string>
+
 </resources>

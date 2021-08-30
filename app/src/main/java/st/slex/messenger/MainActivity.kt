@@ -56,12 +56,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (auth.currentUser != null) viewModel.statusOnline()
+        if (auth.currentUser != null) viewModel.changeState(getString(R.string.state_online))
     }
 
     override fun onStop() {
         super.onStop()
-        if (auth.currentUser != null) viewModel.statusOffline()
+        if (auth.currentUser != null) viewModel.changeState(getString(R.string.state_offline))
     }
 
     override fun onDestroy() {

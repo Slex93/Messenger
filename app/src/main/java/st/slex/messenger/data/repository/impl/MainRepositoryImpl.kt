@@ -10,7 +10,7 @@ import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.repository.interf.MainRepository
 import st.slex.messenger.data.service.interf.DatabaseSnapshot
 import st.slex.messenger.utilites.NODE_USER
-import st.slex.messenger.utilites.result.EventResponse
+import st.slex.messenger.utilites.result.ValueEventResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -21,7 +21,7 @@ class MainRepositoryImpl @Inject constructor(
 ) :
     MainRepository {
 
-    override suspend fun getCurrentUser(): Flow<EventResponse> =
+    override suspend fun getCurrentUser(): Flow<ValueEventResponse> =
         service.valueEventFlow(
             databaseReference.child(NODE_USER).child(auth.uid.toString())
         )

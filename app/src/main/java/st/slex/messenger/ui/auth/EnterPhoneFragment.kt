@@ -16,9 +16,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.funs.restartActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
-import st.slex.messenger.utilites.result.AuthResult
+import st.slex.messenger.utilites.result.AuthResponse
 
 @ExperimentalCoroutinesApi
 class EnterPhoneFragment : BaseFragment() {
@@ -67,19 +66,19 @@ class EnterPhoneFragment : BaseFragment() {
         }
     }
 
-    private val observer: Observer<AuthResult>
+    private val observer: Observer<AuthResponse>
         get() = Observer {
             when (it) {
-                is AuthResult.Success -> {
+                is AuthResponse.Success -> {
                     binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                     viewModel.authUser()
-                    requireActivity().restartActivity()
+                    requireActivity().recreate()
                 }
-                is AuthResult.Send -> {
+                is AuthResponse.Send -> {
                     binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
                     it.id.navigate()
                 }
-                is AuthResult.Failure -> {
+                is AuthResponse.Failure -> {
                     binding.root.showPrimarySnackBar(it.exception.toString())
                 }
             }

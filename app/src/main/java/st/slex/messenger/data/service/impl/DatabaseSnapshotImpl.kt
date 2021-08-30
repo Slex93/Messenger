@@ -10,18 +10,18 @@ import st.slex.messenger.data.service.interf.DatabaseSnapshot
 import st.slex.messenger.utilites.funs.childrenEventListener
 import st.slex.messenger.utilites.funs.valueEventListener
 import st.slex.messenger.utilites.result.ChildEventResponse
-import st.slex.messenger.utilites.result.EventResponse
+import st.slex.messenger.utilites.result.ValueEventResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 
 class DatabaseSnapshotImpl @Inject constructor() : DatabaseSnapshot {
-    override suspend fun valueEventFlow(databaseReference: DatabaseReference): Flow<EventResponse> =
+    override suspend fun valueEventFlow(databaseReference: DatabaseReference): Flow<ValueEventResponse> =
         callbackFlow {
             val valueEventListener = valueEventListener({
-                trySendBlocking(EventResponse.Success(it)).isSuccess
+                trySendBlocking(ValueEventResponse.Success(it)).isSuccess
             }, {
-                trySendBlocking(EventResponse.Cancelled(it)).isFailure
+                trySendBlocking(ValueEventResponse.Cancelled(it)).isFailure
             })
             databaseReference.addValueEventListener(valueEventListener)
             awaitClose {
@@ -29,12 +29,12 @@ class DatabaseSnapshotImpl @Inject constructor() : DatabaseSnapshot {
             }
         }
 
-    override suspend fun singleValueEventFlow(databaseReference: DatabaseReference): Flow<EventResponse> =
+    override suspend fun singleValueEventFlow(databaseReference: DatabaseReference): Flow<ValueEventResponse> =
         callbackFlow {
             val valueEventListener = valueEventListener({
-                trySendBlocking(EventResponse.Success(it)).isSuccess
+                trySendBlocking(ValueEventResponse.Success(it)).isSuccess
             }, {
-                trySendBlocking(EventResponse.Cancelled(it)).isFailure
+                trySendBlocking(ValueEventResponse.Cancelled(it)).isFailure
             })
             databaseReference.addListenerForSingleValueEvent(valueEventListener)
             awaitClose {

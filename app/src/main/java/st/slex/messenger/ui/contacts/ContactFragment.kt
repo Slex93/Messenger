@@ -15,7 +15,7 @@ import st.slex.common.messenger.databinding.FragmentContactBinding
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.setSupportActionBar
-import st.slex.messenger.utilites.result.Resource
+import st.slex.messenger.utilites.result.Response
 
 class ContactFragment : BaseFragment() {
 
@@ -53,13 +53,13 @@ class ContactFragment : BaseFragment() {
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         contactViewModel.initContact().observe(viewLifecycleOwner) {
             when (it) {
-                is Resource.Success -> {
+                is Response.Success -> {
                     adapter.addItems(it.data)
                 }
-                is Resource.Failure -> {
+                is Response.Failure -> {
                     Log.i("ContactFragmentException", it.exception.toString())
                 }
-                is Resource.Loading -> {
+                is Response.Loading -> {
                     Log.i("ContactFragmentLoading", "loading")
                 }
             }

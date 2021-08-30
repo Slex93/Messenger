@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSettingsBinding
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.funs.restartActivity
 import st.slex.messenger.utilites.funs.setSupportActionBar
 import st.slex.messenger.utilites.result.VoidResponse
 
@@ -35,19 +35,21 @@ class SettingsFragment : BaseFragment() {
         binding.settingsToolbar.title = getString(R.string.title_contacts)
         setSupportActionBar(binding.settingsToolbar)
         binding.settingsSignOut.setOnClickListener {
+            viewModel.signOut(getString(R.string.state_offline))
+                .observe(viewLifecycleOwner, signOutObserver)
+        }
+    }
 
-            viewModel.signOut().observe(viewLifecycleOwner) {
-                when (it) {
-                    is VoidResponse.Success -> {
-                        requireActivity().restartActivity()
-                    }
-                    is VoidResponse.Failure -> {
-                        Log.i("$this", it.exception.toString())
-                    }
-                    is VoidResponse.Loading -> {
+    private val signOutObserver: Observer<VoidResponse> = Observer {
+        when (it) {
+            is VoidResponse.Success -> {
+                requireActivity().recreate()
+            }
+            is VoidResponse.Failure -> {
+                Log.i("$this", it.exception.toString())
+            }
+            is VoidResponse.Loading -> {
 
-                    }
-                }
             }
         }
     }

@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.ContactsContract
@@ -25,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
 import st.slex.common.messenger.R
-import st.slex.messenger.MainActivity
 import st.slex.messenger.MessengerApplication
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.di.component.AppComponent
@@ -95,13 +93,6 @@ suspend inline fun Activity.setContacts(crossinline function: (list: List<Contac
 
 fun View.showPrimarySnackBar(it: String) {
     Snackbar.make(this, it, Snackbar.LENGTH_SHORT).show()
-}
-
-@ExperimentalCoroutinesApi
-fun Activity.restartActivity() {
-    val intent = Intent(this, MainActivity::class.java)
-    this.startActivity(intent)
-    this.finish()
 }
 
 fun ImageView.downloadAndSet(url: String) {

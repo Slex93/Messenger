@@ -20,7 +20,7 @@ import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.downloadAndSet
-import st.slex.messenger.utilites.result.Resource
+import st.slex.messenger.utilites.result.Response
 
 @ExperimentalCoroutinesApi
 class MainFragment : BaseFragment() {
@@ -61,15 +61,15 @@ class MainFragment : BaseFragment() {
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
         viewModel.currentUser.observe(viewLifecycleOwner) {
             when (it) {
-                is Resource.Success -> {
+                is Response.Success -> {
                     headerBinding.navigationHeaderImage.downloadAndSet(it.data.url)
                     headerBinding.navigationHeaderUserName.text = it.data.username
                     headerBinding.navigationHeaderPhoneNumber.text = it.data.phone
                 }
-                is Resource.Failure -> {
+                is Response.Failure -> {
                     Log.i("Cancelled", it.exception.message.toString())
                 }
-                is Resource.Loading -> {
+                is Response.Loading -> {
                     Log.i("Loading", it.toString())
                 }
             }

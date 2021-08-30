@@ -11,7 +11,7 @@ import st.slex.messenger.data.service.interf.DatabaseSnapshot
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.base.AppValueEventListener
 import st.slex.messenger.utilites.result.ChildEventResponse
-import st.slex.messenger.utilites.result.EventResponse
+import st.slex.messenger.utilites.result.ValueEventResponse
 import javax.inject.Inject
 
 class SingleChatRepositoryImpl @Inject constructor(
@@ -20,7 +20,7 @@ class SingleChatRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : SingleChatRepository {
 
-    override suspend fun getStatus(uid: String): Flow<EventResponse> = service.valueEventFlow(
+    override suspend fun getStatus(uid: String): Flow<ValueEventResponse> = service.valueEventFlow(
         databaseReference = databaseReference.child(NODE_USER).child(uid).child(CHILD_STATE)
     )
 

@@ -16,13 +16,13 @@ class SettingsRepositoryImpl @Inject constructor(
     private val stateService: StateService
 ) : SettingsRepository {
 
-    override suspend fun signOut(): Flow<VoidResponse> = callbackFlow {
+    override suspend fun signOut(state: String): Flow<VoidResponse> = callbackFlow {
         val event = try {
-            auth.signOut()
-            stateService.stateOffline().collect {
+            stateService.changeState(state).collect {
                 when (it) {
                     is VoidResponse.Success -> {
                         trySendBlocking(VoidResponse.Success)
+                        auth.signOut()
                     }
                     is VoidResponse.Failure -> {
                         trySendBlocking(VoidResponse.Failure(it.exception))

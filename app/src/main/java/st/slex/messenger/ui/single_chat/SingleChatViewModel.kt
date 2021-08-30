@@ -11,34 +11,34 @@ import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.repository.interf.SingleChatRepository
 import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.ChildEventResponse
-import st.slex.messenger.utilites.result.EventResponse
-import st.slex.messenger.utilites.result.Resource
+import st.slex.messenger.utilites.result.Response
+import st.slex.messenger.utilites.result.ValueEventResponse
 import javax.inject.Inject
 
 class SingleChatViewModel @Inject constructor(private val repository: SingleChatRepository) :
     ViewModel() {
 
-    fun getStatus(uid: String): LiveData<Resource<String>> = liveData(Dispatchers.IO) {
-        emit(Resource.Loading)
+    fun getStatus(uid: String): LiveData<Response<String>> = liveData(Dispatchers.IO) {
+        emit(Response.Loading)
         try {
             repository.getStatus(uid = uid).collect {
                 when (it) {
-                    is EventResponse.Success -> emit(Resource.Success(it.snapshot.getThisValue<String>()))
-                    is EventResponse.Cancelled -> emit(Resource.Failure(it.databaseError.toException()))
+                    is ValueEventResponse.Success -> emit(Response.Success(it.snapshot.getThisValue<String>()))
+                    is ValueEventResponse.Cancelled -> emit(Response.Failure(it.databaseError.toException()))
                 }
             }
         } catch (exception: Exception) {
-            emit(Resource.Failure(exception))
+            emit(Response.Failure(exception))
         }
     }
 
-    fun getMessages(limitToLast: Int): LiveData<Resource<MessageModel>> = liveData(Dispatchers.IO) {
-        emit(Resource.Loading)
+    fun getMessages(limitToLast: Int): LiveData<Response<MessageModel>> = liveData(Dispatchers.IO) {
+        emit(Response.Loading)
         try {
             repository.getMessages(limitToLast = limitToLast).collect {
                 when (it) {
                     is ChildEventResponse.Added -> {
-                        Resource.Success(it.snapshot.getThisValue<MessageModel>())
+                        Response.Success(it.snapshot.getThisValue<MessageModel>())
                     }
                     is ChildEventResponse.Moved -> {
                     }
@@ -47,12 +47,12 @@ class SingleChatViewModel @Inject constructor(private val repository: SingleChat
                     is ChildEventResponse.Removed -> {
                     }
                     is ChildEventResponse.Cancelled -> {
-                        Resource.Failure(it.databaseError.toException())
+                        Response.Failure(it.databaseError.toException())
                     }
                 }
             }
         } catch (exception: Exception) {
-            emit(Resource.Failure(exception = exception))
+            emit(Response.Failure(exception = exception))
         }
     }
 

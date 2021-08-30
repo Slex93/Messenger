@@ -13,10 +13,10 @@ class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepository
 ) : ViewModel() {
 
-    fun signOut(): LiveData<VoidResponse> = liveData(Dispatchers.IO) {
+    fun signOut(state: String): LiveData<VoidResponse> = liveData(Dispatchers.IO) {
         emit(VoidResponse.Loading)
         try {
-            repository.signOut().collect {
+            repository.signOut(state).collect {
                 emit(it)
             }
         } catch (exception: Exception) {

@@ -23,7 +23,7 @@ import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
 import st.slex.messenger.ui.single_chat.adapter.ChatAdapter
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.result.Resource
+import st.slex.messenger.utilites.result.Response
 
 
 class SingleChatFragment : BaseFragment() {
@@ -94,13 +94,13 @@ class SingleChatFragment : BaseFragment() {
     private fun initStatus() {
         viewModel.getStatus(chatUserId).observe(viewLifecycleOwner) {
             when (it) {
-                is Resource.Success -> {
+                is Response.Success -> {
                     binding.toolbarInfo.toolbarInfoStatus.text = it.data
                 }
-                is Resource.Failure -> {
+                is Response.Failure -> {
 
                 }
-                is Resource.Loading -> {
+                is Response.Loading -> {
 
                 }
             }
@@ -117,7 +117,7 @@ class SingleChatFragment : BaseFragment() {
         swipeRefreshLayout = binding.singleChatRefreshLayout
         viewModel.getMessages(countMessage).observe(viewLifecycleOwner) {
             when (it) {
-                is Resource.Success -> {
+                is Response.Success -> {
                     if (isScrollToPosition) {
                         adapter.addItemToBottom(it.data) {
                             recycler.smoothScrollToPosition(adapter.itemCount)
@@ -128,10 +128,10 @@ class SingleChatFragment : BaseFragment() {
                         }
                     }
                 }
-                is Resource.Failure -> {
+                is Response.Failure -> {
 
                 }
-                is Resource.Loading -> {
+                is Response.Loading -> {
 
                 }
             }

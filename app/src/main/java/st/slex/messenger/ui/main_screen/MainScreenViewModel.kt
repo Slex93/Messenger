@@ -10,8 +10,8 @@ import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.MainRepository
 import st.slex.messenger.utilites.funs.getThisValue
-import st.slex.messenger.utilites.result.EventResponse
-import st.slex.messenger.utilites.result.Resource
+import st.slex.messenger.utilites.result.Response
+import st.slex.messenger.utilites.result.ValueEventResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -24,22 +24,22 @@ class MainScreenViewModel @Inject constructor(private val repository: MainReposi
         }
     }
 
-    val currentUser: LiveData<Resource<UserModel>> = liveData(Dispatchers.IO) {
+    val currentUser: LiveData<Response<UserModel>> = liveData(Dispatchers.IO) {
         repository.getCurrentUser().collect {
-            Resource.Loading
+            Response.Loading
             try {
                 repository.getCurrentUser().collect {
                     when (it) {
-                        is EventResponse.Success -> {
-                            emit(Resource.Success(it.snapshot.getThisValue<UserModel>()))
+                        is ValueEventResponse.Success -> {
+                            emit(Response.Success(it.snapshot.getThisValue<UserModel>()))
                         }
-                        is EventResponse.Cancelled -> {
-                            emit(Resource.Failure(it.databaseError.toException()))
+                        is ValueEventResponse.Cancelled -> {
+                            emit(Response.Failure(it.databaseError.toException()))
                         }
                     }
                 }
             } catch (exception: Exception) {
-                Resource.Failure(exception = exception)
+                Response.Failure(exception = exception)
             }
         }
     }

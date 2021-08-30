@@ -8,13 +8,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.model.ContactModel
-import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
 import st.slex.messenger.data.service.interf.DatabaseSnapshot
 import st.slex.messenger.data.service.interf.StateService
 import st.slex.messenger.utilites.*
-import st.slex.messenger.utilites.funs.getThisValue
-import st.slex.messenger.utilites.result.EventResponse
+import st.slex.messenger.utilites.result.ValueEventResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -25,60 +23,31 @@ class ActivityRepositoryImpl @Inject constructor(
     private val stateService: StateService
 ) : ActivityRepository {
 
-    override suspend fun signOut() = withContext(Dispatchers.IO) {
-        stateService.stateOffline()
-        auth.signOut()
-    }
-
-    override suspend fun statusOnline(): Unit = withContext(Dispatchers.IO) {
-        stateService.stateOnline()
-    }
-
-    override suspend fun statusOffline(): Unit = withContext(Dispatchers.IO) {
-        stateService.stateOffline()
+    override suspend fun changeState(state: String): Unit = withContext(Dispatchers.IO) {
+        stateService.changeState(state).collect()
     }
 
     override suspend fun updateContacts(list: List<ContactModel>) = withContext(Dispatchers.IO) {
         service.singleValueEventFlow(databaseReference.child(NODE_PHONE)).collect {
             when (it) {
-                is EventResponse.Success -> {
+                is ValueEventResponse.Success -> {
                     it.snapshot.children.forEach { snapshot ->
                         list.forEach { contact ->
                             if (auth.currentUser?.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
-                                service.singleValueEventFlow(
-                                    databaseReference.child(NODE_USER).child(
-                                        snapshot.key.toString()
-                                    )
-                                ).collect { rawUser ->
-                                    when (rawUser) {
-                                        is EventResponse.Success -> {
-                                            val user = rawUser.snapshot.getThisValue<UserModel>()
-                                            val refContact =
-                                                "$NODE_CONTACT/${auth.currentUser?.uid}/${snapshot.value}"
-                                            val mapUser = mapOf(
-                                                CHILD_ID to user.id,
-                                                CHILD_PHONE to user.phone,
-                                                CHILD_USERNAME to user.username,
-                                                CHILD_URL to user.url,
-                                                CHILD_BIO to user.bio,
-                                                CHILD_FULL_NAME to user.full_name,
-                                                CHILD_STATE to user.state
-                                            )
-                                            val mapContact = mapOf(refContact to mapUser)
-                                            databaseReference
-                                                .updateChildren(mapContact)
-                                        }
-                                        is EventResponse.Cancelled -> {
-                                            Log.e("$this", rawUser.databaseError.toString())
-                                        }
-                                    }
-                                }
-
+                                val map = mapOf(
+                                    CHILD_ID to snapshot.key.toString(),
+                                    CHILD_FULL_NAME to contact.full_name,
+                                    CHILD_PHONE to contact.phone
+                                )
+                                databaseReference.child(NODE_CONTACT)
+                                    .child(auth.currentUser?.uid.toString())
+                                    .child(snapshot.value.toString())
+                                    .updateChildren(map)
                             }
                         }
                     }
                 }
-                is EventResponse.Cancelled -> {
+                is ValueEventResponse.Cancelled -> {
                     Log.e("$this", it.databaseError.toString())
                 }
             }
