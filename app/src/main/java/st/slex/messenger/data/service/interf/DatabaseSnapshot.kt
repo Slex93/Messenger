@@ -1,4 +1,4 @@
-package st.slex.messenger.data.service
+package st.slex.messenger.data.service.interf
 
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.flow.Flow

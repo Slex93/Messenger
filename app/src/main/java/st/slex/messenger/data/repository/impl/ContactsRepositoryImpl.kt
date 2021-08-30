@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.collect
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.ContactsRepository
-import st.slex.messenger.data.service.DatabaseSnapshot
+import st.slex.messenger.data.service.interf.DatabaseSnapshot
 import st.slex.messenger.utilites.NODE_CONTACT
 import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.funs.getThisValue

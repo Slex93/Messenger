@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.repository.interf.MainRepository
-import st.slex.messenger.data.service.DatabaseSnapshot
+import st.slex.messenger.data.service.interf.DatabaseSnapshot
 import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.result.EventResponse
 import javax.inject.Inject

@@ -10,7 +10,8 @@ import kotlinx.coroutines.withContext
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
-import st.slex.messenger.data.service.DatabaseSnapshot
+import st.slex.messenger.data.service.interf.DatabaseSnapshot
+import st.slex.messenger.data.service.interf.StateService
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.EventResponse
@@ -20,21 +21,21 @@ import javax.inject.Inject
 class ActivityRepositoryImpl @Inject constructor(
     private val service: DatabaseSnapshot,
     private val databaseReference: DatabaseReference,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val stateService: StateService
 ) : ActivityRepository {
 
     override suspend fun signOut() = withContext(Dispatchers.IO) {
+        stateService.stateOffline()
         auth.signOut()
     }
 
     override suspend fun statusOnline(): Unit = withContext(Dispatchers.IO) {
-        databaseReference.child(NODE_USER).child(auth.uid.toString())
-            .child(CHILD_STATE).setValue("Online")
+        stateService.stateOnline()
     }
 
     override suspend fun statusOffline(): Unit = withContext(Dispatchers.IO) {
-        databaseReference.child(NODE_USER).child(auth.uid.toString())
-            .child(CHILD_STATE).setValue("Offline")
+        stateService.stateOffline()
     }
 
     override suspend fun updateContacts(list: List<ContactModel>) = withContext(Dispatchers.IO) {

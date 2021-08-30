@@ -7,7 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.repository.interf.SingleChatRepository
-import st.slex.messenger.data.service.DatabaseSnapshot
+import st.slex.messenger.data.service.interf.DatabaseSnapshot
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.base.AppValueEventListener
 import st.slex.messenger.utilites.result.ChildEventResponse

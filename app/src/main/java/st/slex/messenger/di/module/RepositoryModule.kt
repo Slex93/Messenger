@@ -23,4 +23,7 @@ interface RepositoryModule {
 
     @Binds
     fun bindSingleChatRepository(repository: SingleChatRepositoryImpl): SingleChatRepository
+
+    @Binds
+    fun bindSettingsRepository(repository: SettingsRepositoryImpl): SettingsRepository
 }

@@ -1,4 +1,4 @@
-package st.slex.messenger.data.service
+package st.slex.messenger.data.service.impl
 
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -6,6 +6,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import st.slex.messenger.data.service.interf.DatabaseSnapshot
 import st.slex.messenger.utilites.funs.childrenEventListener
 import st.slex.messenger.utilites.funs.valueEventListener
 import st.slex.messenger.utilites.result.ChildEventResponse
