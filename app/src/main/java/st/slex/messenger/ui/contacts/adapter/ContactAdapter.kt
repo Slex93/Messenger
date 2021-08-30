@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
-import st.slex.messenger.data.model.ContactModel
+import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.ui.contacts.ContactClickListener
 
 class ContactAdapter(
@@ -13,8 +13,8 @@ class ContactAdapter(
 ) :
     RecyclerView.Adapter<ContactViewHolder>() {
 
-    private var contactList = mutableListOf<ContactModel>()
-    private var contactListNew = mutableListOf<ContactModel>()
+    private var contactList = mutableListOf<UserModel>()
+    private var contactListNew = mutableListOf<UserModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -23,16 +23,16 @@ class ContactAdapter(
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-        holder.bind(contactList[position], position)
+        holder.bind(contactList[position])
         holder.clickListener(clickListener)
     }
 
     override fun getItemCount(): Int = contactList.size
 
-    fun addItems(contact: ContactModel) {
+    fun addItems(contact: UserModel) {
         if (!contactListNew.contains(contact)) {
             contactListNew.add(contact)
-            contactListNew.sortBy { it.fullname }
+            contactListNew.sortBy { it.full_name }
             Log.i("Transit::AdapterAdd", contact.toString())
         }
         contactList = contactListNew

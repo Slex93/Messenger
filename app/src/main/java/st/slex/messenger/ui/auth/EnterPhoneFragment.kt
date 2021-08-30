@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
-import st.slex.messenger.data.model.AuthUserModel
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.restartActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
@@ -42,7 +41,6 @@ class EnterPhoneFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        viewModel.authResultModel.removeObservers(viewLifecycleOwner)
     }
 
     override fun onResume() {
@@ -63,30 +61,30 @@ class EnterPhoneFragment : BaseFragment() {
             binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             val countryCode = binding.signInCountryCodeLayout.editText?.text.toString()
             val phonePostfix = binding.fragmentPhoneInput.editText?.text.toString()
-            viewModel.authResultModel.observe(viewLifecycleOwner) { it.observer }
             viewModel.authPhone(requireActivity(), countryCode + phonePostfix)
+                .observe(viewLifecycleOwner) { it.observer }
         }
     }
 
-    private val AuthResult<AuthUserModel>.observer: Unit
+    private val AuthResult.observer: Unit
         get() = when (this) {
             is AuthResult.Success -> {
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                viewModel.authUser(data)
+                viewModel.authUser()
                 requireActivity().restartActivity()
             }
             is AuthResult.Send -> {
                 binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
-                data.navigate()
+                navigate()
             }
             is AuthResult.Failure -> {
-                binding.root.showPrimarySnackBar(exception)
+                binding.root.showPrimarySnackBar(exception.toString())
             }
         }
 
-    private fun AuthUserModel.navigate() {
+    private fun navigate() {
         val direction =
-            EnterPhoneFragmentDirections.actionNavEnterPhoneToNavEnterCode(id)
+            EnterPhoneFragmentDirections.actionNavEnterPhoneToNavEnterCode(auth.currentUser?.uid.toString())
         val extras =
             FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
         findNavController().navigate(direction, extras)

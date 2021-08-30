@@ -84,7 +84,7 @@ suspend inline fun Activity.setContacts(crossinline function: (list: List<Contac
                     val phone =
                         it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                     val setPhone = phone.replace(Regex("[\\s,-]"), "")
-                    val newModel = ContactModel(fullname = fullName, phone = setPhone)
+                    val newModel = ContactModel(full_name = fullName, phone = setPhone)
                     list.add(newModel)
                 }
             }

@@ -26,14 +26,14 @@ class SingleChatRepositoryImpl @Inject constructor(
 
     override suspend fun getMessages(limitToLast: Int): Flow<ChildEventResponse> =
         service.childEventFlow(
-            databaseReference = databaseReference.child(NODE_MESSAGES).child(auth.uid.toString()),
+            databaseReference = databaseReference.child(NODE_MESSAGE).child(auth.uid.toString()),
             limitToLast = limitToLast
         )
 
     override suspend fun sendMessage(message: String, uid: String): Unit =
         withContext(Dispatchers.IO) {
-            val refDialogUser = "$NODE_MESSAGES/${auth.currentUser?.uid}/$uid"
-            val refDialogReceivingUser = "$NODE_MESSAGES/$uid/${auth.currentUser?.uid}"
+            val refDialogUser = "$NODE_MESSAGE/${auth.currentUser?.uid}/$uid"
+            val refDialogReceivingUser = "$NODE_MESSAGE/$uid/${auth.currentUser?.uid}"
             val messageKey = databaseReference.child(refDialogUser).push().key
             val mapMessage = hashMapOf<String, Any>()
             mapMessage[CHILD_FROM] = auth.currentUser?.uid.toString()

@@ -3,24 +3,20 @@ package st.slex.messenger.ui.contacts.adapter
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
-import st.slex.messenger.data.model.ContactModel
+import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.ui.contacts.ContactClickListener
 import st.slex.messenger.utilites.funs.downloadAndSet
 
 class ContactViewHolder(private val binding: ItemRecyclerContactBinding) :
     RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
-    private lateinit var contact: ContactModel
     private lateinit var clickListener: ContactClickListener
-    private lateinit var key: String
 
-    fun bind(contact: ContactModel, position: Int) {
-        this.contact = contact
-        binding.recyclerContactUsername.text = contact.fullname
+    fun bind(contact: UserModel) {
+        binding.itemContactCard.transitionName = contact.id
+        binding.recyclerContactUsername.text = contact.full_name
         binding.recyclerContactPhone.text = contact.phone
         binding.recyclerContactImage.downloadAndSet(contact.url)
-        key = "card$position"
-        binding.itemContactCard.transitionName = key
     }
 
     fun clickListener(clickListener: ContactClickListener) {
@@ -29,7 +25,7 @@ class ContactViewHolder(private val binding: ItemRecyclerContactBinding) :
     }
 
     override fun onClick(v: View?) {
-        clickListener.onClick(binding.itemContactCard, contact, key)
+        clickListener.onClick(binding.itemContactCard)
     }
 
 }

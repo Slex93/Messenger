@@ -21,7 +21,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
-import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.ui.single_chat.adapter.ChatAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.result.Resource
@@ -171,10 +170,9 @@ class SingleChatFragment : BaseFragment() {
 
     private fun takeExtras() {
         val args: SingleChatFragmentArgs by navArgs()
-        val contact: ContactModel = args.contact
-        val key = args.key
-        chatUserId = contact.id
-        setExtrasInActionBar(key, contact.fullname)
+        val id = args.id
+        chatUserId = id
+        setExtrasInActionBar(id, id)
 
     }
 

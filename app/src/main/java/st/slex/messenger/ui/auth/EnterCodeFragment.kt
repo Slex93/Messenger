@@ -13,7 +13,6 @@ import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
-import st.slex.messenger.data.model.AuthUserModel
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.restartActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
@@ -60,19 +59,18 @@ class EnterCodeFragment : BaseFragment() {
 
     private fun String.textListener(id: String) {
         binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
-        authViewModel.authResultModel.observe(viewLifecycleOwner) { it.observer }
-        authViewModel.sendCode(id = id, code = this)
+        authViewModel.sendCode(id = id, code = this).observe(viewLifecycleOwner) { it.observer }
     }
 
-    private val AuthResult<AuthUserModel>.observer: Unit
+    private val AuthResult.observer: Unit
         get() = when (this) {
             is AuthResult.Success -> {
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                authViewModel.authUser(data)
+                authViewModel.authUser()
                 requireActivity().restartActivity()
             }
             is AuthResult.Failure -> {
-                binding.root.showPrimarySnackBar(exception)
+                binding.root.showPrimarySnackBar(exception.toString())
             }
             else -> {
             }

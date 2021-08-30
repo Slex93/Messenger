@@ -3,23 +3,23 @@ package st.slex.messenger.ui.single_chat.adapter
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerSingleChatBinding
-import st.slex.messenger.data.model.Message
+import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.utilites.funs.asTime
 
 class ChatViewHolder(private val binding: ItemRecyclerSingleChatBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bindUser(message: Message) {
+    fun bindUser(message: MessageModel) {
         binding.chatBlockUserMessage.visibility = View.VISIBLE
         binding.chatBlockReceiverMessage.visibility = View.GONE
-        binding.chatUserMessage.text = message.text
+        binding.chatUserMessage.text = message.content
         binding.chatUserMessageTime.text = message.timestamp.toString().asTime()
     }
 
-    fun bindReceiver(message: Message) {
+    fun bindReceiver(message: MessageModel) {
         binding.chatBlockReceiverMessage.visibility = View.VISIBLE
         binding.chatBlockUserMessage.visibility = View.GONE
-        binding.chatReceiverMessage.text = message.text
+        binding.chatReceiverMessage.text = message.content
         binding.chatReceiverMessageTime.text = message.timestamp.toString().asTime()
     }
 

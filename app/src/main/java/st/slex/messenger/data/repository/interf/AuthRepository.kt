@@ -1,13 +1,11 @@
 package st.slex.messenger.data.repository.interf
 
 import android.app.Activity
-import androidx.lifecycle.LiveData
-import st.slex.messenger.data.model.AuthUserModel
+import kotlinx.coroutines.flow.Flow
 import st.slex.messenger.utilites.result.AuthResult
 
 interface AuthRepository {
-    val userModel: LiveData<AuthResult<AuthUserModel>>
-    suspend fun signInWithPhone(phone: String, activity: Activity)
-    suspend fun sendCode(id: String, code: String)
-    suspend fun authUser(authUserModel: AuthUserModel)
+    suspend fun signInWithPhone(phone: String, activity: Activity): Flow<AuthResult>
+    suspend fun sendCode(id: String, code: String): Flow<AuthResult>
+    suspend fun authUser()
 }

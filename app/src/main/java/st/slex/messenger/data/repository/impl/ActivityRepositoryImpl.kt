@@ -8,9 +8,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.model.ContactModel
+import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
 import st.slex.messenger.data.service.DatabaseSnapshot
 import st.slex.messenger.utilites.*
+import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.EventResponse
 import javax.inject.Inject
 
@@ -42,16 +44,35 @@ class ActivityRepositoryImpl @Inject constructor(
                     it.snapshot.children.forEach { snapshot ->
                         list.forEach { contact ->
                             if (auth.currentUser?.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
-                                databaseReference.child(NODE_PHONE_CONTACT)
-                                    .child(auth.currentUser?.uid.toString())
-                                    .child(snapshot.value.toString())
-                                    .child(CHILD_ID)
-                                    .setValue(snapshot.key.toString())
-                                databaseReference.child(NODE_PHONE_CONTACT)
-                                    .child(auth.currentUser?.uid.toString())
-                                    .child(snapshot.value.toString())
-                                    .child(CHILD_FULLNAME)
-                                    .setValue(contact.fullname)
+                                service.singleValueEventFlow(
+                                    databaseReference.child(NODE_USER).child(
+                                        snapshot.key.toString()
+                                    )
+                                ).collect { rawUser ->
+                                    when (rawUser) {
+                                        is EventResponse.Success -> {
+                                            val user = rawUser.snapshot.getThisValue<UserModel>()
+                                            val refContact =
+                                                "$NODE_CONTACT/${auth.currentUser?.uid}/${snapshot.value}"
+                                            val mapUser = mapOf(
+                                                CHILD_ID to user.id,
+                                                CHILD_PHONE to user.phone,
+                                                CHILD_USERNAME to user.username,
+                                                CHILD_URL to user.url,
+                                                CHILD_BIO to user.bio,
+                                                CHILD_FULL_NAME to user.full_name,
+                                                CHILD_STATE to user.state
+                                            )
+                                            val mapContact = mapOf(refContact to mapUser)
+                                            databaseReference
+                                                .updateChildren(mapContact)
+                                        }
+                                        is EventResponse.Cancelled -> {
+                                            Log.e("$this", rawUser.databaseError.toString())
+                                        }
+                                    }
+                                }
+
                             }
                         }
                     }

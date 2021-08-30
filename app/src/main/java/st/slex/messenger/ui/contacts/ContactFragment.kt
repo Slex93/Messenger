@@ -73,8 +73,9 @@ class ContactFragment : BaseFragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    private val clickListener = ContactClickListener { cardView, contact, key ->
-        val directions = ContactFragmentDirections.actionNavContactToNavSingleChat(contact, key)
+    private val clickListener = ContactClickListener { cardView ->
+        val directions =
+            ContactFragmentDirections.actionNavContactToNavSingleChat(cardView.transitionName)
         val extras = FragmentNavigatorExtras(cardView to cardView.transitionName)
         findNavController().navigate(directions, extras)
     }
