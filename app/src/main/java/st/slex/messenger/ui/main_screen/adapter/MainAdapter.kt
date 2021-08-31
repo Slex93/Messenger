@@ -5,11 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
 import st.slex.messenger.data.model.ChatListModel
+import st.slex.messenger.utilites.base.CardClickListener
 
-class MainAdapter : RecyclerView.Adapter<MainViewHolder>() {
+class MainAdapter(private val clickListener: CardClickListener) :
+    RecyclerView.Adapter<MainViewHolder>() {
 
     private var mainList = mutableListOf<ChatListModel>()
-    private val mapList = mutableMapOf<String, ChatListModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -18,15 +19,14 @@ class MainAdapter : RecyclerView.Adapter<MainViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        val item = mainList[position]
-        holder.bind(item)
+        holder.bind(mainList[position])
+        holder.clickListener(clickListener)
     }
 
     override fun getItemCount(): Int = mainList.size
 
     fun makeMainList(message: ChatListModel) {
-        mapList[message.user.id] = message
-        mainList = mapList.values.toMutableList()
-        notifyDataSetChanged()
+        if (!mainList.contains(message)) mainList.add(message)
+        notifyItemInserted(mainList.size)
     }
 }

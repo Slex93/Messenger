@@ -14,6 +14,7 @@ import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.funs.setSupportActionBar
 import st.slex.messenger.utilites.result.Response
 
@@ -73,7 +74,7 @@ class ContactFragment : BaseFragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    private val clickListener = ContactClickListener { cardView ->
+    private val clickListener = CardClickListener { cardView ->
         val directions =
             ContactFragmentDirections.actionNavContactToNavSingleChat(cardView.transitionName)
         val extras = FragmentNavigatorExtras(cardView to cardView.transitionName)

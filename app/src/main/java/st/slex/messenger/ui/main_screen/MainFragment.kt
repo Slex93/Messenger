@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -20,6 +22,7 @@ import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.data.model.ChatListModel
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.funs.downloadAndSet
 import st.slex.messenger.utilites.result.Response
 
@@ -55,12 +58,14 @@ class MainFragment : BaseFragment() {
         )
         binding.navView.setupWithNavController(findNavController())
         initRecyclerView()
+        Log.i("testMainlist", "created")
         viewModel.chatList.observe(viewLifecycleOwner, chatListObserver)
     }
 
     private val chatListObserver: Observer<Response<ChatListModel>> = Observer {
         when (it) {
             is Response.Success -> {
+                Log.i("testMainlist:", it.data.toString())
                 adapter.makeMainList(it.data)
             }
             is Response.Failure -> {
@@ -94,13 +99,31 @@ class MainFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         recyclerView = binding.fragmentMainRecyclerView
-        adapter = MainAdapter()
+        adapter = MainAdapter(clickListener)
+        postponeEnterTransition()
+        recyclerView.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
+    private val clickListener = CardClickListener { card ->
+        val directions = MainFragmentDirections.actionNavHomeToNavSingleChat(card.transitionName)
+        val extras = FragmentNavigatorExtras(card to card.transitionName)
+        findNavController().navigate(directions, extras)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i("testMainlist", "onStop")
+        viewModel.chatList.removeObservers(viewLifecycleOwner)
+
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.i("testMainlist", "onDestroyView")
         _binding = null
     }
 

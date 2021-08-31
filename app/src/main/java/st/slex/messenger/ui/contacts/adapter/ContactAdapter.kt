@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
 import st.slex.messenger.data.model.UserModel
-import st.slex.messenger.ui.contacts.ContactClickListener
+import st.slex.messenger.utilites.base.CardClickListener
 
 class ContactAdapter(
-    private val clickListener: ContactClickListener
+    private val clickListener: CardClickListener
 ) :
     RecyclerView.Adapter<ContactViewHolder>() {
 

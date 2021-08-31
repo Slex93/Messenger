@@ -1,8 +1,8 @@
-package st.slex.messenger.ui.contacts
+package st.slex.messenger.utilites.base
 
 import com.google.android.material.card.MaterialCardView
 
-class ContactClickListener(
+class CardClickListener(
     val clickListener: (MaterialCardView) -> Unit
 ) {
     fun onClick(

@@ -1,16 +1,32 @@
 package st.slex.messenger.ui.main_screen.adapter
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
 import st.slex.messenger.data.model.ChatListModel
+import st.slex.messenger.utilites.base.CardClickListener
+import st.slex.messenger.utilites.funs.convertToTime
 
 class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
-    RecyclerView.ViewHolder(binding.root) {
+    RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+
+    private lateinit var clickListener: CardClickListener
 
     fun bind(item: ChatListModel) {
-        binding.itemMainUsername.text = item.user.username
+        binding.itemMainCard.transitionName = item.user.id
+        binding.itemMainUsername.text = item.user.full_name
         binding.itemMainContent.text = item.message.text
-        binding.itemMainTimestamp.text = item.message.timestamp.toString()
+        binding.itemMainTimestamp.text = item.message.timestamp.toString().convertToTime()
     }
+
+    fun clickListener(clickListener: CardClickListener) {
+        this.clickListener = clickListener
+        binding.itemMainCard.setOnClickListener(this)
+    }
+
+    override fun onClick(p0: View?) {
+        clickListener.onClick(binding.itemMainCard)
+    }
+
 
 }

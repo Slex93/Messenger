@@ -41,13 +41,11 @@ class MainActivity : AppCompatActivity() {
             (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
         val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
         if (auth.currentUser != null) {
-            navGraph.startDestination = R.id.nav_home
             CoroutineScope(Dispatchers.IO).launch {
                 this@MainActivity.setContacts {
                     viewModel.updateContacts(it)
                 }
             }
-            navController.graph = navGraph
         } else {
             navGraph.startDestination = R.id.nav_enter_phone
             navController.graph = navGraph

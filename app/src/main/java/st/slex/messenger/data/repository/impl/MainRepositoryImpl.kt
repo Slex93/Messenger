@@ -11,9 +11,7 @@ import st.slex.messenger.data.model.ChatListModel
 import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.MainRepository
-import st.slex.messenger.utilites.NODE_CHAT
-import st.slex.messenger.utilites.NODE_CHAT_LIST
-import st.slex.messenger.utilites.NODE_USER
+import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.base.AppValueEventListener
 import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.Response
@@ -51,14 +49,24 @@ class MainRepositoryImpl @Inject constructor(
                     val listener = AppValueEventListener({ messageSnapshot ->
                         val user = userSnapshot.getThisValue<UserModel>()
                         val message = messageSnapshot.getThisValue<MessageModel>()
-                        trySendBlocking(
-                            Response.Success(
-                                ChatListModel(
-                                    user = user,
-                                    message = message
+                        val referenceContact = databaseReference
+                            .child(NODE_CONTACT)
+                            .child(auth.uid.toString())
+                            .child(currentSnapshot.key.toString())
+                            .child(CHILD_FULL_NAME)
+                        val listenerContact = AppValueEventListener({ contact ->
+                            trySendBlocking(
+                                Response.Success(
+                                    ChatListModel(
+                                        user = user.copy(full_name = contact.value.toString()),
+                                        message = message
+                                    )
                                 )
                             )
-                        )
+                        }, { exception ->
+                            trySendBlocking(Response.Failure(exception))
+                        })
+                        referenceContact.addValueEventListener(listenerContact)
                     }, { exception ->
                         trySendBlocking(Response.Failure(exception))
                     })

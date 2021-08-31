@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import android.provider.ContactsContract
 import android.view.View
 import android.widget.ImageView
@@ -38,6 +37,21 @@ val Context.appComponent: AppComponent
         else -> this.applicationContext.appComponent
     }
 
+fun String.convertToTime(): String {
+    val sdfComp = SimpleDateFormat("yyMMdd", Locale.getDefault()).apply {
+        timeZone = TimeZone.getDefault()
+    }
+    val compareCurrentDate = sdfComp.format(Date(toLong())).toInt()
+    val compareDate = sdfComp.format(System.currentTimeMillis()).toInt()
+    val format = if (compareDate == compareCurrentDate) {
+        "HH:mm"
+    } else "EEE d MMMM"
+    val date = SimpleDateFormat(format, Locale.getDefault()).apply {
+        TimeZone.getDefault()
+    }.format(Date(toLong()))
+    return date
+}
+
 fun Fragment.setSupportActionBar(toolbar: MaterialToolbar) {
     (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
     NavigationUI.setupWithNavController(
@@ -48,8 +62,7 @@ fun Fragment.setSupportActionBar(toolbar: MaterialToolbar) {
 }
 
 suspend fun Activity.checkPermission(permission: String): Boolean = withContext(Dispatchers.IO) {
-    return@withContext if (Build.VERSION.SDK_INT >= 23
-        && ContextCompat.checkSelfPermission(
+    return@withContext if (ContextCompat.checkSelfPermission(
             this@checkPermission,
             permission
         ) != PackageManager.PERMISSION_GRANTED

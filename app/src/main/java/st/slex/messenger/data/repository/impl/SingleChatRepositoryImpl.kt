@@ -2,7 +2,6 @@ package st.slex.messenger.data.repository.impl
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ServerValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -69,7 +68,7 @@ class SingleChatRepositoryImpl @Inject constructor(
             val mapMessage = hashMapOf<String, Any>()
             mapMessage[CHILD_FROM] = auth.currentUser?.uid.toString()
             mapMessage[CHILD_TEXT] = message
-            mapMessage[CHILD_TIMESTAMP] = ServerValue.TIMESTAMP
+            mapMessage[CHILD_TIMESTAMP] = System.currentTimeMillis()
             val mapDialog = hashMapOf<String, Any>()
             mapDialog["$refDialogUser/$messageKey"] = mapMessage
             mapDialog["$refDialogReceivingUser/$messageKey"] = mapMessage
