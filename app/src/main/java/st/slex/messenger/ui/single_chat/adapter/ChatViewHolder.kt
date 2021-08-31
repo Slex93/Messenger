@@ -4,7 +4,6 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerSingleChatBinding
 import st.slex.messenger.data.model.MessageModel
-import st.slex.messenger.utilites.funs.asTime
 
 class ChatViewHolder(private val binding: ItemRecyclerSingleChatBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -12,15 +11,15 @@ class ChatViewHolder(private val binding: ItemRecyclerSingleChatBinding) :
     fun bindUser(message: MessageModel) {
         binding.chatBlockUserMessage.visibility = View.VISIBLE
         binding.chatBlockReceiverMessage.visibility = View.GONE
-        binding.chatUserMessage.text = message.content
-        binding.chatUserMessageTime.text = message.timestamp.toString().asTime()
+        binding.chatUserMessage.text = message.text
+        binding.chatUserMessageTime.text = message.timestamp.toString()
     }
 
     fun bindReceiver(message: MessageModel) {
         binding.chatBlockReceiverMessage.visibility = View.VISIBLE
         binding.chatBlockUserMessage.visibility = View.GONE
-        binding.chatReceiverMessage.text = message.content
-        binding.chatReceiverMessageTime.text = message.timestamp.toString().asTime()
+        binding.chatReceiverMessage.text = message.text
+        binding.chatReceiverMessageTime.text = message.timestamp.toString()
     }
 
 }

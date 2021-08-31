@@ -2,15 +2,14 @@ package st.slex.messenger.ui.single_chat
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph
-import androidx.navigation.fragment.NavHostFragment
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -19,24 +18,22 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
+import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.ui.single_chat.adapter.ChatAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.result.Response
 
 
+@ExperimentalCoroutinesApi
 class SingleChatFragment : BaseFragment() {
 
     private var _binding: FragmentSingleChatBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var navGraph: NavGraph
-    private lateinit var navHostFragment: NavHostFragment
-    private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
-
-    private lateinit var chatUserId: String
+    private lateinit var uid: String
 
     private lateinit var recycler: RecyclerView
     private lateinit var adapter: ChatAdapter
@@ -68,9 +65,12 @@ class SingleChatFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         takeExtras()
-        initNavigationFields()
-        setActionBar()
-        initStatus()
+        NavigationUI.setupWithNavController(
+            binding.chatToolbar,
+            findNavController(),
+            AppBarConfiguration(setOf(R.id.nav_contact))
+        )
+        viewModel.getUser(uid).observe(viewLifecycleOwner, userObserver)
         initRecyclerView()
         initMessagesSending()
     }
@@ -85,24 +85,8 @@ class SingleChatFragment : BaseFragment() {
                 snackBar.setAction("Ok") {}
                 snackBar.show()
             } else {
-                viewModel.sendMessage(message, chatUserId)
+                viewModel.sendMessage(message, uid)
                 binding.singleChatRecyclerTextInput.editText?.setText("")
-            }
-        }
-    }
-
-    private fun initStatus() {
-        viewModel.getStatus(chatUserId).observe(viewLifecycleOwner) {
-            when (it) {
-                is Response.Success -> {
-                    binding.toolbarInfo.toolbarInfoStatus.text = it.data
-                }
-                is Response.Failure -> {
-
-                }
-                is Response.Loading -> {
-
-                }
             }
         }
     }
@@ -115,7 +99,7 @@ class SingleChatFragment : BaseFragment() {
         recycler.adapter = adapter
         recycler.isNestedScrollingEnabled = false
         swipeRefreshLayout = binding.singleChatRefreshLayout
-        viewModel.getMessages(countMessage).observe(viewLifecycleOwner) {
+        viewModel.getMessages(uid, countMessage).observe(viewLifecycleOwner) {
             when (it) {
                 is Response.Success -> {
                     if (isScrollToPosition) {
@@ -171,14 +155,20 @@ class SingleChatFragment : BaseFragment() {
     private fun takeExtras() {
         val args: SingleChatFragmentArgs by navArgs()
         val id = args.id
-        chatUserId = id
-        setExtrasInActionBar(id, id)
-
+        uid = id
+        binding.toolbarInfo.toolbarInfoCardView.transitionName = uid
     }
 
-    private fun setExtrasInActionBar(key: String, fullname: String) {
-        binding.toolbarInfo.toolbarInfoCardView.transitionName = key
-        binding.toolbarInfo.toolbarInfoUsername.text = fullname
+    private val userObserver: Observer<Response<UserModel>> = Observer {
+        when (it) {
+            is Response.Success -> {
+                binding.toolbarInfo.toolbarInfoUsername.text = it.data.full_name
+                binding.toolbarInfo.toolbarInfoStatus.text = it.data.state
+            }
+            is Response.Failure -> {
+                Log.e("$this", it.exception.toString())
+            }
+        }
     }
 
     private fun setTransitAnimation() {
@@ -187,20 +177,6 @@ class SingleChatFragment : BaseFragment() {
             duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
             scrimColor = Color.TRANSPARENT
         }
-    }
-
-    private fun setActionBar() {
-        val toolbar = binding.chatToolbar
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.nav_contact))
-        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
-    }
-
-    private fun initNavigationFields() {
-        navHostFragment =
-            ((activity as AppCompatActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-        navController = navHostFragment.navController
-        val navInflater = navHostFragment.navController.navInflater
-        navGraph = navInflater.inflate(R.navigation.nav_graph)
     }
 
     override fun onDestroyView() {

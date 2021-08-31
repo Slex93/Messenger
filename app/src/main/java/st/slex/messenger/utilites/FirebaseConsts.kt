@@ -7,8 +7,8 @@ const val NODE_USER = "user"
 const val NODE_USERNAME = "username"
 const val NODE_PHONE = "phone"
 const val NODE_CONTACT = "contact"
-const val NODE_MESSAGE = "message"
-const val NODE_MAIN_LIST = "main_list"
+const val NODE_CHAT = "chat"
+const val NODE_CHAT_LIST = "chat_list"
 
 /*Children*/
 const val CHILD_ID = "id"

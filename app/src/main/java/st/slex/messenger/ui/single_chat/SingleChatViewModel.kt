@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.messenger.data.model.MessageModel
+import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.SingleChatRepository
 import st.slex.messenger.utilites.result.Response
 import javax.inject.Inject
@@ -15,10 +16,10 @@ import javax.inject.Inject
 class SingleChatViewModel @Inject constructor(private val repository: SingleChatRepository) :
     ViewModel() {
 
-    fun getStatus(uid: String): LiveData<Response<String>> = liveData(Dispatchers.IO) {
+    fun getUser(uid: String): LiveData<Response<UserModel>> = liveData(Dispatchers.IO) {
         emit(Response.Loading)
         try {
-            repository.getStatus(uid = uid).collect {
+            repository.getUser(uid = uid).collect {
                 emit(it)
             }
         } catch (exception: Exception) {
@@ -26,16 +27,17 @@ class SingleChatViewModel @Inject constructor(private val repository: SingleChat
         }
     }
 
-    fun getMessages(limitToLast: Int): LiveData<Response<MessageModel>> = liveData(Dispatchers.IO) {
-        emit(Response.Loading)
-        try {
-            repository.getMessages(limitToLast = limitToLast).collect {
-                emit(it)
+    fun getMessages(uid: String, limitToLast: Int): LiveData<Response<MessageModel>> =
+        liveData(Dispatchers.IO) {
+            emit(Response.Loading)
+            try {
+                repository.getMessages(uid = uid, limitToLast = limitToLast).collect {
+                    emit(it)
+                }
+            } catch (exception: Exception) {
+                emit(Response.Failure(exception = exception))
             }
-        } catch (exception: Exception) {
-            emit(Response.Failure(exception = exception))
         }
-    }
 
     fun sendMessage(message: String, uid: String) = viewModelScope.launch {
         repository.sendMessage(message = message, uid = uid)

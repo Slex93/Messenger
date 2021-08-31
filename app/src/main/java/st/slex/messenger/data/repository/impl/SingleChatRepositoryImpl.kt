@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.model.MessageModel
+import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.SingleChatRepository
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.base.AppChildEventListener
@@ -25,10 +26,21 @@ class SingleChatRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth
 ) : SingleChatRepository {
 
-    override suspend fun getStatus(uid: String): Flow<Response<String>> = callbackFlow {
-        val reference = databaseReference.child(NODE_USER).child(uid).child(CHILD_STATE)
+    override suspend fun getUser(uid: String): Flow<Response<UserModel>> = callbackFlow {
+        val reference = databaseReference.child(NODE_USER).child(uid)
         val callback = AppValueEventListener({ snapshot ->
-            trySendBlocking(Response.Success(snapshot.getThisValue()))
+            val user = snapshot.getThisValue<UserModel>()
+            val referenceContact = databaseReference
+                .child(NODE_CONTACT)
+                .child(auth.uid.toString())
+                .child(uid)
+                .child(CHILD_FULL_NAME)
+            val callbackContact = AppValueEventListener({
+                trySendBlocking(Response.Success(user.copy(full_name = it.value.toString())))
+            }, { exception ->
+                trySendBlocking(Response.Failure(exception))
+            })
+            referenceContact.addListenerForSingleValueEvent(callbackContact)
         }, { exception ->
             trySendBlocking(Response.Failure(exception))
         })
@@ -36,9 +48,9 @@ class SingleChatRepositoryImpl @Inject constructor(
         awaitClose { reference.removeEventListener(callback) }
     }
 
-    override suspend fun getMessages(limitToLast: Int): Flow<Response<MessageModel>> =
+    override suspend fun getMessages(uid: String, limitToLast: Int): Flow<Response<MessageModel>> =
         callbackFlow {
-            val reference = databaseReference.child(NODE_MESSAGE).child(auth.uid.toString())
+            val reference = databaseReference.child(NODE_CHAT).child(auth.uid.toString()).child(uid)
                 .limitToLast(limitToLast)
             val listener = AppChildEventListener({ snapshot ->
                 trySendBlocking(Response.Success(snapshot.getThisValue()))
@@ -51,13 +63,12 @@ class SingleChatRepositoryImpl @Inject constructor(
 
     override suspend fun sendMessage(message: String, uid: String): Unit =
         withContext(Dispatchers.IO) {
-            val refDialogUser = "$NODE_MESSAGE/${auth.currentUser?.uid}/$uid"
-            val refDialogReceivingUser = "$NODE_MESSAGE/$uid/${auth.currentUser?.uid}"
+            val refDialogUser = "$NODE_CHAT/${auth.currentUser?.uid}/$uid"
+            val refDialogReceivingUser = "$NODE_CHAT/$uid/${auth.currentUser?.uid}"
             val messageKey = databaseReference.child(refDialogUser).push().key
             val mapMessage = hashMapOf<String, Any>()
             mapMessage[CHILD_FROM] = auth.currentUser?.uid.toString()
             mapMessage[CHILD_TEXT] = message
-            mapMessage[CHILD_ID] = messageKey.toString()
             mapMessage[CHILD_TIMESTAMP] = ServerValue.TIMESTAMP
             val mapDialog = hashMapOf<String, Any>()
             mapDialog["$refDialogUser/$messageKey"] = mapMessage
@@ -65,20 +76,20 @@ class SingleChatRepositoryImpl @Inject constructor(
             databaseReference
                 .updateChildren(mapDialog)
                 .addOnSuccessListener {
-                    setInMainList(uid)
+                    setInMainList(uid, messageKey.toString())
                 }
         }
 
-    private fun setInMainList(uid: String) {
-        databaseReference.child(NODE_MAIN_LIST).child(auth.currentUser?.uid.toString()).child(uid)
+    private fun setInMainList(uid: String, messageKey: String) {
+        databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString()).child(uid)
             .addListenerForSingleValueEvent(AppValueEventListener({
-                var refUser = "$NODE_MAIN_LIST/${auth.currentUser?.uid}/$uid"
-                var refReceived = "$NODE_MAIN_LIST/$uid/${auth.currentUser?.uid}"
+                var refUser = "$NODE_CHAT_LIST/${auth.currentUser?.uid}"
+                var refReceived = "$NODE_CHAT_LIST/$uid"
                 val mapUser = hashMapOf<String, Any>()
                 val mapReceived = hashMapOf<String, Any>()
                 val commonMap = hashMapOf<String, Any>()
-                mapUser[CHILD_ID] = uid
-                mapReceived[CHILD_ID] = auth.currentUser?.uid.toString()
+                mapUser[uid] = messageKey
+                mapReceived[auth.currentUser?.uid.toString()] = messageKey
                 commonMap[refUser] = mapUser
                 commonMap[refReceived] = mapReceived
                 databaseReference.updateChildren(commonMap)

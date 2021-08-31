@@ -35,13 +35,7 @@ class MainRepositoryImpl @Inject constructor(
 
     override suspend fun getTestList(): Flow<List<MessageModel>> = callbackFlow {
         val event = trySend(
-            listOf(
-                MessageModel().copy("1", "Helen", "Hello, Alex", "12:30"),
-                MessageModel().copy("1", "Bob", "Wow", "11:30"),
-                MessageModel().copy("1", "Anya", "I don't know", "10:30"),
-                MessageModel().copy("1", "Helen", "Hello, Alex", "12:30"),
-                MessageModel().copy("1", "Olga", "May be it is not a good idea", "09:30"),
-            )
+            emptyList()
         )
         awaitClose { event.isClosed }
     }

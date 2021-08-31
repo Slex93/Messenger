@@ -8,9 +8,9 @@ class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: MessageModel) {
-        binding.itemMainUsername.text = item.username
-        binding.itemMainContent.text = item.content
-        binding.itemMainTimestamp.text = item.timestamp
+        binding.itemMainUsername.text = item.from
+        binding.itemMainContent.text = item.text
+        binding.itemMainTimestamp.text = item.timestamp.toString()
     }
 
 }

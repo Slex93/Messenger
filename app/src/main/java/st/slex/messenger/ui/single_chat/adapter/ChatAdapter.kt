@@ -18,7 +18,7 @@ class ChatAdapter(private val uid: String) : RecyclerView.Adapter<ChatViewHolder
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val message = listMessages[position]
-        if (message.user.id == uid) {
+        if (message.from == uid) {
             holder.bindUser(message)
         } else {
             holder.bindReceiver(message)
