@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_main_card"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/primary_padding"
     android:checkable="true"
@@ -11,17 +11,16 @@
     android:focusable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/primary_padding">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/item_main_image"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:src="@drawable/ic_default_photo"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,26 +29,28 @@
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/primary_padding"
             android:ellipsize="end"
             android:maxLines="1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/item_main_image"
-            tools:text="Title"
-            android:layout_marginTop="@dimen/small_padding"/>
+            app:layout_constraintStart_toEndOf="@+id/item_main_image"
+            app:layout_constraintTop_toTopOf="@+id/item_main_image"
+            tools:text="Title" />
 
         <TextView
             android:id="@+id/item_main_content"
             style="@style/TextAppearance.MaterialComponents.Body2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/primary_padding"
+            android:layout_marginTop="@dimen/small_padding"
             android:ellipsize="end"
             android:maxLines="4"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_main_image"
             app:layout_constraintTop_toBottomOf="@+id/item_main_username"
-            tools:text="Content"
-            android:layout_marginTop="@dimen/small_padding"/>
+            app:layout_goneMarginTop="@dimen/primary_padding"
+            tools:text="Content" />
 
         <TextView
             android:id="@+id/item_main_timestamp"
@@ -58,8 +59,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:maxLines="1"
+            app:layout_constraintBottom_toBottomOf="@+id/item_main_image"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/item_main_content"
             tools:text="12:30" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

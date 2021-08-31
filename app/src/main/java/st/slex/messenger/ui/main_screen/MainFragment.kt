@@ -6,16 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
+import st.slex.messenger.data.model.ChatListModel
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.downloadAndSet
@@ -53,6 +55,21 @@ class MainFragment : BaseFragment() {
         )
         binding.navView.setupWithNavController(findNavController())
         initRecyclerView()
+        viewModel.chatList.observe(viewLifecycleOwner, chatListObserver)
+    }
+
+    private val chatListObserver: Observer<Response<ChatListModel>> = Observer {
+        when (it) {
+            is Response.Success -> {
+                adapter.makeMainList(it.data)
+            }
+            is Response.Failure -> {
+                Log.e("$this", it.exception.toString())
+            }
+            is Response.Loading -> {
+
+            }
+        }
     }
 
     private fun setUserInfoInHeader() {
@@ -79,8 +96,7 @@ class MainFragment : BaseFragment() {
         recyclerView = binding.fragmentMainRecyclerView
         adapter = MainAdapter()
         recyclerView.adapter = adapter
-        recyclerView.layoutManager =
-            StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
     override fun onDestroyView() {

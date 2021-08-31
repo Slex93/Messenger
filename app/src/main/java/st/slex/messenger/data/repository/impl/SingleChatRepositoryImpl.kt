@@ -81,19 +81,16 @@ class SingleChatRepositoryImpl @Inject constructor(
         }
 
     private fun setInMainList(uid: String, messageKey: String) {
-        databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString()).child(uid)
-            .addListenerForSingleValueEvent(AppValueEventListener({
-                var refUser = "$NODE_CHAT_LIST/${auth.currentUser?.uid}"
-                var refReceived = "$NODE_CHAT_LIST/$uid"
-                val mapUser = hashMapOf<String, Any>()
-                val mapReceived = hashMapOf<String, Any>()
-                val commonMap = hashMapOf<String, Any>()
-                mapUser[uid] = messageKey
-                mapReceived[auth.currentUser?.uid.toString()] = messageKey
-                commonMap[refUser] = mapUser
-                commonMap[refReceived] = mapReceived
-                databaseReference.updateChildren(commonMap)
-            }, {}))
+        val userReference =
+            databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString())
+                .child(uid)
+        val receiverReference = databaseReference.child(NODE_CHAT_LIST).child(uid)
+            .child(auth.currentUser?.uid.toString())
+
+        userReference.setValue(messageKey)
+        receiverReference.setValue(messageKey)
+
+
     }
 
 }

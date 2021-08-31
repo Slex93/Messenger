@@ -7,8 +7,12 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import st.slex.messenger.data.model.ChatListModel
+import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.MainRepository
+import st.slex.messenger.utilites.NODE_CHAT
+import st.slex.messenger.utilites.NODE_CHAT_LIST
 import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.base.AppValueEventListener
 import st.slex.messenger.utilites.funs.getThisValue
@@ -29,6 +33,46 @@ class MainRepositoryImpl @Inject constructor(
             trySendBlocking(Response.Failure(exception))
         })
         reference.addListenerForSingleValueEvent(listener)
+        awaitClose { reference.removeEventListener(listener) }
+    }
+
+    override suspend fun getChatList(): Flow<Response<ChatListModel>> = callbackFlow {
+        val reference =
+            databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString())
+        val listener = AppValueEventListener({ snapshot ->
+            snapshot.children.forEach { currentSnapshot ->
+                val userReference =
+                    databaseReference.child(NODE_USER).child(currentSnapshot.key.toString())
+                val listener = AppValueEventListener({ userSnapshot ->
+                    val messageReference =
+                        databaseReference.child(NODE_CHAT).child(auth.currentUser?.uid.toString())
+                            .child(currentSnapshot.key.toString())
+                            .child(currentSnapshot.value.toString())
+                    val listener = AppValueEventListener({ messageSnapshot ->
+                        val user = userSnapshot.getThisValue<UserModel>()
+                        val message = messageSnapshot.getThisValue<MessageModel>()
+                        trySendBlocking(
+                            Response.Success(
+                                ChatListModel(
+                                    user = user,
+                                    message = message
+                                )
+                            )
+                        )
+                    }, { exception ->
+                        trySendBlocking(Response.Failure(exception))
+                    })
+                    messageReference.addValueEventListener(listener)
+                }, { exception ->
+                    trySendBlocking(Response.Failure(exception))
+                })
+                userReference.addValueEventListener(listener)
+
+            }
+        }, { exception ->
+            trySendBlocking(Response.Failure(exception))
+        })
+        reference.addValueEventListener(listener)
         awaitClose { reference.removeEventListener(listener) }
     }
 }
