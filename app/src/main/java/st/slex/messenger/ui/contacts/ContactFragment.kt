@@ -56,7 +56,7 @@ class ContactFragment : BaseFragment() {
     private val contactObserver: Observer<Response<UserModel>> = Observer {
         when (it) {
             is Response.Success -> {
-                adapter.addItems(it.data)
+                adapter.addItems(it.value)
             }
             is Response.Failure -> {
                 Log.i("ContactFragmentException", it.exception.toString())

@@ -72,11 +72,6 @@ class SingleChatFragment : BaseFragment() {
         )
         viewModel.getUser(uid).observe(viewLifecycleOwner, userObserver)
         initRecyclerView()
-        initMessagesSending()
-    }
-
-    private fun initMessagesSending() {
-
     }
 
     private fun initRecyclerView() {
@@ -91,11 +86,11 @@ class SingleChatFragment : BaseFragment() {
             when (it) {
                 is Response.Success -> {
                     if (isScrollToPosition) {
-                        adapter.addItemToBottom(it.data) {
+                        adapter.addItemToBottom(it.value) {
                             recycler.smoothScrollToPosition(adapter.itemCount)
                         }
                     } else {
-                        adapter.addItemToTop(it.data) {
+                        adapter.addItemToTop(it.value) {
                             swipeRefreshLayout.isRefreshing = false
                         }
                     }
@@ -150,8 +145,8 @@ class SingleChatFragment : BaseFragment() {
     private val userObserver: Observer<Response<UserModel>> = Observer { user ->
         when (user) {
             is Response.Success -> {
-                binding.toolbarInfo.toolbarInfoUsername.text = user.data.full_name
-                binding.toolbarInfo.toolbarInfoStatus.text = user.data.state
+                binding.toolbarInfo.toolbarInfoUsername.text = user.value.full_name
+                binding.toolbarInfo.toolbarInfoStatus.text = user.value.state
                 binding.singleChatRecyclerButton.setOnClickListener {
                     isScrollToPosition = true
                     val message = binding.singleChatRecyclerTextInput.editText?.text.toString()
@@ -162,7 +157,7 @@ class SingleChatFragment : BaseFragment() {
                         snackBar.setAction("Ok") {}
                         snackBar.show()
                     } else {
-                        viewModel.sendMessage(message, user.data)
+                        viewModel.sendMessage(message, user.value)
                         binding.singleChatRecyclerTextInput.editText?.setText("")
                     }
                 }

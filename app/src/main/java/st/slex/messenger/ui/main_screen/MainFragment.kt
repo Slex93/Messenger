@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,10 +16,10 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
-import st.slex.messenger.data.model.ChatListModel
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.base.CardClickListener
@@ -58,20 +58,13 @@ class MainFragment : BaseFragment() {
         )
         binding.navView.setupWithNavController(findNavController())
         initRecyclerView()
-        viewModel.chatList.observe(viewLifecycleOwner, chatListObserver)
-        viewModel.getChatList()
-    }
-
-    private val chatListObserver: Observer<Response<ChatListModel>> = Observer {
-        when (it) {
-            is Response.Success -> {
-                adapter.addChat(it.data)
-            }
-            is Response.Failure -> {
-                Log.e("$this", it.exception.toString())
-            }
-            is Response.Loading -> {
-
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewModel.getChatList().collect {
+                when (it) {
+                    is Response.Success -> {
+                        adapter.addChat(it.value)
+                    }
+                }
             }
         }
     }
@@ -82,9 +75,9 @@ class MainFragment : BaseFragment() {
         viewModel.currentUser.observe(viewLifecycleOwner) {
             when (it) {
                 is Response.Success -> {
-                    headerBinding.navigationHeaderImage.downloadAndSet(it.data.url)
-                    headerBinding.navigationHeaderUserName.text = it.data.username
-                    headerBinding.navigationHeaderPhoneNumber.text = it.data.phone
+                    headerBinding.navigationHeaderImage.downloadAndSet(it.value.url)
+                    headerBinding.navigationHeaderUserName.text = it.value.username
+                    headerBinding.navigationHeaderPhoneNumber.text = it.value.phone
                 }
                 is Response.Failure -> {
                     Log.i("Cancelled", it.exception.message.toString())
