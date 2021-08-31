@@ -76,19 +76,7 @@ class SingleChatFragment : BaseFragment() {
     }
 
     private fun initMessagesSending() {
-        binding.singleChatRecyclerButton.setOnClickListener {
-            isScrollToPosition = true
-            val message = binding.singleChatRecyclerTextInput.editText?.text.toString()
-            if (message.isEmpty()) {
-                val snackBar = Snackbar.make(binding.root, "Empty message", Snackbar.LENGTH_SHORT)
-                snackBar.anchorView = binding.singleChatRecyclerTextInput
-                snackBar.setAction("Ok") {}
-                snackBar.show()
-            } else {
-                viewModel.sendMessage(message, uid)
-                binding.singleChatRecyclerTextInput.editText?.setText("")
-            }
-        }
+
     }
 
     private fun initRecyclerView() {
@@ -159,14 +147,28 @@ class SingleChatFragment : BaseFragment() {
         binding.toolbarInfo.toolbarInfoCardView.transitionName = uid
     }
 
-    private val userObserver: Observer<Response<UserModel>> = Observer {
-        when (it) {
+    private val userObserver: Observer<Response<UserModel>> = Observer { user ->
+        when (user) {
             is Response.Success -> {
-                binding.toolbarInfo.toolbarInfoUsername.text = it.data.full_name
-                binding.toolbarInfo.toolbarInfoStatus.text = it.data.state
+                binding.toolbarInfo.toolbarInfoUsername.text = user.data.full_name
+                binding.toolbarInfo.toolbarInfoStatus.text = user.data.state
+                binding.singleChatRecyclerButton.setOnClickListener {
+                    isScrollToPosition = true
+                    val message = binding.singleChatRecyclerTextInput.editText?.text.toString()
+                    if (message.isEmpty()) {
+                        val snackBar =
+                            Snackbar.make(binding.root, "Empty message", Snackbar.LENGTH_SHORT)
+                        snackBar.anchorView = binding.singleChatRecyclerTextInput
+                        snackBar.setAction("Ok") {}
+                        snackBar.show()
+                    } else {
+                        viewModel.sendMessage(message, user.data)
+                        binding.singleChatRecyclerTextInput.editText?.setText("")
+                    }
+                }
             }
             is Response.Failure -> {
-                Log.e("$this", it.exception.toString())
+                Log.e("$this", user.exception.toString())
             }
         }
     }

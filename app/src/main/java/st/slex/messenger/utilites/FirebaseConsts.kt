@@ -21,6 +21,7 @@ const val CHILD_TEXT = "text"
 const val CHILD_TIMESTAMP = "timestamp"
 const val CHILD_URL = "url"
 const val CHILD_BIO = "bio"
+const val CHILD_MESSAGE_KEY = "message_key"
 
 /*Permission Const*/
 const val READ_CONTACTS = Manifest.permission.READ_CONTACTS

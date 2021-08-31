@@ -8,5 +8,5 @@ import st.slex.messenger.utilites.result.Response
 interface SingleChatRepository {
     suspend fun getUser(uid: String): Flow<Response<UserModel>>
     suspend fun getMessages(uid: String, limitToLast: Int): Flow<Response<MessageModel>>
-    suspend fun sendMessage(message: String, uid: String)
+    suspend fun sendMessage(message: String, user: UserModel)
 }

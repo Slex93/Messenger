@@ -60,10 +60,10 @@ class SingleChatRepositoryImpl @Inject constructor(
             awaitClose { reference.removeEventListener(listener) }
         }
 
-    override suspend fun sendMessage(message: String, uid: String): Unit =
+    override suspend fun sendMessage(message: String, user: UserModel): Unit =
         withContext(Dispatchers.IO) {
-            val refDialogUser = "$NODE_CHAT/${auth.currentUser?.uid}/$uid"
-            val refDialogReceivingUser = "$NODE_CHAT/$uid/${auth.currentUser?.uid}"
+            val refDialogUser = "$NODE_CHAT/${auth.currentUser?.uid}/${user.id}"
+            val refDialogReceivingUser = "$NODE_CHAT/${user.id}/${auth.currentUser?.uid}"
             val messageKey = databaseReference.child(refDialogUser).push().key
             val mapMessage = hashMapOf<String, Any>()
             mapMessage[CHILD_FROM] = auth.currentUser?.uid.toString()
@@ -75,20 +75,24 @@ class SingleChatRepositoryImpl @Inject constructor(
             databaseReference
                 .updateChildren(mapDialog)
                 .addOnSuccessListener {
-                    setInMainList(uid, messageKey.toString())
+                    setInMainList(user, message, messageKey.toString())
                 }
         }
 
-    private fun setInMainList(uid: String, messageKey: String) {
-        val userReference =
-            databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString())
-                .child(uid)
-        val receiverReference = databaseReference.child(NODE_CHAT_LIST).child(uid)
-            .child(auth.currentUser?.uid.toString())
-
-        userReference.setValue(messageKey)
-        receiverReference.setValue(messageKey)
-
+    private fun setInMainList(user: UserModel, message: String, messageKey: String) {
+        val mapMessage = hashMapOf<String, Any>()
+        mapMessage[CHILD_MESSAGE_KEY] = messageKey
+        mapMessage[CHILD_FROM] = auth.currentUser?.uid.toString()
+        mapMessage[CHILD_TEXT] = message
+        mapMessage[CHILD_TIMESTAMP] = System.currentTimeMillis()
+        mapMessage[CHILD_FULL_NAME] = user.full_name
+        mapMessage[CHILD_USERNAME] = user.username
+        mapMessage[CHILD_URL] = user.url
+        mapMessage[CHILD_ID] = user.id
+        databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString())
+            .child(user.id).updateChildren(mapMessage)
+        databaseReference.child(NODE_CHAT_LIST).child(user.id)
+            .child(auth.currentUser?.uid.toString()).updateChildren(mapMessage)
 
     }
 

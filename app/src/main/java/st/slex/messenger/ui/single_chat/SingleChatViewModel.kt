@@ -39,8 +39,8 @@ class SingleChatViewModel @Inject constructor(private val repository: SingleChat
             }
         }
 
-    fun sendMessage(message: String, uid: String) = viewModelScope.launch {
-        repository.sendMessage(message = message, uid = uid)
+    fun sendMessage(message: String, user: UserModel) = viewModelScope.launch {
+        repository.sendMessage(message = message, user = user)
     }
 
 }

@@ -10,7 +10,7 @@ import st.slex.messenger.utilites.base.CardClickListener
 class MainAdapter(private val clickListener: CardClickListener) :
     RecyclerView.Adapter<MainViewHolder>() {
 
-    private var mainList = mutableListOf<ChatListModel>()
+    private var list = mutableListOf<ChatListModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -19,14 +19,27 @@ class MainAdapter(private val clickListener: CardClickListener) :
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        holder.bind(mainList[position])
+        holder.bind(list[position])
         holder.clickListener(clickListener)
     }
 
-    override fun getItemCount(): Int = mainList.size
+    override fun getItemCount(): Int = list.size
 
-    fun makeMainList(message: ChatListModel) {
-        if (!mainList.contains(message)) mainList.add(message)
-        notifyItemInserted(mainList.size)
+    fun addChat(message: ChatListModel) {
+        if (!list.contains(message)) {
+            var update = false
+            list.map {
+                if (it.id == message.id) {
+                    update = true
+                    message
+                } else it
+            }
+            if (!update) list.add(message)
+            list.apply {
+                sortBy { it.timestamp.toString() }
+                reverse()
+            }
+            notifyDataSetChanged()
+        }
     }
 }

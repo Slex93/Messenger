@@ -13,6 +13,7 @@ class AppChildEventListener(
     }
 
     override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+        onSuccess(snapshot)
     }
 
     override fun onChildRemoved(snapshot: DataSnapshot) {

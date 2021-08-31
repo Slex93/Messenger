@@ -13,10 +13,10 @@ class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
     private lateinit var clickListener: CardClickListener
 
     fun bind(item: ChatListModel) {
-        binding.itemMainCard.transitionName = item.user.id
-        binding.itemMainUsername.text = item.user.full_name
-        binding.itemMainContent.text = item.message.text
-        binding.itemMainTimestamp.text = item.message.timestamp.toString().convertToTime()
+        binding.itemMainCard.transitionName = item.id
+        binding.itemMainUsername.text = item.full_name
+        binding.itemMainContent.text = item.text
+        binding.itemMainTimestamp.text = item.timestamp.toString().convertToTime()
     }
 
     fun clickListener(clickListener: CardClickListener) {

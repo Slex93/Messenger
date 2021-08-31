@@ -5,19 +5,23 @@ import android.util.Log
 import android.view.*
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
+import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.funs.setSupportActionBar
 import st.slex.messenger.utilites.result.Response
 
+@ExperimentalCoroutinesApi
 class ContactFragment : BaseFragment() {
 
     private var _binding: FragmentContactBinding? = null
@@ -46,26 +50,27 @@ class ContactFragment : BaseFragment() {
         initRecyclerView()
         binding.fragmentContactToolbar.title = getString(R.string.title_contacts)
         setSupportActionBar(binding.fragmentContactToolbar)
+        contactViewModel.initContact().observe(viewLifecycleOwner, contactObserver)
+    }
+
+    private val contactObserver: Observer<Response<UserModel>> = Observer {
+        when (it) {
+            is Response.Success -> {
+                adapter.addItems(it.data)
+            }
+            is Response.Failure -> {
+                Log.i("ContactFragmentException", it.exception.toString())
+            }
+            is Response.Loading -> {
+
+            }
+        }
     }
 
     private fun initRecyclerView() {
         recycler = binding.fragmentContactRecycler
         adapter = ContactAdapter(clickListener)
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        contactViewModel.initContact().observe(viewLifecycleOwner) {
-            when (it) {
-                is Response.Success -> {
-                    adapter.addItems(it.data)
-                }
-                is Response.Failure -> {
-                    Log.i("ContactFragmentException", it.exception.toString())
-                }
-                is Response.Loading -> {
-                    Log.i("ContactFragmentLoading", "loading")
-                }
-            }
-        }
-
         postponeEnterTransition()
         recycler.doOnPreDraw {
             startPostponedEnterTransition()

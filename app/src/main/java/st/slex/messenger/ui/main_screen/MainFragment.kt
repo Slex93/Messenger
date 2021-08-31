@@ -58,15 +58,14 @@ class MainFragment : BaseFragment() {
         )
         binding.navView.setupWithNavController(findNavController())
         initRecyclerView()
-        Log.i("testMainlist", "created")
         viewModel.chatList.observe(viewLifecycleOwner, chatListObserver)
+        viewModel.getChatList()
     }
 
     private val chatListObserver: Observer<Response<ChatListModel>> = Observer {
         when (it) {
             is Response.Success -> {
-                Log.i("testMainlist:", it.data.toString())
-                adapter.makeMainList(it.data)
+                adapter.addChat(it.data)
             }
             is Response.Failure -> {
                 Log.e("$this", it.exception.toString())
@@ -91,7 +90,6 @@ class MainFragment : BaseFragment() {
                     Log.i("Cancelled", it.exception.message.toString())
                 }
                 is Response.Loading -> {
-                    Log.i("Loading", it.toString())
                 }
             }
         }
@@ -114,16 +112,8 @@ class MainFragment : BaseFragment() {
         findNavController().navigate(directions, extras)
     }
 
-    override fun onStop() {
-        super.onStop()
-        Log.i("testMainlist", "onStop")
-        viewModel.chatList.removeObservers(viewLifecycleOwner)
-
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.i("testMainlist", "onDestroyView")
         _binding = null
     }
 
