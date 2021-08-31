@@ -7,7 +7,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.MainRepository
 import st.slex.messenger.utilites.NODE_USER
@@ -31,12 +30,5 @@ class MainRepositoryImpl @Inject constructor(
         })
         reference.addListenerForSingleValueEvent(listener)
         awaitClose { reference.removeEventListener(listener) }
-    }
-
-    override suspend fun getTestList(): Flow<List<MessageModel>> = callbackFlow {
-        val event = trySend(
-            emptyList()
-        )
-        awaitClose { event.isClosed }
     }
 }
