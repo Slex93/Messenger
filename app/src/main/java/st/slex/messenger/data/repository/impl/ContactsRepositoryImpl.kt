@@ -7,7 +7,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.ContactsRepository
@@ -22,29 +21,26 @@ import javax.inject.Inject
 class ContactsRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
     private val auth: FirebaseAuth
-) :
-    ContactsRepository {
+) : ContactsRepository {
     override suspend fun getContacts(): Flow<Response<UserModel>> = callbackFlow {
+        Response.Loading
         val referenceContact = databaseReference.child(NODE_CONTACT).child(auth.uid.toString())
         val listener = AppValueEventListener({ snapshot ->
-            val list = snapshot.children.map {
+            snapshot.children.map {
                 it.getThisValue<ContactModel>()
-            }
-            list.forEach { contact ->
-                launch {
-                    val reference = databaseReference.child(NODE_USER).child(contact.id)
-                    val userListener = AppValueEventListener({ user ->
-                        trySendBlocking(
-                            Response.Success(
-                                user.getThisValue<UserModel>()
-                                    .copy(full_name = contact.full_name)
-                            )
-                        )
-                    }, { exception ->
-                        trySendBlocking(Response.Failure(exception))
-                    })
-                    reference.addValueEventListener(userListener)
-                }
+            }.forEach { contact ->
+                databaseReference
+                    .child(NODE_USER)
+                    .child(contact.id)
+                    .addValueEventListener(
+                        AppValueEventListener({ user ->
+                            val contact =
+                                user.getThisValue<UserModel>().copy(full_name = contact.full_name)
+                            trySendBlocking(Response.Success(contact))
+                        }, { exception ->
+                            trySendBlocking(Response.Failure(exception))
+                        })
+                    )
             }
         }, { exception ->
             trySendBlocking(Response.Failure(exception))

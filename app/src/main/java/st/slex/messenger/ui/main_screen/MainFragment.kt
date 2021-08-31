@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
@@ -58,11 +59,21 @@ class MainFragment : BaseFragment() {
         )
         binding.navView.setupWithNavController(findNavController())
         initRecyclerView()
-        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getChatList().collect {
                 when (it) {
                     is Response.Success -> {
                         adapter.addChat(it.value)
+                    }
+                    is Response.Failure -> {
+                        Log.e(
+                            "Exception im MainList from the flow",
+                            it.exception.message.toString(),
+                            it.exception.cause
+                        )
+                    }
+                    is Response.Loading -> {
+
                     }
                 }
             }
