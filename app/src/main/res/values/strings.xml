@@ -1,8 +1,6 @@
 <resources>
-    <string name="app_name">Messenger</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name" translatable="false">Messenger</string>
     <string name="next_step">Next step</string>
-
     <!--Title-->
     <string name="title_code">Enter code</string>
     <string name="title_contacts">Contacts</string>
@@ -23,10 +21,10 @@
     <string name="label_sign_out">Sign out</string>
 
     <!--State-->
-    <string name="state_online">Online</string>
-    <string name="state_offline">Offline</string>
+    <string name="state_online" translatable="false">Online</string>
+    <string name="state_offline" translatable="false">Offline</string>
     <string name="label_btn_send">send</string>
-    <string name="label_input_message">Input message...</string>
+    <string name="label_input_message">Input message…</string>
     <string name="label_nav_all_chats">All chats</string>
     <string name="label_nav_contacts">Contacts</string>
     <string name="label_nav_settings">Settings</string>
