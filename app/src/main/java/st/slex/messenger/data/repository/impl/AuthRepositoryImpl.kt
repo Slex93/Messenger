@@ -67,7 +67,7 @@ class AuthRepositoryImpl @Inject constructor(
         val userReference = databaseReference.child(NODE_USER).child(id)
         val listener = AppValueEventListener({ snapshot ->
             val user = snapshot.getThisValue<UserModel>()
-            val username = if (user.username.isNullOrEmpty()) {
+            val username = if (user.username.isEmpty()) {
                 id
             } else user.username
             val mapUser = mapOf(

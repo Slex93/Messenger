@@ -24,6 +24,7 @@ import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.base.CardClickListener
+import st.slex.messenger.utilites.funs.downloadAndSet
 import st.slex.messenger.utilites.result.Response
 
 @ExperimentalCoroutinesApi
@@ -85,7 +86,7 @@ class MainFragment : BaseFragment() {
         viewModel.currentUser.observe(viewLifecycleOwner) {
             when (it) {
                 is Response.Success -> {
-                    //headerBinding.navigationHeaderImage.downloadAndSet(it.value.url)
+                    headerBinding.navigationHeaderImage.downloadAndSet(it.value.url)
                     headerBinding.navigationHeaderUserName.text = it.value.username
                     headerBinding.navigationHeaderPhoneNumber.text = it.value.phone
                 }

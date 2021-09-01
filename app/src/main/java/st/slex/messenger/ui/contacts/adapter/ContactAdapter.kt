@@ -30,8 +30,11 @@ class ContactAdapter(
 
     fun addItems(data: List<ContactModel>) {
         val result = DiffUtil.calculateDiff(ContactsDiffUtilCallback(contacts, data))
-        contacts.clear()
-        contacts.addAll(data)
+        contacts.apply {
+            clear()
+            addAll(data)
+            sortBy { it.full_name }
+        }
         result.dispatchUpdatesTo(this)
     }
 

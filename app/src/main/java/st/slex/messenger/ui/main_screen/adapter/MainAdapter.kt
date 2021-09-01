@@ -29,8 +29,12 @@ class MainAdapter(private val clickListener: CardClickListener) :
 
     fun addChat(data: List<ChatListModel>) {
         val result = DiffUtil.calculateDiff(ChatsDiffUtilCallback(chats, data))
-        chats.clear()
-        chats.addAll(data)
+        chats.apply {
+            clear()
+            addAll(data)
+            sortBy { it.timestamp.toString() }
+            reverse()
+        }
         result.dispatchUpdatesTo(this)
     }
 }

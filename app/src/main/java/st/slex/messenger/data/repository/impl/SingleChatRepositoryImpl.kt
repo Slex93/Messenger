@@ -60,7 +60,39 @@ class SingleChatRepositoryImpl @Inject constructor(
             awaitClose { reference.removeEventListener(listener) }
         }
 
-    override suspend fun sendMessage(message: String, user: UserModel): Unit =
+    override suspend fun getCurrentUser(uid: String): Flow<Response<UserModel>> = callbackFlow {
+        val reference = databaseReference.child(NODE_USER).child(auth.uid.toString())
+        val listener = AppValueEventListener({ snapshot ->
+            val currentUser = snapshot.getThisValue<UserModel>()
+            if (currentUser.full_name.isEmpty()) {
+                databaseReference.child(NODE_CONTACT).child(uid).child(auth.uid.toString()).child(
+                    CHILD_FULL_NAME
+                ).addValueEventListener(AppValueEventListener({
+                    val fullName = it.getThisValue<String>()
+                    val name = if (fullName.isEmpty()) {
+                        currentUser.username
+                    } else {
+                        fullName
+                    }
+                    trySendBlocking(Response.Success(currentUser.copy(full_name = name)))
+                }, { exception ->
+                    trySendBlocking(Response.Failure(exception))
+                }))
+            } else {
+                trySendBlocking(Response.Success(currentUser))
+            }
+        }, { exception ->
+            trySendBlocking(Response.Failure(exception))
+        })
+        reference.addValueEventListener(listener)
+        awaitClose { reference.removeEventListener(listener) }
+    }
+
+    override suspend fun sendMessage(
+        message: String,
+        user: UserModel,
+        currentUser: UserModel
+    ): Unit =
         withContext(Dispatchers.IO) {
             val refDialogUser = "$NODE_CHAT/${auth.currentUser?.uid}/${user.id}"
             val refDialogReceivingUser = "$NODE_CHAT/${user.id}/${auth.currentUser?.uid}"
@@ -75,24 +107,35 @@ class SingleChatRepositoryImpl @Inject constructor(
             databaseReference
                 .updateChildren(mapDialog)
                 .addOnSuccessListener {
-                    setInMainList(user, message, messageKey.toString())
+                    setInChatList(user, message, messageKey.toString(), currentUser)
                 }
         }
 
-    private fun setInMainList(user: UserModel, message: String, messageKey: String) {
-        val mapChat = mapOf(
+    private fun setInChatList(
+        user: UserModel,
+        message: String,
+        messageKey: String,
+        currentUser: UserModel
+    ) {
+        val mapUser = mutableMapOf<String, Any>(
             CHILD_MESSAGE_KEY to messageKey,
-            CHILD_FROM to auth.currentUser?.uid.toString(),
+            CHILD_FROM to currentUser.id,
             CHILD_TEXT to message,
             CHILD_TIMESTAMP to System.currentTimeMillis(),
             CHILD_FULL_NAME to user.full_name,
             CHILD_USERNAME to user.username,
-            CHILD_URL to user.url
+            CHILD_URL to user.url,
+            CHILD_ID to user.id
         )
-        val mapUser: MutableMap<String, Any> = mapChat.toMutableMap()
-        val mapReceiver: MutableMap<String, Any> = mapChat.toMutableMap()
-        mapUser[CHILD_ID] = user.id
-        mapReceiver[CHILD_ID] = user.id
+        val mapReceiver = mutableMapOf<String, Any>(
+            CHILD_MESSAGE_KEY to messageKey,
+            CHILD_FROM to currentUser.id,
+            CHILD_TEXT to message,
+            CHILD_TIMESTAMP to System.currentTimeMillis(),
+            CHILD_FULL_NAME to currentUser.full_name,
+            CHILD_USERNAME to currentUser.username,
+            CHILD_URL to currentUser.url
+        )
         databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString())
             .child(user.id).updateChildren(mapUser)
         databaseReference.child(NODE_CHAT_LIST).child(user.id)

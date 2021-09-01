@@ -6,25 +6,25 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_baseline_home_24"
-            android:title="All chats" />
+            android:title="@string/label_nav_all_chats" />
         <item
             android:id="@+id/nav_contact"
             android:icon="@drawable/ic_baseline_contacts_24"
-            android:title="Contacts" />
+            android:title="@string/label_nav_contacts" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_baseline_settings_24"
-            android:title="Settings" />
+            android:title="@string/label_nav_settings" />
     </group>
 
     <group android:id="@+id/group_menu">
         <item
             android:id="@+id/nav_connect"
             android:icon="@drawable/ic_baseline_connect_without_contact_24"
-            android:title="Connect me" />
+            android:title="@string/label_nav_connect_me" />
         <item
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_baseline_help_24"
-            android:title="Help" />
+            android:title="@string/label_nav_help" />
     </group>
 </menu>

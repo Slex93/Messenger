@@ -26,6 +26,7 @@ import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.ui.single_chat.adapter.ChatAdapter
 import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.utilites.funs.downloadAndSet
 import st.slex.messenger.utilites.result.Response
 
 
@@ -150,6 +151,7 @@ class SingleChatFragment : BaseFragment() {
             is Response.Success -> {
                 binding.toolbarInfo.toolbarInfoUsername.text = user.value.full_name
                 binding.toolbarInfo.toolbarInfoStatus.text = user.value.state
+                binding.toolbarInfo.shapeableImageView.downloadAndSet(user.value.url)
                 binding.singleChatRecyclerButton.setOnClickListener(user.value.sendClicker)
             }
             is Response.Failure -> {

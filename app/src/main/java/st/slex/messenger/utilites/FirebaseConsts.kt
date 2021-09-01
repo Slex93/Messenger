@@ -1,7 +1,5 @@
 package st.slex.messenger.utilites
 
-import android.Manifest
-
 /*Nodes*/
 const val NODE_USER = "user"
 const val NODE_USERNAME = "username"
@@ -23,6 +21,4 @@ const val CHILD_URL = "url"
 const val CHILD_BIO = "bio"
 const val CHILD_MESSAGE_KEY = "message_key"
 
-/*Permission Const*/
-const val READ_CONTACTS = Manifest.permission.READ_CONTACTS
 const val PERMISSION_REQUEST = 200

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar_info_card_view"
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
-    android:id="@+id/toolbar_info_card_view"
-    android:transitionName="transitCard"
-    android:elevation="0dp">
+    android:elevation="0dp"
+    android:transitionName="transitCard">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
@@ -17,8 +17,8 @@
             android:id="@+id/shapeableImageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/ic_default_photo"
-            android:layout_gravity="start|center_vertical" />
+            android:layout_gravity="start|center_vertical"
+            tools:src="@drawable/ic_default_photo" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -26,22 +26,22 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_gravity="center"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/toolbar_info_username"
             style="@style/TextAppearance.MaterialComponents.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username" />
+            tools:text="Username" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/toolbar_info_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="status" />
+            tools:text="status" />
 
     </LinearLayout>
 

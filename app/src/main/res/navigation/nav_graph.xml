@@ -53,7 +53,8 @@
         tools:layout="@layout/fragment_contact">
         <action
             android:id="@+id/action_nav_contact_to_nav_single_chat"
-            app:destination="@id/nav_single_chat" />
+            app:destination="@id/nav_single_chat"
+            app:popUpTo="@id/nav_home" />
     </fragment>
     <fragment
         android:id="@+id/nav_single_chat"

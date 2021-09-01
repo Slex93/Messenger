@@ -1,5 +1,6 @@
 package st.slex.messenger.ui.single_chat
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -40,7 +41,20 @@ class SingleChatViewModel @Inject constructor(private val repository: SingleChat
         }
 
     fun sendMessage(message: String, user: UserModel) = viewModelScope.launch {
-        repository.sendMessage(message = message, user = user)
+        repository.getCurrentUser(user.id).collect {
+            when (it) {
+                is Response.Success -> {
+                    repository.sendMessage(message = message, user = user, it.value)
+                }
+                is Response.Failure -> {
+                    Log.e(
+                        "Failure in SingleChatViewModel:",
+                        it.exception.message.toString(),
+                        it.exception.fillInStackTrace()
+                    )
+                }
+            }
+        }
     }
 
 }

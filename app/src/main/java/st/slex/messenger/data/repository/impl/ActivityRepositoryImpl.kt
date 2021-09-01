@@ -31,15 +31,26 @@ class ActivityRepositoryImpl @Inject constructor(
                     snapshotParent.children.forEach { snapshot ->
                         list.forEach { contact ->
                             if (auth.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
-                                val map = mapOf(
-                                    CHILD_ID to snapshot.key.toString(),
-                                    CHILD_FULL_NAME to contact.full_name,
-                                    CHILD_PHONE to contact.phone,
-                                )
-                                databaseReference.child(NODE_CONTACT)
-                                    .child(auth.uid.toString())
-                                    .child(snapshot.key.toString())
-                                    .updateChildren(map)
+                                databaseReference.child(NODE_USER).child(snapshot.key.toString())
+                                    .child(
+                                        CHILD_URL
+                                    ).addValueEventListener(AppValueEventListener({ url ->
+                                        val map = mapOf(
+                                            CHILD_ID to snapshot.key.toString(),
+                                            CHILD_FULL_NAME to contact.full_name,
+                                            CHILD_PHONE to contact.phone,
+                                            CHILD_URL to url.value.toString()
+                                        )
+                                        databaseReference.child(NODE_CONTACT)
+                                            .child(auth.uid.toString())
+                                            .child(snapshot.key.toString())
+                                            .updateChildren(map)
+                                    }, { exception ->
+                                        Log.e(
+                                            "Activity Repository Send Contact",
+                                            exception.toString()
+                                        )
+                                    }))
                             }
                         }
                     }

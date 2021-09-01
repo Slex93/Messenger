@@ -1,11 +1,9 @@
 package st.slex.messenger.utilites.base
 
-import com.google.android.material.card.MaterialCardView
+import android.view.View
 
 class CardClickListener(
-    val clickListener: (MaterialCardView) -> Unit
-) {
-    fun onClick(
-        cardView: MaterialCardView,
-    ) = clickListener(cardView)
+    val clickListener: (View) -> Unit
+) : View.OnClickListener {
+    override fun onClick(p0: View) = clickListener(p0)
 }

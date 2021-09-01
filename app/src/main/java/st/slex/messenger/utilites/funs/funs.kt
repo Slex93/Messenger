@@ -112,11 +112,8 @@ fun ImageView.downloadAndSet(url: String) {
     Glide.with(this)
         .load(url)
         .apply(RequestOptions.placeholderOf(R.drawable.ic_default_photo))
+        .circleCrop()
+        .centerCrop()
         .into(this)
 }
 
-fun String.asTime(): CharSequence? {
-    val time = Date(this.toLong())
-    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return timeFormat.format(time)
-}

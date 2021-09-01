@@ -34,7 +34,7 @@ class MainRepositoryImpl @Inject constructor(
         awaitClose { reference.removeEventListener(listener) }
     }
 
-    override suspend fun getChatList() = callbackFlow<Response<List<ChatListModel>>> {
+    override suspend fun getChatList() = callbackFlow {
         val reference =
             databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString())
         val listener = AppValueEventListener({ snapshot ->
