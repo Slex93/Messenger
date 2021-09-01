@@ -30,7 +30,7 @@ class ActivityRepositoryImpl @Inject constructor(
                 AppValueEventListener({ snapshotParent ->
                     snapshotParent.children.forEach { snapshot ->
                         list.forEach { contact ->
-                        if (auth.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
+                            if (auth.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
                                 databaseReference.child(NODE_USER).child(snapshot.key.toString())
                                     .child(
                                         CHILD_URL
