@@ -20,7 +20,7 @@ import javax.inject.Inject
 class MainScreenViewModel @Inject constructor(private val repository: MainRepository) :
     ViewModel() {
 
-    suspend fun getChatList(): StateFlow<Response<ChatListModel>> =
+    suspend fun getChatList(): StateFlow<Response<List<ChatListModel>>> =
         repository.getChatList().stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,

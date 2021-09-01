@@ -5,16 +5,17 @@ import android.util.Log
 import android.view.*
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
-import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.base.CardClickListener
@@ -47,22 +48,26 @@ class ContactFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        initRecyclerView()
         binding.fragmentContactToolbar.title = getString(R.string.title_contacts)
         setSupportActionBar(binding.fragmentContactToolbar)
-        contactViewModel.initContact().observe(viewLifecycleOwner, contactObserver)
-    }
+        initRecyclerView()
+        viewLifecycleOwner.lifecycleScope.launch {
+            contactViewModel.getContact().collect {
+                when (it) {
+                    is Response.Success -> {
+                        adapter.addItems(it.value)
+                    }
+                    is Response.Failure -> {
+                        Log.e(
+                            "Exception im ContactList from the flow",
+                            it.exception.message.toString(),
+                            it.exception.cause
+                        )
+                    }
+                    is Response.Loading -> {
 
-    private val contactObserver: Observer<Response<UserModel>> = Observer {
-        when (it) {
-            is Response.Success -> {
-                adapter.addItems(it.value)
-            }
-            is Response.Failure -> {
-                Log.i("ContactFragmentException", it.exception.toString())
-            }
-            is Response.Loading -> {
-
+                    }
+                }
             }
         }
     }

@@ -80,19 +80,23 @@ class SingleChatRepositoryImpl @Inject constructor(
         }
 
     private fun setInMainList(user: UserModel, message: String, messageKey: String) {
-        val mapMessage = hashMapOf<String, Any>()
-        mapMessage[CHILD_MESSAGE_KEY] = messageKey
-        mapMessage[CHILD_FROM] = auth.currentUser?.uid.toString()
-        mapMessage[CHILD_TEXT] = message
-        mapMessage[CHILD_TIMESTAMP] = System.currentTimeMillis()
-        mapMessage[CHILD_FULL_NAME] = user.full_name
-        mapMessage[CHILD_USERNAME] = user.username
-        mapMessage[CHILD_URL] = user.url
-        mapMessage[CHILD_ID] = user.id
+        val mapChat = mapOf(
+            CHILD_MESSAGE_KEY to messageKey,
+            CHILD_FROM to auth.currentUser?.uid.toString(),
+            CHILD_TEXT to message,
+            CHILD_TIMESTAMP to System.currentTimeMillis(),
+            CHILD_FULL_NAME to user.full_name,
+            CHILD_USERNAME to user.username,
+            CHILD_URL to user.url
+        )
+        val mapUser: MutableMap<String, Any> = mapChat.toMutableMap()
+        val mapReceiver: MutableMap<String, Any> = mapChat.toMutableMap()
+        mapUser[CHILD_ID] = user.id
+        mapReceiver[CHILD_ID] = user.id
         databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString())
-            .child(user.id).updateChildren(mapMessage)
+            .child(user.id).updateChildren(mapUser)
         databaseReference.child(NODE_CHAT_LIST).child(user.id)
-            .child(auth.currentUser?.uid.toString()).updateChildren(mapMessage)
+            .child(auth.currentUser?.uid.toString()).updateChildren(mapReceiver)
 
     }
 

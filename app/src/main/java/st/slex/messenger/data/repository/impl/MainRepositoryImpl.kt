@@ -12,7 +12,6 @@ import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.MainRepository
 import st.slex.messenger.utilites.NODE_CHAT_LIST
 import st.slex.messenger.utilites.NODE_USER
-import st.slex.messenger.utilites.base.AppChildEventListener
 import st.slex.messenger.utilites.base.AppValueEventListener
 import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.Response
@@ -35,15 +34,16 @@ class MainRepositoryImpl @Inject constructor(
         awaitClose { reference.removeEventListener(listener) }
     }
 
-    override suspend fun getChatList() = callbackFlow<Response<ChatListModel>> {
+    override suspend fun getChatList() = callbackFlow<Response<List<ChatListModel>>> {
         val reference =
             databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString())
-        val listener = AppChildEventListener({ snapshot ->
-            trySendBlocking(Response.Success(value = snapshot.getThisValue()))
+        val listener = AppValueEventListener({ snapshot ->
+            val result = snapshot.children.map { it.getThisValue<ChatListModel>() }
+            trySendBlocking(Response.Success(value = result))
         }, { exception ->
             trySendBlocking(Response.Failure(exception = exception))
         })
-        reference.addChildEventListener(listener)
+        reference.addValueEventListener(listener)
         awaitClose { reference.removeEventListener(listener) }
     }
 

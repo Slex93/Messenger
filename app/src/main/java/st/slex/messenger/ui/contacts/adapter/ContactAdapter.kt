@@ -2,9 +2,10 @@ package st.slex.messenger.ui.contacts.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
-import st.slex.messenger.data.model.UserModel
+import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.utilites.base.CardClickListener
 
 class ContactAdapter(
@@ -12,7 +13,7 @@ class ContactAdapter(
 ) :
     RecyclerView.Adapter<ContactViewHolder>() {
 
-    private var contactList = mutableListOf<UserModel>()
+    private var contacts = mutableListOf<ContactModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -21,17 +22,17 @@ class ContactAdapter(
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-        holder.bind(contactList[position])
+        holder.bind(contacts[position])
         holder.clickListener(clickListener)
     }
 
-    override fun getItemCount(): Int = contactList.size
+    override fun getItemCount(): Int = contacts.size
 
-    fun addItems(contact: UserModel) {
-        if (!contactList.contains(contact)) {
-            contactList.add(contact)
-        }
-        notifyDataSetChanged()
+    fun addItems(data: List<ContactModel>) {
+        val result = DiffUtil.calculateDiff(ContactsDiffUtilCallback(contacts, data))
+        contacts.clear()
+        contacts.addAll(data)
+        result.dispatchUpdatesTo(this)
     }
 
 }

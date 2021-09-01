@@ -7,5 +7,5 @@ import st.slex.messenger.utilites.result.Response
 
 interface MainRepository {
     suspend fun getCurrentUser(): Flow<Response<UserModel>>
-    suspend fun getChatList(): Flow<Response<ChatListModel>>
+    suspend fun getChatList(): Flow<Response<List<ChatListModel>>>
 }

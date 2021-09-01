@@ -26,26 +26,26 @@ class ActivityRepositoryImpl @Inject constructor(
 
     override suspend fun updateContacts(list: List<ContactModel>): Unit =
         withContext(Dispatchers.IO) {
-            val reference = databaseReference.child(NODE_PHONE)
-            val listener = AppValueEventListener({ snapshotParent ->
-                snapshotParent.children.forEach { snapshot ->
-                    list.forEach { contact ->
-                        if (auth.currentUser?.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
-                            val map = mapOf(
-                                CHILD_ID to snapshot.key.toString(),
-                                CHILD_FULL_NAME to contact.full_name,
-                                CHILD_PHONE to contact.phone
-                            )
-                            databaseReference.child(NODE_CONTACT)
-                                .child(auth.currentUser?.uid.toString())
-                                .child(snapshot.key.toString())
-                                .updateChildren(map)
+            databaseReference.child(NODE_PHONE).addValueEventListener(
+                AppValueEventListener({ snapshotParent ->
+                    snapshotParent.children.forEach { snapshot ->
+                        list.forEach { contact ->
+                            if (auth.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
+                                val map = mapOf(
+                                    CHILD_ID to snapshot.key.toString(),
+                                    CHILD_FULL_NAME to contact.full_name,
+                                    CHILD_PHONE to contact.phone,
+                                )
+                                databaseReference.child(NODE_CONTACT)
+                                    .child(auth.uid.toString())
+                                    .child(snapshot.key.toString())
+                                    .updateChildren(map)
+                            }
                         }
                     }
-                }
-            }, { exception ->
-                Log.e("$this", exception.toString())
-            })
-            reference.addListenerForSingleValueEvent(listener)
+                }, { exception ->
+                    Log.e("Activity Repository Send Contact", exception.toString())
+                })
+            )
         }
 }

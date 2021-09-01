@@ -18,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
+import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.ui.single_chat.adapter.ChatAdapter
 import st.slex.messenger.utilites.base.BaseFragment
@@ -76,57 +78,58 @@ class SingleChatFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         recycler = binding.singleChatRecycler
-        adapter = ChatAdapter(auth.currentUser?.uid.toString())
+        adapter = ChatAdapter(FirebaseAuth.getInstance().uid.toString())
         layoutManager = LinearLayoutManager(requireContext())
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
         recycler.isNestedScrollingEnabled = false
         swipeRefreshLayout = binding.singleChatRefreshLayout
-        viewModel.getMessages(uid, countMessage).observe(viewLifecycleOwner) {
-            when (it) {
-                is Response.Success -> {
-                    if (isScrollToPosition) {
-                        adapter.addItemToBottom(it.value) {
-                            recycler.smoothScrollToPosition(adapter.itemCount)
-                        }
-                    } else {
-                        adapter.addItemToTop(it.value) {
-                            swipeRefreshLayout.isRefreshing = false
-                        }
-                    }
-                }
-                is Response.Failure -> {
-
-                }
-                is Response.Loading -> {
-
-                }
-            }
-        }
-
-        recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                    isScrolling = true
-                }
-            }
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (isScrolling
-                    && dy < 0
-                    && layoutManager.findFirstVisibleItemPosition() <= 3
-                ) {
-                    updateData()
-                }
-            }
-        })
-
+        viewModel.getMessages(uid, countMessage).observe(viewLifecycleOwner, messageObserver)
+        recycler.addOnScrollListener(scrollListener)
         swipeRefreshLayout.setOnRefreshListener {
             updateData()
         }
+    }
 
+    private val messageObserver: Observer<Response<MessageModel>> = Observer {
+        when (it) {
+            is Response.Success -> {
+                if (isScrollToPosition) {
+                    adapter.addItemToBottom(it.value) {
+                        recycler.smoothScrollToPosition(adapter.itemCount)
+                    }
+                } else {
+                    adapter.addItemToTop(it.value) {
+                        swipeRefreshLayout.isRefreshing = false
+                    }
+                }
+            }
+            is Response.Failure -> {
+
+            }
+            is Response.Loading -> {
+
+            }
+        }
+    }
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                isScrolling = true
+            }
+        }
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            if (isScrolling
+                && dy < 0
+                && layoutManager.findFirstVisibleItemPosition() <= 3
+            ) {
+                updateData()
+            }
+        }
     }
 
     private fun updateData() {
@@ -147,26 +150,32 @@ class SingleChatFragment : BaseFragment() {
             is Response.Success -> {
                 binding.toolbarInfo.toolbarInfoUsername.text = user.value.full_name
                 binding.toolbarInfo.toolbarInfoStatus.text = user.value.state
-                binding.singleChatRecyclerButton.setOnClickListener {
-                    isScrollToPosition = true
-                    val message = binding.singleChatRecyclerTextInput.editText?.text.toString()
-                    if (message.isEmpty()) {
-                        val snackBar =
-                            Snackbar.make(binding.root, "Empty message", Snackbar.LENGTH_SHORT)
-                        snackBar.anchorView = binding.singleChatRecyclerTextInput
-                        snackBar.setAction("Ok") {}
-                        snackBar.show()
-                    } else {
-                        viewModel.sendMessage(message, user.value)
-                        binding.singleChatRecyclerTextInput.editText?.setText("")
-                    }
-                }
+                binding.singleChatRecyclerButton.setOnClickListener(user.value.sendClicker)
             }
             is Response.Failure -> {
                 Log.e("$this", user.exception.toString())
             }
+            is Response.Loading -> {
+
+            }
         }
     }
+
+    private val UserModel.sendClicker: View.OnClickListener
+        get() = View.OnClickListener {
+            isScrollToPosition = true
+            val message = binding.singleChatRecyclerTextInput.editText?.text.toString()
+            if (message.isEmpty()) {
+                val snackBar =
+                    Snackbar.make(binding.root, "Empty message", Snackbar.LENGTH_SHORT)
+                snackBar.anchorView = binding.singleChatRecyclerTextInput
+                snackBar.setAction("Ok") {}
+                snackBar.show()
+            } else {
+                viewModel.sendMessage(message, this)
+                binding.singleChatRecyclerTextInput.editText?.setText("")
+            }
+        }
 
     private fun setTransitAnimation() {
         sharedElementEnterTransition = MaterialContainerTransform().apply {

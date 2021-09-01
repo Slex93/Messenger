@@ -46,6 +46,8 @@ class MainActivity : AppCompatActivity() {
                     viewModel.updateContacts(it)
                 }
             }
+            navGraph.startDestination = R.id.nav_home
+            navController.graph = navGraph
         } else {
             navGraph.startDestination = R.id.nav_enter_phone
             navController.graph = navGraph
