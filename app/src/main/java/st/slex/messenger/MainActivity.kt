@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                 READ_CONTACTS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+
             CoroutineScope(Dispatchers.IO).launch {
                 this@MainActivity.setContacts {
                     viewModel.updateContacts(it)
