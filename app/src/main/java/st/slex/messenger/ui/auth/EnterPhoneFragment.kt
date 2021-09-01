@@ -76,20 +76,16 @@ class EnterPhoneFragment : BaseFragment() {
                 }
                 is AuthResponse.Send -> {
                     binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
-                    it.id.navigate()
+                    val direction =
+                        EnterPhoneFragmentDirections.actionNavEnterPhoneToNavEnterCode(it.id)
+                    val extras =
+                        FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
+                    findNavController().navigate(direction, extras)
                 }
                 is AuthResponse.Failure -> {
                     binding.root.showPrimarySnackBar(it.exception.toString())
                 }
             }
         }
-
-    private fun String.navigate() {
-        val direction =
-            EnterPhoneFragmentDirections.actionNavEnterPhoneToNavEnterCode(this)
-        val extras =
-            FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
-        findNavController().navigate(direction, extras)
-    }
 
 }
