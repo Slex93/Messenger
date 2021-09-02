@@ -1,6 +1,8 @@
 package st.slex.messenger.ui.auth
 
+import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,7 @@ import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.result.AuthResponse
+import st.slex.messenger.utilites.result.VoidResponse
 
 @ExperimentalCoroutinesApi
 class EnterPhoneFragment : BaseFragment() {
@@ -71,8 +74,19 @@ class EnterPhoneFragment : BaseFragment() {
             when (it) {
                 is AuthResponse.Success -> {
                     binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                    viewModel.authUser()
-                    requireActivity().recreate()
+                    viewModel.authUser().observe(viewLifecycleOwner) { auth ->
+                        when (auth) {
+                            is VoidResponse.Success -> {
+                                requireActivity().recreate()
+                            }
+                            is VoidResponse.Failure -> {
+                                Log.w(ContentValues.TAG, auth.exception)
+                            }
+                            is VoidResponse.Loading -> {
+
+                            }
+                        }
+                    }
                 }
                 is AuthResponse.Send -> {
                     binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
