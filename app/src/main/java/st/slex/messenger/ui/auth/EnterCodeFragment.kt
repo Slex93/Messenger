@@ -73,7 +73,7 @@ class EnterCodeFragment : BaseFragment() {
                     requireActivity().recreate()
                 }
                 is AuthResponse.Failure -> {
-                    binding.root.showPrimarySnackBar(it.exception.toString())
+                    Log.e("EnterCode: AuthResponse", it.exception.message, it.exception.cause)
                 }
                 else -> {
                 }
