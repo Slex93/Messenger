@@ -1,13 +1,8 @@
 package st.slex.messenger.data.repository.impl
 
 import android.app.Activity
-import android.content.ContentValues.TAG
-import android.util.Log
 import com.google.firebase.FirebaseException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.*
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -28,35 +23,20 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
 
-    override suspend fun signInWithPhone(phone: String, activity: Activity) = callbackFlow {
+    override suspend fun signInWithPhone(activity: Activity, phone: String) = callbackFlow {
 
-        val callback = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                Log.d(TAG, "onVerificationCompleted:$credential")
-                FirebaseAuth.getInstance().signInWithCredential(credential)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d(TAG, "signInWithCredential:success")
-                            trySendBlocking(AuthResponse.Success)
-                        } else {
-                            Log.w(TAG, "signInWithCredential:failure", task.exception)
-                            trySendBlocking(AuthResponse.Failure(task.exception as Exception))
-                        }
-                    }
-            }
-
-            override fun onVerificationFailed(e: FirebaseException) {
-                Log.w(TAG, "onVerificationFailed", e)
-                trySendBlocking(AuthResponse.Failure(e))
-            }
-
-            override fun onCodeSent(
-                verificationId: String,
-                token: PhoneAuthProvider.ForceResendingToken
-            ) {
-                trySendBlocking(AuthResponse.Send(verificationId))
-            }
-        }
+        val callback = makeCallback({ credential ->
+            signInWithCredential(
+                credential, {
+                    trySendBlocking(AuthResponse.Success)
+                }, {
+                    trySendBlocking(AuthResponse.Failure(it))
+                })
+        }, {
+            trySendBlocking(AuthResponse.Failure(it))
+        }, {
+            trySendBlocking(AuthResponse.Send(it))
+        })
 
         val phoneOptions = PhoneAuthOptions
             .newBuilder(FirebaseAuth.getInstance())
@@ -71,17 +51,40 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
 
     override suspend fun sendCode(id: String, code: String) = callbackFlow {
         val credential = PhoneAuthProvider.getCredential(id, code)
-        val event = FirebaseAuth.getInstance().signInWithCredential(credential)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    trySendBlocking(AuthResponse.Success)
-                } else {
-                    trySendBlocking(AuthResponse.Failure(task.exception as Exception))
-                }
-            }
+        val event = signInWithCredential(credential,
+            { trySendBlocking(AuthResponse.Success) },
+            { trySendBlocking(AuthResponse.Failure(it)) })
         awaitClose { event }
     }
 
+    private inline fun signInWithCredential(
+        credential: AuthCredential,
+        crossinline success: () -> Unit,
+        crossinline failure: (java.lang.Exception) -> Unit
+    ) = FirebaseAuth.getInstance().signInWithCredential(credential)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                success()
+            } else task.exception?.let {
+                failure(it)
+            }
+        }
+
+    private inline fun makeCallback(
+        crossinline success: (PhoneAuthCredential) -> Unit,
+        crossinline failure: (FirebaseException) -> Unit,
+        crossinline send: (String) -> Unit
+    ) =
+        object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            override fun onVerificationCompleted(credential: PhoneAuthCredential): Unit =
+                success(credential)
+
+            override fun onVerificationFailed(e: FirebaseException): Unit = failure(e)
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ): Unit = send(verificationId)
+        }
 
     override suspend fun authUser(): Flow<VoidResponse> = callbackFlow {
         val id = FirebaseAuth.getInstance().currentUser?.uid.toString()

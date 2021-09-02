@@ -11,10 +11,13 @@ import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
 import st.slex.messenger.utilites.base.BaseFragment
@@ -64,42 +67,45 @@ class EnterPhoneFragment : BaseFragment() {
             binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             val countryCode = binding.signInCountryCodeLayout.editText?.text.toString()
             val phonePostfix = binding.fragmentPhoneInput.editText?.text.toString()
-            viewModel.authPhone(requireActivity(), countryCode + phonePostfix)
-                .observe(viewLifecycleOwner, observer)
-        }
-    }
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.authPhone(requireActivity(), countryCode + phonePostfix).collect {
+                    when (it) {
+                        is AuthResponse.Success -> {
+                            binding.root.showPrimarySnackBar(getString(R.string.snack_success))
+                            this.async {
+                                viewModel.authUser().collect { auth ->
+                                    when (auth) {
+                                        is VoidResponse.Success -> {
+                                            requireActivity().recreate()
+                                        }
+                                        is VoidResponse.Failure -> {
+                                            Log.w(ContentValues.TAG, auth.exception)
+                                        }
+                                        is VoidResponse.Loading -> {
 
-    private val observer: Observer<AuthResponse>
-        get() = Observer {
-            when (it) {
-                is AuthResponse.Success -> {
-                    binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                    viewModel.authUser().observe(viewLifecycleOwner) { auth ->
-                        when (auth) {
-                            is VoidResponse.Success -> {
-                                requireActivity().recreate()
+                                        }
+                                    }
+                                }
                             }
-                            is VoidResponse.Failure -> {
-                                Log.w(ContentValues.TAG, auth.exception)
-                            }
-                            is VoidResponse.Loading -> {
 
-                            }
+                        }
+                        is AuthResponse.Send -> {
+                            binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
+                            val direction =
+                                EnterPhoneFragmentDirections.actionNavEnterPhoneToNavEnterCode(it.id)
+                            val extras =
+                                FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
+                            findNavController().navigate(direction, extras)
+                        }
+                        is AuthResponse.Failure -> {
+                            binding.root.showPrimarySnackBar(it.exception.toString())
+                        }
+                        is AuthResponse.Loading -> {
                         }
                     }
                 }
-                is AuthResponse.Send -> {
-                    binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
-                    val direction =
-                        EnterPhoneFragmentDirections.actionNavEnterPhoneToNavEnterCode(it.id)
-                    val extras =
-                        FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
-                    findNavController().navigate(direction, extras)
-                }
-                is AuthResponse.Failure -> {
-                    binding.root.showPrimarySnackBar(it.exception.toString())
-                }
             }
         }
+    }
 
 }

@@ -10,9 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.utilites.base.BaseFragment
@@ -61,24 +65,39 @@ class EnterCodeFragment : BaseFragment() {
 
     private fun String.textListener(id: String) {
         binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
-        authViewModel.sendCode(id = id, code = this).observe(viewLifecycleOwner, sendCodeObserver)
-    }
-
-    private val sendCodeObserver: Observer<AuthResponse>
-        get() = Observer<AuthResponse> {
-            when (it) {
-                is AuthResponse.Success -> {
-                    binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                    authViewModel.authUser().observe(viewLifecycleOwner, authObserver)
-                    requireActivity().recreate()
-                }
-                is AuthResponse.Failure -> {
-                    Log.e("EnterCode: AuthResponse", it.exception.message, it.exception.cause)
-                }
-                else -> {
+        viewLifecycleOwner.lifecycleScope.launch {
+            authViewModel.sendCode(id = id, code = this@textListener).collect {
+                when (it) {
+                    is AuthResponse.Success -> {
+                        binding.root.showPrimarySnackBar(getString(R.string.snack_success))
+                        this.async {
+                            authViewModel.authUser().collect { auth ->
+                                when (auth) {
+                                    is VoidResponse.Success -> {
+                                        requireActivity().recreate()
+                                    }
+                                    is VoidResponse.Failure -> {
+                                        Log.e(
+                                            "EnterCode: AuthResponse: Auth",
+                                            auth.exception.message,
+                                            auth.exception.cause
+                                        )
+                                    }
+                                    is VoidResponse.Loading -> {
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    is AuthResponse.Failure -> {
+                        Log.e("EnterCode: AuthResponse", it.exception.message, it.exception.cause)
+                    }
+                    else -> {
+                    }
                 }
             }
         }
+    }
 
     private val authObserver: Observer<VoidResponse> = Observer {
         if (it is VoidResponse.Failure) Log.e("$this", it.exception.toString())
