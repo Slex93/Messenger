@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
-
     private val viewModel: ActivityViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
