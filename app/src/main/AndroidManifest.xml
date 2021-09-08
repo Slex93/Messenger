@@ -14,26 +14,20 @@
         android:supportsRtl="true"
         android:theme="@style/ProjectTheme">
         <activity
-            android:name="st.slex.messenger.activities.AuthActivity"
+            android:name="st.slex.messenger.ui.activities.SplashActivity"
+            android:exported="true"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="st.slex.messenger.ui.activities.AuthActivity"
             android:exported="true" />
         <activity
-            android:name="st.slex.messenger.activities.SplashActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="st.slex.messenger.activities.MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name="st.slex.messenger.ui.activities.MainActivity"
+            android:exported="true" />
     </application>
 
 </manifest>
