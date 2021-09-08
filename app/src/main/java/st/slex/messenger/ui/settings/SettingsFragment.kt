@@ -1,5 +1,6 @@
 package st.slex.messenger.ui.settings
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import androidx.lifecycle.Observer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSettingsBinding
+import st.slex.messenger.ui.activities.AuthActivity
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.setSupportActionBar
 import st.slex.messenger.utilites.result.VoidResponse
@@ -43,7 +45,8 @@ class SettingsFragment : BaseFragment() {
     private val signOutObserver: Observer<VoidResponse> = Observer {
         when (it) {
             is VoidResponse.Success -> {
-                requireActivity().recreate()
+                requireActivity().startActivity(Intent(requireContext(), AuthActivity::class.java))
+                requireActivity().finish()
             }
             is VoidResponse.Failure -> {
                 Log.i("$this", it.exception.toString())

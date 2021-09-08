@@ -7,7 +7,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,20 +35,10 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applicationContext.appComponent.inject(this)
-        val navController =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
-        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
-        if (auth.currentUser != null) {
-            CoroutineScope(Dispatchers.IO).launch {
-                this@MainActivity.setContacts {
-                    viewModel.updateContacts(it)
-                }
+        CoroutineScope(Dispatchers.IO).launch {
+            this@MainActivity.setContacts {
+                viewModel.updateContacts(it)
             }
-            navGraph.startDestination = R.id.nav_home
-            navController.graph = navGraph
-        } else {
-            navGraph.startDestination = R.id.nav_enter_phone
-            navController.graph = navGraph
         }
     }
 

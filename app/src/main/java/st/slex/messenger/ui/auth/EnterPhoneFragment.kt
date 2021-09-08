@@ -1,6 +1,7 @@
 package st.slex.messenger.ui.auth
 
 import android.content.ContentValues
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
+import st.slex.messenger.ui.activities.MainActivity
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.result.AuthResponse
@@ -76,7 +78,13 @@ class EnterPhoneFragment : BaseFragment() {
                                 viewModel.authUser().collect { auth ->
                                     when (auth) {
                                         is VoidResponse.Success -> {
-                                            requireActivity().recreate()
+                                            requireActivity().startActivity(
+                                                Intent(
+                                                    requireContext(),
+                                                    MainActivity::class.java
+                                                )
+                                            )
+                                            requireActivity().finish()
                                         }
                                         is VoidResponse.Failure -> {
                                             Log.w(ContentValues.TAG, auth.exception)
@@ -92,7 +100,7 @@ class EnterPhoneFragment : BaseFragment() {
                         is AuthResponse.Send -> {
                             binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
                             val direction =
-                                EnterPhoneFragmentDirections.actionNavEnterPhoneToNavEnterCode(it.id)
+                                EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(it.id)
                             val extras =
                                 FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
                             findNavController().navigate(direction, extras)

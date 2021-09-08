@@ -1,5 +1,6 @@
 package st.slex.messenger.ui.auth
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
+import st.slex.messenger.ui.activities.MainActivity
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.result.AuthResponse
@@ -74,7 +76,10 @@ class EnterCodeFragment : BaseFragment() {
                             authViewModel.authUser().collect { auth ->
                                 when (auth) {
                                     is VoidResponse.Success -> {
-                                        requireActivity().recreate()
+                                        requireActivity().startActivity(
+                                            Intent(requireContext(), MainActivity::class.java)
+                                        )
+                                        requireActivity().finish()
                                     }
                                     is VoidResponse.Failure -> {
                                         Log.e(
