@@ -5,7 +5,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.ActivityViewModel
+import st.slex.messenger.activities.ActivityViewModel
 import st.slex.messenger.di.key.ViewModelKey
 import st.slex.messenger.ui.auth.AuthViewModel
 import st.slex.messenger.ui.contacts.ContactViewModel
