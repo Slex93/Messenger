@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,72 +7,44 @@
     tools:context="st.slex.messenger.ui.auth.EnterPhoneFragment">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/sign_in_country_code_layout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/big_padding"
-        android:hint="@string/code"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/fragment_phone_input">
-
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="none"
-            android:text="@string/country_code_ru" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/fragment_phone_input"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/small_padding"
-        android:layout_marginEnd="@dimen/big_padding"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/big_padding"
         android:hint="@string/hint_phone_number"
         android:selectAllOnFocus="true"
         app:counterEnabled="true"
-        app:counterMaxLength="10"
+        app:counterMaxLength="12"
         app:endIconMode="clear_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sign_in_country_code_layout"
-        app:layout_constraintTop_toTopOf="parent"
         app:startIconDrawable="@drawable/ic_baseline_call_24">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
-            android:maxLength="10"
+            android:maxLength="12"
             android:maxLines="1" />
-
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_phone_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/primary_padding"
         android:contentDescription="@string/next_step"
         android:enabled="false"
         android:src="@drawable/ic_next_step"
-        android:transitionName="activity_trans"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:transitionName="activity_trans" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/fragment_code_progress_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="@dimen/big_padding"
         android:indeterminate="true"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/fragment_phone_input"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:visibility="gone" />
+</FrameLayout>

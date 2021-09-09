@@ -10,12 +10,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
@@ -31,6 +29,8 @@ class EnterCodeFragment : BaseFragment() {
 
     private var _binding: FragmentEnterCodeBinding? = null
     private val binding get() = _binding!!
+    private var _id: String? = null
+    private val id get() = _id!!
 
     private val authViewModel: AuthViewModel by viewModels {
         viewModelFactory.get()
@@ -58,55 +58,64 @@ class EnterCodeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args: EnterCodeFragmentArgs by navArgs()
-        binding.fragmentCodeTextInput.editText?.addTextChangedListener { code ->
-            code.toString().apply {
-                if (length == 6) textListener(args.id)
-            }
-        }
+        _id = args.id
     }
 
-    private fun String.textListener(id: String) {
-        binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
-        viewLifecycleOwner.lifecycleScope.launch {
-            authViewModel.sendCode(id = id, code = this@textListener).collect {
-                when (it) {
-                    is AuthResponse.Success -> {
-                        binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                        this.async {
-                            authViewModel.authUser().collect { auth ->
-                                when (auth) {
-                                    is VoidResponse.Success -> {
-                                        requireActivity().startActivity(
-                                            Intent(requireContext(), MainActivity::class.java)
-                                        )
-                                        requireActivity().finish()
-                                    }
-                                    is VoidResponse.Failure -> {
-                                        Log.e(
-                                            "EnterCode: AuthResponse: Auth",
-                                            auth.exception.message,
-                                            auth.exception.cause
-                                        )
-                                    }
-                                    is VoidResponse.Loading -> {
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    is AuthResponse.Failure -> {
-                        Log.e("EnterCode: AuthResponse", it.exception.message, it.exception.cause)
-                    }
-                    else -> {
+    override fun onResume() {
+        super.onResume()
+        binding.fragmentCodeTextInput.editText?.addTextChangedListener()
+        binding.fragmentCodeTextInput.editText?.addTextChangedListener { code ->
+            if (code?.length == 6) {
+                binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
+                viewLifecycleOwner.lifecycleScope.launch {
+                    authViewModel.sendCode(id = id, code = code.toString()).collect {
+                        it.collector()
                     }
                 }
             }
         }
     }
 
-    private val authObserver: Observer<VoidResponse> = Observer {
-        if (it is VoidResponse.Failure) Log.e("$this", it.exception.toString())
+    private fun AuthResponse.collector() {
+        when (this) {
+            is AuthResponse.Success -> {
+                binding.root.showPrimarySnackBar(getString(R.string.snack_success))
+                viewLifecycleOwner.lifecycleScope.launch {
+                    authViewModel.authUser().collect {
+                        collector(it)
+                    }
+                }
+            }
+            is AuthResponse.Failure -> {
+                Log.e("EnterCode: AuthResponse", exception.message, exception.cause)
+            }
+            else -> {
+                Log.e("EnterCode: Loading", "loading...")
+            }
+        }
     }
+
+    private fun collector(response: VoidResponse) {
+        when (response) {
+            is VoidResponse.Success -> {
+                requireActivity().startActivity(
+                    Intent(requireContext(), MainActivity::class.java)
+                )
+                requireActivity().finish()
+            }
+            is VoidResponse.Failure -> {
+                Log.e(
+                    "EnterCode: AuthResponse: Auth",
+                    response.exception.message,
+                    response.exception.cause
+                )
+            }
+            is VoidResponse.Loading -> {
+
+            }
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
