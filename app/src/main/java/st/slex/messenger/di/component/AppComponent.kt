@@ -2,7 +2,10 @@ package st.slex.messenger.di.component
 
 import dagger.Component
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.di.module.*
+import st.slex.messenger.di.module.ReferencesModule
+import st.slex.messenger.di.module.RepositoryModule
+import st.slex.messenger.di.module.ViewModelFactoryModule
+import st.slex.messenger.di.module.ViewModelModule
 import st.slex.messenger.ui.activities.MainActivity
 import st.slex.messenger.utilites.base.BaseFragment
 
@@ -12,7 +15,6 @@ import st.slex.messenger.utilites.base.BaseFragment
         RepositoryModule::class,
         ViewModelModule::class,
         ViewModelFactoryModule::class,
-        ServiceModule::class,
         ReferencesModule::class
     ]
 )
