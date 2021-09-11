@@ -13,6 +13,12 @@ open class BaseFragment : Fragment() {
     @Inject
     open lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
 
+    open val glide = SetImageWithGlide { imageView, url, needCrop, needCircleCrop ->
+        GlideBase {
+            startPostponedEnterTransition()
+        }.setImageWithRequest(imageView, url, needCrop, needCircleCrop)
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         requireContext().applicationContext.appComponent.inject(this)

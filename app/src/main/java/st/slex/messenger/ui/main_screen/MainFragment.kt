@@ -112,7 +112,7 @@ class MainFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         recyclerView = binding.fragmentMainRecyclerView
-        adapter = MainAdapter(clickListener)
+        adapter = MainAdapter(clickListener, glide)
         postponeEnterTransition()
         recyclerView.doOnPreDraw {
             startPostponedEnterTransition()

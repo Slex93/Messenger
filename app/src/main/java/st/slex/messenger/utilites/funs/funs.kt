@@ -111,9 +111,9 @@ fun View.showPrimarySnackBar(it: String) {
 fun ImageView.downloadAndSet(url: String) {
     Glide.with(this)
         .load(url)
-        .apply(RequestOptions.placeholderOf(R.drawable.ic_default_photo))
-        .circleCrop()
+        .apply(RequestOptions.placeholderOf(R.drawable.test_image))
         .centerCrop()
+        .circleCrop()
         .into(this)
 }
 

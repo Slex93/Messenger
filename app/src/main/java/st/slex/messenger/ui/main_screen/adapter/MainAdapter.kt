@@ -8,9 +8,12 @@ import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
 import st.slex.messenger.data.model.ChatListModel
 import st.slex.messenger.ui.single_chat.adapter.ChatsDiffUtilCallback
 import st.slex.messenger.utilites.base.CardClickListener
+import st.slex.messenger.utilites.base.SetImageWithGlide
 
-class MainAdapter(private val clickListener: CardClickListener) :
-    RecyclerView.Adapter<MainViewHolder>() {
+class MainAdapter(
+    private val clickListener: CardClickListener,
+    private val glide: SetImageWithGlide
+) : RecyclerView.Adapter<MainViewHolder>() {
 
     private var chats = mutableListOf<ChatListModel>()
 
@@ -21,7 +24,7 @@ class MainAdapter(private val clickListener: CardClickListener) :
     }
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        holder.bind(chats[position])
+        holder.bind(chats[position], glide)
         holder.clickListener(clickListener)
     }
 

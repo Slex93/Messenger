@@ -4,13 +4,14 @@ import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
 import st.slex.messenger.data.model.ChatListModel
 import st.slex.messenger.utilites.base.CardClickListener
+import st.slex.messenger.utilites.base.SetImageWithGlide
 import st.slex.messenger.utilites.funs.convertToTime
 import st.slex.messenger.utilites.funs.downloadAndSet
 
 class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: ChatListModel) {
+    fun bind(item: ChatListModel, glide: SetImageWithGlide) {
         val name = if (item.full_name.isEmpty()) {
             item.username
         } else item.full_name
@@ -18,6 +19,7 @@ class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
         binding.itemMainUsername.text = name
         binding.itemMainContent.text = item.text
         binding.itemMainTimestamp.text = item.timestamp.toString().convertToTime()
+        glide.setImage(binding.itemMainImage, item.url, needCircleCrop = true)
         binding.itemMainImage.downloadAndSet(item.url)
     }
 
