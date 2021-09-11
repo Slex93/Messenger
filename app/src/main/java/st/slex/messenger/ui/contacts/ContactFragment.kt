@@ -74,7 +74,7 @@ class ContactFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         recycler = binding.fragmentContactRecycler
-        adapter = ContactAdapter(clickListener)
+        adapter = ContactAdapter(clickListener, glide)
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         postponeEnterTransition()
         recycler.doOnPreDraw {
@@ -84,10 +84,10 @@ class ContactFragment : BaseFragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    private val clickListener = CardClickListener { cardView ->
+    private val clickListener = CardClickListener { card, url ->
         val directions =
-            ContactFragmentDirections.actionNavContactToNavSingleChat(cardView.transitionName)
-        val extras = FragmentNavigatorExtras(cardView to cardView.transitionName)
+            ContactFragmentDirections.actionNavContactToNavSingleChat(card.transitionName, url)
+        val extras = FragmentNavigatorExtras(card to card.transitionName)
         findNavController().navigate(directions, extras)
     }
 

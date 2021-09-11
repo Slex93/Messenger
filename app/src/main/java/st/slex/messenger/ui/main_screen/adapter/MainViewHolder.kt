@@ -10,7 +10,11 @@ import st.slex.messenger.utilites.funs.convertToTime
 class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
+    private var _url: String? = null
+    private val url get() = _url!!
+
     fun bind(item: ChatListModel, glide: SetImageWithGlide) {
+        _url = item.url
         val name = if (item.full_name.isEmpty()) {
             item.username
         } else item.full_name
@@ -20,7 +24,7 @@ class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
         binding.itemMainTimestamp.text = item.timestamp.toString().convertToTime()
         glide.setImage(
             binding.itemMainImage,
-            item.url,
+            url,
             needCircleCrop = true,
             needCrop = true
         )
@@ -28,7 +32,7 @@ class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
 
     fun clickListener(clickListener: CardClickListener) {
         binding.itemMainCard.setOnClickListener {
-            clickListener.onClick(it)
+            clickListener.onClick(it, url)
         }
     }
 

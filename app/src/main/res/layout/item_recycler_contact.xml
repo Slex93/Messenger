@@ -1,49 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_contact_card"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/primary_padding"
     android:checkable="true"
     android:clickable="true"
-    android:focusable="true">
-
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/recycler_contact_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:cropToPadding="true"
-        android:src="@drawable/ic_default_photo" />
+    android:focusable="true"
+    app:cardElevation="0dp">
 
     <LinearLayout
-        android:layout_width="150dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:background="@color/blue_gray_200"
-        android:orientation="vertical"
-        android:padding="4dp">
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/recycler_contact_username"
-            style="@style/TextAppearance.MaterialComponents.Body1"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="@dimen/primary_padding"
+            android:weightSum="10">
+
+            <ImageView
+                android:id="@+id/recycler_contact_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="TODO"
+                tools:src="@drawable/test_image" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/primary_padding"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/recycler_contact_username"
+                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    tools:text="UserName" />
+
+                <TextView
+                    android:id="@+id/recycler_contact_phone"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    tools:text="PhoneNumber" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLength="15"
-            android:maxLines="1"
-            tools:text="UserName" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/recycler_contact_phone"
-            style="@style/TextAppearance.MaterialComponents.Body2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            tools:text="PhoneNumber" />
-
+            app:dividerInsetStart="82dp" />
     </LinearLayout>
-
 
 </com.google.android.material.card.MaterialCardView>

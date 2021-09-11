@@ -45,6 +45,9 @@
         <argument
             android:name="id"
             app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/nav_settings"

@@ -7,11 +7,12 @@ import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.utilites.base.CardClickListener
+import st.slex.messenger.utilites.base.SetImageWithGlide
 
 class ContactAdapter(
-    private val clickListener: CardClickListener
-) :
-    RecyclerView.Adapter<ContactViewHolder>() {
+    private val clickListener: CardClickListener,
+    private val glide: SetImageWithGlide
+) : RecyclerView.Adapter<ContactViewHolder>() {
 
     private var contacts = mutableListOf<ContactModel>()
 
@@ -22,7 +23,7 @@ class ContactAdapter(
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-        holder.bind(contacts[position])
+        holder.bind(contacts[position], glide)
         holder.clickListener(clickListener)
     }
 

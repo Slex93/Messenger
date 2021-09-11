@@ -31,6 +31,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/primary_padding"
                 android:orientation="vertical">
 
                 <TextView
@@ -38,7 +39,6 @@
                     style="@style/TextAppearance.MaterialComponents.Body1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/primary_padding"
                     android:ellipsize="end"
                     android:maxLines="1"
                     tools:text="Title" />
@@ -48,7 +48,6 @@
                     style="@style/TextAppearance.MaterialComponents.Body2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/primary_padding"
                     android:layout_marginTop="@dimen/small_padding"
                     android:ellipsize="end"
                     android:maxLines="1"

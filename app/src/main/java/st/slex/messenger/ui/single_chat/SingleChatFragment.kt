@@ -52,7 +52,11 @@ class SingleChatFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTransitAnimation()
+        sharedElementEnterTransition = MaterialContainerTransform().apply {
+            drawingViewId = R.id.nav_host_fragment
+            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
+            scrimColor = Color.TRANSPARENT
+        }
     }
 
     override fun onCreateView(
@@ -143,6 +147,12 @@ class SingleChatFragment : BaseFragment() {
         val id = args.id
         uid = id
         binding.toolbarInfo.toolbarInfoCardView.transitionName = uid
+        glide.setImage(
+            binding.toolbarInfo.shapeableImageView,
+            args.url,
+            needCircleCrop = true,
+            needCrop = true
+        )
     }
 
     private val userObserver: Observer<Response<UserModel>> = Observer { user ->
@@ -150,12 +160,6 @@ class SingleChatFragment : BaseFragment() {
             is Response.Success -> {
                 binding.toolbarInfo.toolbarInfoUsername.text = user.value.full_name
                 binding.toolbarInfo.toolbarInfoStatus.text = user.value.state
-                glide.setImage(
-                    binding.toolbarInfo.shapeableImageView,
-                    user.value.url,
-                    needCircleCrop = true,
-                    needCrop = true
-                )
                 binding.singleChatRecyclerButton.setOnClickListener(user.value.sendClicker)
             }
             is Response.Failure -> {
@@ -182,14 +186,6 @@ class SingleChatFragment : BaseFragment() {
                 binding.singleChatRecyclerTextInput.editText?.setText("")
             }
         }
-
-    private fun setTransitAnimation() {
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            drawingViewId = R.id.nav_host_fragment
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = Color.TRANSPARENT
-        }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
