@@ -2,8 +2,6 @@ package st.slex.messenger.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -13,9 +11,7 @@ import st.slex.messenger.domain.LoginInteractor
 @ExperimentalCoroutinesApi
 class LoginViewModel(
     private val communication: LoginCommunication,
-    private val interactor: LoginInteractor,
-    private val dispatchersIO: CoroutineDispatcher = Dispatchers.IO,
-    private val dispatchersMain: CoroutineDispatcher = Dispatchers.Main,
+    private val interactor: LoginInteractor
 ) : ViewModel() {
 
     suspend fun login(engine: LoginEngine, phone: String): StateFlow<LoginUi> =
