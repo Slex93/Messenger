@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSettingsBinding
-import st.slex.messenger.ui.activities.AuthActivity
+import st.slex.messenger.ui.auth.AuthActivity
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.setSupportActionBar
 import st.slex.messenger.utilites.result.VoidResponse

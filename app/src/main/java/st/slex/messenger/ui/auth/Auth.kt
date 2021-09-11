@@ -13,6 +13,10 @@ interface Auth {
         override fun <T> map(mapper: AuthResultMapper<T>): T = mapper.map(emptyMap())
     }
 
+    data class SendCode(private val id: String) : Auth {
+        override fun <T> map(mapper: AuthResultMapper<T>): T = mapper.map(emptyMap())
+    }
+
     interface AuthResultMapper<T> {
         fun map(profile: Map<String, Any>): T
 

@@ -2,6 +2,7 @@ package st.slex.messenger.data
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -13,10 +14,10 @@ interface LoginRepository {
 
     fun user(): Any?
 
-    class Base(private val firebaseDatabaseProvider: FirebaseDatabaseProvider) : LoginRepository {
+    class Base : LoginRepository {
         override fun user() = Firebase.auth.currentUser
         override suspend fun saveUser(user: UserInitial) {
-            val value = firebaseDatabaseProvider.provideDatabase()
+            val value = FirebaseDatabase.getInstance().reference
                 .child("users")
                 .child(user()!!.uid)
                 .setValue(user)

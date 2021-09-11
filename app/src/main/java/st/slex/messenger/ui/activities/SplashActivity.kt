@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import st.slex.messenger.ui.auth.AuthActivity
 
 @ExperimentalCoroutinesApi
 class SplashActivity : AppCompatActivity() {

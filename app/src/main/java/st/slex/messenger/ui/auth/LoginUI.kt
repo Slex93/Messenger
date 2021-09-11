@@ -9,6 +9,8 @@ interface LoginUi : Abstract.UiObject {
 
     object Success : LoginUi
 
+    object SendCode : LoginUi
+
     object Initial : LoginUi {
         override fun map(error: AbstractView.Text, progress: AbstractView, button: AbstractView) {
             error.hide()
@@ -32,4 +34,5 @@ interface LoginUi : Abstract.UiObject {
             button.show()
         }
     }
+
 }
