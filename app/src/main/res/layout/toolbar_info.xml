@@ -8,20 +8,11 @@
     android:transitionName="transitCard"
     app:cardElevation="0dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="0dp">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/shapeableImageView"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="start|center_vertical"
-            android:scaleType="centerCrop"
-            tools:src="@drawable/ic_default_photo" />
-    </com.google.android.material.card.MaterialCardView>
+    <ImageView
+        android:id="@+id/shapeableImageView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="start|center_vertical" />
 
     <LinearLayout
         android:layout_width="wrap_content"

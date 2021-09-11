@@ -6,7 +6,6 @@ import st.slex.messenger.data.model.ChatListModel
 import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.base.SetImageWithGlide
 import st.slex.messenger.utilites.funs.convertToTime
-import st.slex.messenger.utilites.funs.downloadAndSet
 
 class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -19,8 +18,12 @@ class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
         binding.itemMainUsername.text = name
         binding.itemMainContent.text = item.text
         binding.itemMainTimestamp.text = item.timestamp.toString().convertToTime()
-        glide.setImage(binding.itemMainImage, item.url, needCircleCrop = true)
-        binding.itemMainImage.downloadAndSet(item.url)
+        glide.setImage(
+            binding.itemMainImage,
+            item.url,
+            needCircleCrop = true,
+            needCrop = true
+        )
     }
 
     fun clickListener(clickListener: CardClickListener) {

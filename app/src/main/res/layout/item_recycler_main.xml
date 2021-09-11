@@ -22,19 +22,11 @@
             android:padding="@dimen/primary_padding"
             android:weightSum="10">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="50dp">
-
-                <ImageView
-                    android:id="@+id/item_main_image"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/test_image" />
-
-            </com.google.android.material.card.MaterialCardView>
+            <ImageView
+                android:id="@+id/item_main_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                tools:src="@drawable/test_image" />
 
             <LinearLayout
                 android:layout_width="match_parent"

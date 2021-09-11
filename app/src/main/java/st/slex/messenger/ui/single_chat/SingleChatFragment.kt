@@ -153,7 +153,8 @@ class SingleChatFragment : BaseFragment() {
                 glide.setImage(
                     binding.toolbarInfo.shapeableImageView,
                     user.value.url,
-                    needCircleCrop = true
+                    needCircleCrop = true,
+                    needCrop = true
                 )
                 binding.singleChatRecyclerButton.setOnClickListener(user.value.sendClicker)
             }

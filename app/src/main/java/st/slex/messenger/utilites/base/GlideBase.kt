@@ -7,7 +7,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import st.slex.common.messenger.R
 
@@ -22,25 +21,29 @@ value class GlideBase(
         needCrop: Boolean = false,
         needCircleCrop: Boolean = false
     ) {
+        val urlSet = if (url.isEmpty()) {
+            R.drawable.test_image
+        } else url
         val glide = Glide.with(imageView)
-            .load(url)
+            .load(urlSet)
             .listener(primaryRequestListener)
-            .apply(RequestOptions.placeholderOf(R.drawable.test_image))
-        if (needCrop) {
-            glide.centerCrop()
-        }
+
+        if (needCrop) glide.centerCrop()
         if (needCircleCrop) glide.circleCrop()
+
         glide.into(imageView)
     }
 
     private val primaryRequestListener: RequestListener<Drawable>
         get() = object : RequestListener<Drawable> {
+            @SuppressLint("CheckResult")
             override fun onLoadFailed(
                 e: GlideException?,
                 model: Any?,
                 target: Target<Drawable>?,
                 isFirstResource: Boolean
             ): Boolean {
+
                 startPostponedEnterTransition()
                 return false
             }
