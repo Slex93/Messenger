@@ -16,7 +16,6 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.divider.MaterialDividerItemDecoration
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -120,8 +119,6 @@ class MainFragment : BaseFragment() {
         }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        val divider = MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        recyclerView.addItemDecoration(divider)
     }
 
     private val clickListener = CardClickListener { card ->
