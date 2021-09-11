@@ -7,7 +7,7 @@ import st.slex.messenger.di.module.RepositoryModule
 import st.slex.messenger.di.module.ViewModelFactoryModule
 import st.slex.messenger.di.module.ViewModelModule
 import st.slex.messenger.ui.activities.MainActivity
-import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.utilites.base.RawFragment
 
 @ExperimentalCoroutinesApi
 @Component(
@@ -20,5 +20,5 @@ import st.slex.messenger.utilites.base.BaseFragment
 )
 interface AppComponent {
     fun inject(activity: MainActivity)
-    fun inject(fragment: BaseFragment)
+    fun inject(fragment: RawFragment)
 }

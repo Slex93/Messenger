@@ -13,6 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -54,6 +56,7 @@ class EnterPhoneFragment : BaseFragment() {
         binding.fragmentPhoneInput.editText?.addTextChangedListener {
             binding.fragmentPhoneFab.isEnabled = it?.length == 12
         }
+        val auth = Firebase.auth
         binding.fragmentPhoneFab.setOnClickListener {
             binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             val phone = binding.fragmentPhoneInput.editText?.text.toString()

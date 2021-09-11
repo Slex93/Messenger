@@ -2,8 +2,13 @@ package st.slex.messenger.data.repository.impl
 
 import android.app.Activity
 import com.google.firebase.FirebaseException
-import com.google.firebase.auth.*
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -24,7 +29,6 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
 
     override suspend fun signInWithPhone(activity: Activity, phone: String) = callbackFlow {
-
         val callback = makeCallback({ credential ->
             signInWithCredential(
                 credential, {
@@ -39,29 +43,29 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
         })
 
         val phoneOptions = PhoneAuthOptions
-            .newBuilder(FirebaseAuth.getInstance())
+            .newBuilder(Firebase.auth)
             .setActivity(activity)
             .setPhoneNumber(phone)
             .setTimeout(60L, TimeUnit.SECONDS)
             .setCallbacks(callback)
             .build()
-        val event = PhoneAuthProvider.verifyPhoneNumber(phoneOptions)
-        awaitClose { event }
+        PhoneAuthProvider.verifyPhoneNumber(phoneOptions)
+        awaitClose {}
     }
 
     override suspend fun sendCode(id: String, code: String) = callbackFlow {
         val credential = PhoneAuthProvider.getCredential(id, code)
-        val event = signInWithCredential(credential,
+        signInWithCredential(credential,
             { trySendBlocking(AuthResponse.Success) },
             { trySendBlocking(AuthResponse.Failure(it)) })
-        awaitClose { event }
+        awaitClose {}
     }
 
     private inline fun signInWithCredential(
         credential: AuthCredential,
         crossinline success: () -> Unit,
         crossinline failure: (java.lang.Exception) -> Unit
-    ) = FirebaseAuth.getInstance().signInWithCredential(credential)
+    ) = Firebase.auth.signInWithCredential(credential)
         .addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 success()
@@ -87,8 +91,8 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
         }
 
     override suspend fun authUser(): Flow<VoidResponse> = callbackFlow {
-        val id = FirebaseAuth.getInstance().currentUser?.uid.toString()
-        val phone = FirebaseAuth.getInstance().currentUser?.phoneNumber.toString()
+        val id = Firebase.auth.currentUser?.uid.toString()
+        val phone = Firebase.auth.currentUser?.phoneNumber.toString()
         val userReference = FirebaseDatabase.getInstance().reference.child(NODE_USER).child(id)
         val listener = AppValueEventListener({ snapshot ->
             val user = snapshot.getThisValue<UserModel>()
