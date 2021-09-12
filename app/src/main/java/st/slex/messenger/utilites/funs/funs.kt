@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.ContactsContract
 import android.view.View
@@ -36,6 +37,13 @@ val Context.appComponent: AppComponent
         is MessengerApplication -> appComponent
         else -> this.applicationContext.appComponent
     }
+
+
+fun Activity.start(activity: Activity) {
+    val intent = Intent(this, activity.javaClass)
+    startActivity(intent)
+    finish()
+}
 
 fun String.convertToTime(): String {
     val sdfComp = SimpleDateFormat("yyMMdd", Locale.getDefault()).apply {

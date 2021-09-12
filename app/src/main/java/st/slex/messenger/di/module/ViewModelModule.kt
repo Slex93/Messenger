@@ -8,7 +8,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.di.key.ViewModelKey
 import st.slex.messenger.ui.activities.ActivityViewModel
 import st.slex.messenger.ui.auth.AuthViewModel
-import st.slex.messenger.ui.auth.LoginViewModel
 import st.slex.messenger.ui.contacts.ContactViewModel
 import st.slex.messenger.ui.main_screen.MainScreenViewModel
 import st.slex.messenger.ui.settings.SettingsViewModel
@@ -25,13 +24,13 @@ interface ViewModelModule {
 
     @IntoMap
     @Binds
-    @ViewModelKey(MainScreenViewModel::class)
-    fun bindsMainScreenViewModel(viewModel: MainScreenViewModel): ViewModel
+    @ViewModelKey(AuthViewModel::class)
+    fun bindsLoginViewModel(viewModel: AuthViewModel): ViewModel
 
     @IntoMap
     @Binds
-    @ViewModelKey(AuthViewModel::class)
-    fun bindsAuthViewModel(viewModel: AuthViewModel): ViewModel
+    @ViewModelKey(MainScreenViewModel::class)
+    fun bindsMainScreenViewModel(viewModel: MainScreenViewModel): ViewModel
 
     @IntoMap
     @Binds
@@ -47,9 +46,4 @@ interface ViewModelModule {
     @Binds
     @ViewModelKey(SettingsViewModel::class)
     fun bindsSettingsViewModel(viewModel: SettingsViewModel): ViewModel
-
-    @IntoMap
-    @Binds
-    @ViewModelKey(LoginViewModel::class)
-    fun bindsLoginViewModel(viewModel: LoginViewModel): ViewModel
 }

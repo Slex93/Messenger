@@ -1,4 +1,4 @@
-package st.slex.messenger.domain.engine.impl
+package st.slex.messenger.ui.auth.engine.impl
 
 import android.app.Activity
 import com.google.firebase.FirebaseException
@@ -12,8 +12,8 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.domain.engine.interf.LoginEngine
-import st.slex.messenger.domain.engine.interf.signInWithCredential
+import st.slex.messenger.ui.auth.engine.interf.LoginEngine
+import st.slex.messenger.ui.auth.engine.interf.signInWithCredential
 import st.slex.messenger.utilites.result.AuthResponse
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

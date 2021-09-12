@@ -1,4 +1,4 @@
-package st.slex.messenger.domain.engine.interf
+package st.slex.messenger.ui.auth.engine.interf
 
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.ktx.auth

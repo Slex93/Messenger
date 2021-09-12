@@ -21,6 +21,7 @@ import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.ui.activities.MainActivity
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
+import st.slex.messenger.utilites.funs.start
 import st.slex.messenger.utilites.result.AuthResponse
 import st.slex.messenger.utilites.result.VoidResponse
 
@@ -32,7 +33,7 @@ class EnterCodeFragment : BaseFragment() {
     private var _id: String? = null
     private val id get() = _id!!
 
-    private val authViewModel: AuthViewModel by viewModels {
+    private val viewModel: AuthViewModel by viewModels {
         viewModelFactory.get()
     }
 
@@ -68,7 +69,7 @@ class EnterCodeFragment : BaseFragment() {
             if (code?.length == 6) {
                 binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
                 viewLifecycleOwner.lifecycleScope.launch {
-                    authViewModel.sendCode(id = id, code = code.toString()).collect {
+                    viewModel.sendCode(id = id, code = code.toString()).collect {
                         it.collector()
                     }
                 }
@@ -80,11 +81,7 @@ class EnterCodeFragment : BaseFragment() {
         when (this) {
             is AuthResponse.Success -> {
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                viewLifecycleOwner.lifecycleScope.launch {
-                    authViewModel.authUser().collect {
-                        collector(it)
-                    }
-                }
+                requireActivity().start(MainActivity())
             }
             is AuthResponse.Failure -> {
                 Log.e("EnterCode: AuthResponse", exception.message, exception.cause)
@@ -122,3 +119,4 @@ class EnterCodeFragment : BaseFragment() {
         _binding = null
     }
 }
+

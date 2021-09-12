@@ -9,18 +9,18 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import st.slex.messenger.data.model.UserInitial
-import st.slex.messenger.data.repository.LoginRepository
-import st.slex.messenger.domain.engine.interf.LoginEngine
-import st.slex.messenger.domain.engine.interf.SendCodeEngine
-import st.slex.messenger.domain.interactor.interf.LoginInteractor
+import st.slex.messenger.data.repository.interf.AuthRepository
+import st.slex.messenger.domain.interactor.interf.AuthInteractor
+import st.slex.messenger.ui.auth.engine.interf.LoginEngine
+import st.slex.messenger.ui.auth.engine.interf.SendCodeEngine
 import st.slex.messenger.utilites.result.AuthResponse
 import javax.inject.Inject
 
-class LoginInteractorImpl @Inject constructor(
-    private val repository: LoginRepository,
+class AuthInteractorImpl @Inject constructor(
+    private val repository: AuthRepository,
     private val loginEngine: LoginEngine,
     private val sendCodeEngine: SendCodeEngine
-) : LoginInteractor {
+) : AuthInteractor {
 
     private fun user() = UserInitial(Firebase.auth.currentUser?.phoneNumber.toString())
 

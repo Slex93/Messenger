@@ -1,4 +1,4 @@
-package st.slex.messenger.domain.model
+package st.slex.messenger.domain
 
 import st.slex.messenger.data.model.UserInitial
 

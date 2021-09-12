@@ -3,8 +3,6 @@ package st.slex.messenger.di.module
 import dagger.Binds
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.data.repository.LoginRepository
-import st.slex.messenger.data.repository.LoginRepositoryImpl
 import st.slex.messenger.data.repository.impl.*
 import st.slex.messenger.data.repository.interf.*
 
@@ -15,7 +13,7 @@ interface RepositoryModule {
     fun bindActivityRepository(repository: ActivityRepositoryImpl): ActivityRepository
 
     @Binds
-    fun bindAuthRepository(repository: AuthRepositoryImpl): AuthRepository
+    fun bindsLoginRepository(repository: AuthRepositoryImpl): AuthRepository
 
     @Binds
     fun bindMainRepository(repository: MainRepositoryImpl): MainRepository
@@ -28,7 +26,4 @@ interface RepositoryModule {
 
     @Binds
     fun bindSettingsRepository(repository: SettingsRepositoryImpl): SettingsRepository
-
-    @Binds
-    fun bindsLoginRepository(repository: LoginRepositoryImpl): LoginRepository
 }
