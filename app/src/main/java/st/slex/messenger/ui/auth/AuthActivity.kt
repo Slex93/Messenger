@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.activities
+package st.slex.messenger.ui.auth
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

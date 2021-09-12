@@ -2,10 +2,10 @@ package st.slex.messenger.di.module
 
 import dagger.Binds
 import dagger.Module
-import st.slex.messenger.domain.impl.LoginEngineImpl
-import st.slex.messenger.domain.impl.SendCodeEngineImpl
-import st.slex.messenger.domain.interf.LoginEngine
-import st.slex.messenger.domain.interf.SendCodeEngine
+import st.slex.messenger.domain.engine.impl.LoginEngineImpl
+import st.slex.messenger.domain.engine.impl.SendCodeEngineImpl
+import st.slex.messenger.domain.engine.interf.LoginEngine
+import st.slex.messenger.domain.engine.interf.SendCodeEngine
 
 @Module
 interface EngineModule {
