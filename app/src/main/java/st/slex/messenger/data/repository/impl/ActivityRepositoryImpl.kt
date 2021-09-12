@@ -1,7 +1,6 @@
 package st.slex.messenger.data.repository.impl
 
-import android.util.Log
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,26 +14,24 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class ActivityRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
-    private val auth: FirebaseAuth,
+    private val auth: FirebaseUser,
 ) : ActivityRepository {
 
     override suspend fun changeState(state: String): Unit = withContext(Dispatchers.IO) {
-        databaseReference.child(NODE_USER).child(auth.uid.toString())
+        databaseReference.child(NODE_USER).child(auth.uid)
             .child(CHILD_STATE).setValue(state)
     }
 
     override suspend fun updateContacts(list: List<ContactModel>): Unit =
         withContext(Dispatchers.IO) {
             databaseReference.child(NODE_PHONE).addValueEventListener(
-                AppValueEventListener({ snapshotParent ->
+                AppValueEventListener { snapshotParent ->
                     snapshotParent.children.forEach { snapshot ->
                         list.forEach { contact ->
-
-                            if (auth.uid.toString() != snapshot.key && snapshot.value == contact.phone) {
+                            if (auth.uid != snapshot.key && snapshot.value == contact.phone) {
                                 databaseReference.child(NODE_USER).child(snapshot.key.toString())
-                                    .child(
-                                        CHILD_URL
-                                    ).addValueEventListener(AppValueEventListener({ url ->
+                                    .child(CHILD_URL)
+                                    .addValueEventListener(AppValueEventListener { url ->
                                         val map = mapOf(
                                             CHILD_ID to snapshot.key.toString(),
                                             CHILD_FULL_NAME to contact.full_name,
@@ -42,21 +39,15 @@ class ActivityRepositoryImpl @Inject constructor(
                                             CHILD_URL to url.value.toString()
                                         )
                                         databaseReference.child(NODE_CONTACT)
-                                            .child(auth.uid.toString())
+                                            .child(auth.uid)
                                             .child(snapshot.key.toString())
                                             .updateChildren(map)
-                                    }, { exception ->
-                                        Log.e(
-                                            "Activity Repository Send Contact",
-                                            exception.toString()
-                                        )
-                                    }))
+
+                                    })
                             }
                         }
                     }
-                }, { exception ->
-                    Log.e("Activity Repository Send Contact", exception.toString())
-                })
+                }
             )
         }
 }

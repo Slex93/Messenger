@@ -1,7 +1,9 @@
 package st.slex.messenger.data.repository.impl
 
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -15,21 +17,21 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class SettingsRepositoryImpl @Inject constructor(
-    private val auth: FirebaseAuth,
+    private val databaseReference: DatabaseReference
 ) : SettingsRepository {
 
     override suspend fun signOut(state: String): Flow<VoidResponse> = callbackFlow {
-        try {
-            FirebaseDatabase.getInstance().reference.child(NODE_USER).child(auth.uid.toString())
-                .child(CHILD_STATE).setValue(state).addOnSuccessListener {
-                    trySendBlocking(VoidResponse.Success)
-                    auth.signOut()
-                }.addOnFailureListener {
-                    trySendBlocking(VoidResponse.Failure(it))
-                }
-        } catch (exception: Exception) {
-            trySendBlocking(VoidResponse.Failure(exception))
+        val reference = databaseReference
+            .child(NODE_USER)
+            .child(Firebase.auth.uid.toString())
+            .child(CHILD_STATE)
+            .setValue(state)
+        val listener = OnCompleteListener<Void> {
+            if (it.isSuccessful) {
+                Firebase.auth.signOut()
+                trySendBlocking(VoidResponse.Success)
+            } else trySendBlocking(VoidResponse.Failure(it.exception!!))
         }
-        awaitClose { }
+        awaitClose { reference.addOnCompleteListener(listener) }
     }
 }

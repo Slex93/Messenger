@@ -1,9 +1,6 @@
 package st.slex.messenger.data.repository.impl
 
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -18,12 +15,11 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
-
-    override val user: FirebaseUser?
-        get() = Firebase.auth.currentUser
-
     override suspend fun saveUser(user: UserInitial): Flow<Result<String>> = callbackFlow {
-        val map = mapOf<String, Any>(CHILD_PHONE to user.phone, CHILD_ID to user.uid)
+        val map = mapOf<String, Any>(
+            CHILD_PHONE to user.phone,
+            CHILD_ID to user.uid
+        )
         val value = FirebaseDatabase.getInstance().reference
             .child(NODE_USER)
             .child(user.uid)

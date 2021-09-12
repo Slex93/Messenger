@@ -1,6 +1,6 @@
 package st.slex.messenger.data.repository.impl
 
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -20,31 +20,29 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class MainRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
-    private val auth: FirebaseAuth
+    private val user: FirebaseUser
 ) : MainRepository {
 
     override suspend fun getCurrentUser(): Flow<Response<UserModel>> = callbackFlow {
-        val reference = databaseReference.child(NODE_USER).child(auth.currentUser?.uid.toString())
-        val listener = AppValueEventListener({ snapshot ->
+        val reference = databaseReference
+            .child(NODE_USER)
+            .child(user.uid)
+        val listener = AppValueEventListener { snapshot ->
             trySendBlocking(Response.Success(snapshot.getThisValue()))
-        }, { exception ->
-            trySendBlocking(Response.Failure(exception))
-        })
+        }
         reference.addListenerForSingleValueEvent(listener)
         awaitClose { reference.removeEventListener(listener) }
     }
 
-    override suspend fun getChatList() = callbackFlow {
-        val reference =
-            databaseReference.child(NODE_CHAT_LIST).child(auth.currentUser?.uid.toString())
-        val listener = AppValueEventListener({ snapshot ->
+    override suspend fun getChatList(): Flow<Response<List<ChatListModel>>> = callbackFlow {
+        val reference = databaseReference
+            .child(NODE_CHAT_LIST)
+            .child(user.uid)
+        val listener = AppValueEventListener { snapshot ->
             val result = snapshot.children.map { it.getThisValue<ChatListModel>() }
             trySendBlocking(Response.Success(value = result))
-        }, { exception ->
-            trySendBlocking(Response.Failure(exception = exception))
-        })
+        }
         reference.addValueEventListener(listener)
         awaitClose { reference.removeEventListener(listener) }
     }
-
 }

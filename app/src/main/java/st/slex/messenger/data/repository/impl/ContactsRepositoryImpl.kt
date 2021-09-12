@@ -1,6 +1,6 @@
 package st.slex.messenger.data.repository.impl
 
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -18,20 +18,19 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class ContactsRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
-    private val auth: FirebaseAuth
+    private val user: FirebaseUser
 ) : ContactsRepository {
     override suspend fun getContacts(): Flow<Response<List<ContactModel>>> = callbackFlow {
-        Response.Loading
-        val referenceContact = databaseReference.child(NODE_CONTACT).child(auth.uid.toString())
-        val listener = AppValueEventListener({ snapshot ->
+        val reference = databaseReference
+            .child(NODE_CONTACT)
+            .child(user.uid)
+        val listener = AppValueEventListener { snapshot ->
             val result = snapshot.children.map {
                 it.getThisValue<ContactModel>()
             }
             trySendBlocking(Response.Success(result))
-        }, { exception ->
-            trySendBlocking(Response.Failure(exception))
-        })
-        referenceContact.addValueEventListener(listener)
-        awaitClose { referenceContact.removeEventListener(listener) }
+        }
+        reference.addValueEventListener(listener)
+        awaitClose { reference.removeEventListener(listener) }
     }
 }
