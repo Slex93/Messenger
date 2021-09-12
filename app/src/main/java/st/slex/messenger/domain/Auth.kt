@@ -24,6 +24,7 @@ sealed class Auth {
         class Base : AuthResultMapper<UserInitial> {
 
             override fun map(profile: Map<String, Any>) = UserInitial(
+                profile["uid"].makeString(),
                 profile["phone"].makeString()
             )
 

@@ -1,6 +1,7 @@
 package st.slex.messenger.ui.auth
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,9 +67,10 @@ class EnterPhoneFragment : BaseFragment() {
             requireActivity().start(MainActivity())
         }
         is AuthResponse.Send -> {
+            Log.i("checkId::PhoneFragment", this.id)
             binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
             val direction =
-                EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(id)
+                EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(this.id)
             val extras =
                 FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
             findNavController().navigate(direction, extras)

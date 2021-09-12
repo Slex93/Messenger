@@ -2,7 +2,6 @@ package st.slex.messenger.utilites.base
 
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -22,13 +21,9 @@ value class GlideBase(
         needCrop: Boolean = false,
         needCircleCrop: Boolean = false
     ) {
-        Log.i("testGlideUrl:", url)
         val urlSet = if (url == "null" || url == "") {
             R.drawable.test_image
         } else url
-
-        Log.i("testGlideurlSet:", urlSet.toString())
-
         val glide = Glide.with(imageView)
             .load(urlSet)
             .listener(primaryRequestListener)

@@ -1,6 +1,5 @@
 package st.slex.messenger.ui.auth
 
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -23,7 +22,6 @@ import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.funs.start
 import st.slex.messenger.utilites.result.AuthResponse
-import st.slex.messenger.utilites.result.VoidResponse
 
 @ExperimentalCoroutinesApi
 class EnterCodeFragment : BaseFragment() {
@@ -84,6 +82,7 @@ class EnterCodeFragment : BaseFragment() {
                 requireActivity().start(MainActivity())
             }
             is AuthResponse.Failure -> {
+                binding.root.showPrimarySnackBar(exception.toString())
                 Log.e("EnterCode: AuthResponse", exception.message, exception.cause)
             }
             else -> {
@@ -91,28 +90,6 @@ class EnterCodeFragment : BaseFragment() {
             }
         }
     }
-
-    private fun collector(response: VoidResponse) {
-        when (response) {
-            is VoidResponse.Success -> {
-                requireActivity().startActivity(
-                    Intent(requireContext(), MainActivity::class.java)
-                )
-                requireActivity().finish()
-            }
-            is VoidResponse.Failure -> {
-                Log.e(
-                    "EnterCode: AuthResponse: Auth",
-                    response.exception.message,
-                    response.exception.cause
-                )
-            }
-            is VoidResponse.Loading -> {
-
-            }
-        }
-    }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.provider.ContactsContract
 import android.view.View
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -16,8 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
@@ -114,14 +111,5 @@ suspend inline fun Activity.setContacts(crossinline function: (list: List<Contac
 
 fun View.showPrimarySnackBar(it: String) {
     Snackbar.make(this, it, Snackbar.LENGTH_SHORT).show()
-}
-
-fun ImageView.downloadAndSet(url: String) {
-    Glide.with(this)
-        .load(url)
-        .apply(RequestOptions.placeholderOf(R.drawable.test_image))
-        .centerCrop()
-        .circleCrop()
-        .into(this)
 }
 
