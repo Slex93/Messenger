@@ -32,6 +32,7 @@ class SettingsRepositoryImpl @Inject constructor(
                 trySendBlocking(VoidResponse.Success)
             } else trySendBlocking(VoidResponse.Failure(it.exception!!))
         }
-        awaitClose { reference.addOnCompleteListener(listener) }
+        reference.addOnCompleteListener(listener)
+        awaitClose { }
     }
 }

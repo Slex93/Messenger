@@ -8,8 +8,9 @@ import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
 import javax.inject.Inject
 
-class ActivityViewModel @Inject constructor(private val repository: ActivityRepository) :
-    ViewModel() {
+class ActivityViewModel @Inject constructor(
+    private val repository: ActivityRepository
+) : ViewModel() {
 
     fun updateContacts(listContacts: List<ContactModel>) = viewModelScope.launch {
         repository.updateContacts(listContacts)

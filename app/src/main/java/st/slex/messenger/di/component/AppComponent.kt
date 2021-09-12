@@ -3,8 +3,8 @@ package st.slex.messenger.di.component
 import dagger.Component
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.di.module.*
+import st.slex.messenger.ui.activities.AuthActivity
 import st.slex.messenger.ui.activities.MainActivity
-import st.slex.messenger.ui.auth.AuthActivity
 import st.slex.messenger.utilites.base.RawFragment
 
 @ExperimentalCoroutinesApi
@@ -20,6 +20,6 @@ import st.slex.messenger.utilites.base.RawFragment
 )
 interface AppComponent {
     fun inject(activity: MainActivity)
-    fun inject(authActivity: AuthActivity)
+    fun inject(activity: AuthActivity)
     fun inject(fragment: RawFragment)
 }

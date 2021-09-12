@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSettingsBinding
-import st.slex.messenger.ui.auth.AuthActivity
+import st.slex.messenger.ui.activities.AuthActivity
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.funs.setSupportActionBar
 import st.slex.messenger.utilites.result.VoidResponse
@@ -37,19 +39,22 @@ class SettingsFragment : BaseFragment() {
         binding.settingsToolbar.title = getString(R.string.title_contacts)
         setSupportActionBar(binding.settingsToolbar)
         binding.settingsSignOut.setOnClickListener {
-            viewModel.signOut(getString(R.string.state_offline))
-                .observe(viewLifecycleOwner, signOutObserver)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.signOut(getString(R.string.state_offline)).collect {
+                    it.collector()
+                }
+            }
         }
     }
 
-    private val signOutObserver: Observer<VoidResponse> = Observer {
-        when (it) {
+    private fun VoidResponse.collector() {
+        when (this) {
             is VoidResponse.Success -> {
                 requireActivity().startActivity(Intent(requireContext(), AuthActivity::class.java))
                 requireActivity().finish()
             }
             is VoidResponse.Failure -> {
-                Log.i("$this", it.exception.toString())
+                Log.i("$this", exception.toString())
             }
             is VoidResponse.Loading -> {
 

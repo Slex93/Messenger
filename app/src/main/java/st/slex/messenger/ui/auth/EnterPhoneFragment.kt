@@ -40,13 +40,8 @@ class EnterPhoneFragment : BaseFragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    override fun onResume() {
-        super.onResume()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.fragmentPhoneInput.editText?.addTextChangedListener {
             binding.fragmentPhoneFab.isEnabled = it?.length == 12
         }
@@ -61,13 +56,19 @@ class EnterPhoneFragment : BaseFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun AuthResponse.collector() = when (this) {
         is AuthResponse.Success -> {
+            Log.i("Response::phone:", "Success")
             binding.root.showPrimarySnackBar(getString(R.string.snack_success))
             requireActivity().start(MainActivity())
         }
         is AuthResponse.Send -> {
-            Log.i("checkId::PhoneFragment", this.id)
+            Log.i("Response::phone:", "Send")
             binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
             val direction =
                 EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(this.id)
@@ -76,6 +77,7 @@ class EnterPhoneFragment : BaseFragment() {
             findNavController().navigate(direction, extras)
         }
         is AuthResponse.Failure -> {
+            Log.i("Response::phone:", "Failure")
             binding.root.showPrimarySnackBar(exception.toString())
         }
         is AuthResponse.Loading -> {

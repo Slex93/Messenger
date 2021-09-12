@@ -3,6 +3,7 @@ package st.slex.messenger.ui.auth
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import st.slex.messenger.domain.interactor.interf.AuthInteractor
@@ -14,9 +15,17 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
     suspend fun login(phone: String, activity: Activity): StateFlow<AuthResponse> =
-        interactor.login(phone, activity).stateIn(viewModelScope)
+        interactor.login(phone, activity).stateIn(
+            viewModelScope,
+            started = SharingStarted.WhileSubscribed(1000),
+            initialValue = AuthResponse.Loading
+        )
 
     suspend fun sendCode(id: String, code: String): StateFlow<AuthResponse> =
-        interactor.sendCode(id, code).stateIn(viewModelScope)
+        interactor.sendCode(id, code).stateIn(
+            viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = AuthResponse.Loading
+        )
 
 }

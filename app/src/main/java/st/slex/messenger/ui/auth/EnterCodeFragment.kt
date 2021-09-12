@@ -28,8 +28,6 @@ class EnterCodeFragment : BaseFragment() {
 
     private var _binding: FragmentEnterCodeBinding? = null
     private val binding get() = _binding!!
-    private var _id: String? = null
-    private val id get() = _id!!
 
     private val viewModel: AuthViewModel by viewModels {
         viewModelFactory.get()
@@ -57,13 +55,8 @@ class EnterCodeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args: EnterCodeFragmentArgs by navArgs()
-        _id = args.id
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.fragmentCodeTextInput.editText?.addTextChangedListener()
-        binding.fragmentCodeTextInput.editText?.addTextChangedListener { code ->
+        val id = args.id
+        binding.fragmentCodeTextInput.addTextChangedListener { code ->
             if (code?.length == 6) {
                 binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
                 viewLifecycleOwner.lifecycleScope.launch {
@@ -78,12 +71,13 @@ class EnterCodeFragment : BaseFragment() {
     private fun AuthResponse.collector() {
         when (this) {
             is AuthResponse.Success -> {
+                Log.i("Response::code:", "Success")
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                 requireActivity().start(MainActivity())
             }
             is AuthResponse.Failure -> {
+                Log.i("Response::code:", "Failure")
                 binding.root.showPrimarySnackBar(exception.toString())
-                Log.e("EnterCode: AuthResponse", exception.message, exception.cause)
             }
             else -> {
                 Log.e("EnterCode: Loading", "loading...")

@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.auth
+package st.slex.messenger.ui.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +15,7 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityAuthBinding.inflate(layoutInflater)
-        application.appComponent.inject(this)
+        applicationContext.appComponent.inject(this)
         setContentView(binding.root)
     }
 

@@ -24,16 +24,24 @@ class LoginEngineImpl @Inject constructor() : LoginEngine {
     override suspend fun login(phone: String, activity: Activity): Flow<AuthResponse> =
         callbackFlow {
             val callback = makeCallback({ credential ->
-                signInWithCredential(
-                    credential, {
+                Log.i("Response::LoginEngineImpl:", "SuccessCredential")
+
+                Log.i("Response::LoginEngineImpl:", "Successlaunch")
+                Firebase.auth.signInWithCredential(credential).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.i("Response::LoginEngineImpl:", "Success")
                         trySendBlocking(AuthResponse.Success)
-                    }, {
-                        trySendBlocking(AuthResponse.Failure(it))
-                    })
+                    } else {
+                        Log.i("Response::LoginEngineImpl:", "SuccessFailure")
+                        trySendBlocking(AuthResponse.Failure(task.exception!!))
+                    }
+                }
+
             }, {
+                Log.i("Response::LoginEngineImpl:", "Failure")
                 trySendBlocking(AuthResponse.Failure(it))
             }, {
-                Log.i("checkId::Login", it)
+                Log.i("Response::LoginEngineImpl:", "Send")
                 trySendBlocking(AuthResponse.Send(it))
             })
 
@@ -63,15 +71,4 @@ class LoginEngineImpl @Inject constructor() : LoginEngine {
         ): Unit = codeSend(verificationId)
     }
 
-    private inline fun signInWithCredential(
-        credential: PhoneAuthCredential,
-        crossinline success: () -> Unit,
-        crossinline failure: (Exception) -> Unit
-    ) = Firebase.auth.signInWithCredential(credential).addOnCompleteListener {
-        if (it.isSuccessful) {
-            success()
-        } else {
-            failure(it.exception!!)
-        }
-    }
 }

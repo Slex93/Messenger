@@ -21,28 +21,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
             android:id="@+id/fragment_code_text_input"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/TextAppearance.MaterialComponents.Headline3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="50dp"
             android:gravity="center"
             android:hint="@string/enter_code"
-            android:selectAllOnFocus="true">
-
-            <com.google.android.material.textfield.TextInputEditText
-                style="@style/TextAppearance.MaterialComponents.Headline3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:inputType="number"
-                android:maxLength="6"
-                android:maxLines="1"
-                android:padding="10dp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:maxLength="6"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:textStyle="bold" />
 
     </com.google.android.material.card.MaterialCardView>
 

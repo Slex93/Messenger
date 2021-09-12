@@ -1,8 +1,8 @@
 package st.slex.messenger.data.repository.interf
 
 import kotlinx.coroutines.flow.Flow
-import st.slex.messenger.data.model.UserInitial
+import st.slex.messenger.utilites.result.VoidResponse
 
 interface AuthRepository {
-    suspend fun saveUser(user: UserInitial): Flow<Result<String>>
+    suspend fun saveUser(): Flow<VoidResponse>
 }

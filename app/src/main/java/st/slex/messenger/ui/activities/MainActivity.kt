@@ -7,7 +7,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,9 +21,6 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var auth: FirebaseAuth
 
     private var _binding: ActivityMainBinding? = null
     private val binding: ActivityMainBinding get() = _binding!!
@@ -44,12 +40,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (auth.currentUser != null) viewModel.changeState(getString(R.string.state_online))
+        viewModel.changeState(getString(R.string.state_online))
     }
 
     override fun onStop() {
         super.onStop()
-        if (auth.currentUser != null) viewModel.changeState(getString(R.string.state_offline))
+        viewModel.changeState(getString(R.string.state_offline))
     }
 
     override fun onDestroy() {
