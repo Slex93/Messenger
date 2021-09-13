@@ -24,7 +24,7 @@ Messenger with end-to-end encryption
 
 ### Installation
 
-Not available yet
+first working build is available in [Releases](https://github.com/stslex/Messenger/releases)
 
 ### Screenshots
 
