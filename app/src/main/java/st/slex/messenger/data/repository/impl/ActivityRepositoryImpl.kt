@@ -1,7 +1,10 @@
 package st.slex.messenger.data.repository.impl
 
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
@@ -9,6 +12,7 @@ import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.base.AppValueEventListener
+import st.slex.messenger.utilites.funs.getThisValue
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -42,7 +46,6 @@ class ActivityRepositoryImpl @Inject constructor(
                                             .child(auth.uid)
                                             .child(snapshot.key.toString())
                                             .updateChildren(map)
-
                                     })
                             }
                         }
@@ -50,4 +53,19 @@ class ActivityRepositoryImpl @Inject constructor(
                 }
             )
         }
+
+
+    class ApplicationValueEventListener<T>(
+        val success: (type: Class<T>) -> Unit,
+        val cancel: (Exception) -> Unit
+    ) : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            success(snapshot.getThisValue())
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            cancel(error.toException())
+        }
+
+    }
 }

@@ -12,7 +12,7 @@ class ActivityViewModel @Inject constructor(
     private val repository: ActivityRepository
 ) : ViewModel() {
 
-    fun updateContacts(listContacts: List<ContactModel>) = viewModelScope.launch {
+    fun updateContacts(listContacts: List<ContactModel>) = viewModelScope.launch(Dispatchers.IO) {
         repository.updateContacts(listContacts)
     }
 
