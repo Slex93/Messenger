@@ -1,9 +1,12 @@
 package st.slex.messenger.data.repository.impl
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import dagger.Lazy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -11,57 +14,79 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.data.repository.interf.AuthRepository
 import st.slex.messenger.utilites.*
+import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class AuthRepositoryImpl @Inject constructor() : AuthRepository {
+class AuthRepositoryImpl @Inject constructor(
+    private val currentUser: Lazy<FirebaseUser>,
+    private val reference: Lazy<DatabaseReference>
+) : AuthRepository {
 
     override suspend fun saveUser(): Flow<VoidResponse> = callbackFlow {
-        val currentUser = Firebase.auth.currentUser!!
-        val map = mapOf<String, Any>(
-            CHILD_PHONE to currentUser.phoneNumber.toString(),
-            CHILD_ID to currentUser.uid,
-            CHILD_USERNAME to currentUser.displayName.toString()
-        )
-        val user = FirebaseDatabase.getInstance().reference
+        val usernameReference = reference.get()
             .child(NODE_USER)
-            .child(currentUser.uid)
-            .updateChildren(map)
-        val phones = FirebaseDatabase.getInstance().reference
-            .child(NODE_PHONE)
-            .child(currentUser.uid)
-            .setValue(currentUser.phoneNumber.toString())
-        val username = FirebaseDatabase.getInstance().reference
-            .child(NODE_USERNAME)
-            .child(currentUser.uid)
-            .setValue(currentUser.displayName)
+            .child(currentUser.get().uid)
+            .child(CHILD_USERNAME)
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val username = if (snapshot.value != null) {
+                    snapshot.getThisValue<String>()
+                } else currentUser.get().uid
 
-        user.listener { userResponse ->
-            if (userResponse is VoidResponse.Success) {
-                phones.listener { phonesResponse ->
-                    if (phonesResponse is VoidResponse.Success) {
-                        username.listener {
+                val map = mapOf<String, Any>(
+                    CHILD_PHONE to currentUser.get().phoneNumber.toString(),
+                    CHILD_ID to currentUser.get().uid,
+                    CHILD_USERNAME to username
+                )
+
+                val userTask = reference.get()
+                    .child(NODE_USER)
+                    .child(currentUser.get().uid)
+                    .updateChildren(map)
+
+                val phonesTask = reference.get()
+                    .child(NODE_PHONE)
+                    .child(currentUser.get().uid)
+                    .setValue(currentUser.get().phoneNumber.toString())
+
+                val usernameTask = reference.get()
+                    .child(NODE_USERNAME)
+                    .child(currentUser.get().uid)
+                    .setValue(username)
+
+                userTask.listener({
+                    phonesTask.listener({
+                        usernameTask.listener({
                             trySendBlocking(it)
-                        }
-                    } else trySendBlocking(phonesResponse)
-                }
-            } else {
-                trySendBlocking(userResponse)
+                        }, {
+                            trySendBlocking(it)
+                        })
+                    }, {
+                        trySendBlocking(it)
+                    })
+                }, {
+                    trySendBlocking(it)
+                })
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                trySendBlocking(VoidResponse.Failure(error.toException()))
             }
         }
-        awaitClose {}
+        usernameReference.addValueEventListener(listener)
+        awaitClose { usernameReference.removeEventListener(listener) }
     }
 
     private inline fun Task<Void>.listener(
-        crossinline request: (VoidResponse) -> Unit
+        crossinline success: (VoidResponse.Success) -> Unit,
+        crossinline failure: (VoidResponse.Failure) -> Unit
     ) {
-        addOnCompleteListener {
-            if (isSuccessful) {
-                request(VoidResponse.Success)
-            } else {
-                request(VoidResponse.Failure(it.exception!!))
-            }
+        this.addOnCompleteListener {
+            if (it.isSuccessful) {
+                success(VoidResponse.Success)
+            } else failure(VoidResponse.Failure(it.exception!!))
         }
     }
 
