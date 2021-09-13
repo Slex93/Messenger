@@ -1,7 +1,6 @@
 package st.slex.messenger.ui.auth
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +47,8 @@ class EnterPhoneFragment : BaseFragment() {
         binding.fragmentPhoneFab.setOnClickListener {
             binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             val phone = binding.fragmentPhoneInput.editText?.text.toString()
-            viewLifecycleOwner.lifecycleScope.launch {
+
+            requireActivity().lifecycleScope.launch {
                 viewModel.login(phone, requireActivity()).collect {
                     it.collector()
                 }
@@ -63,12 +63,9 @@ class EnterPhoneFragment : BaseFragment() {
 
     private fun AuthResponse.collector() = when (this) {
         is AuthResponse.Success -> {
-            Log.i("Response::phone:", "Success")
-            binding.root.showPrimarySnackBar(getString(R.string.snack_success))
             requireActivity().start(MainActivity())
         }
         is AuthResponse.Send -> {
-            Log.i("Response::phone:", "Send")
             binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
             val direction =
                 EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(this.id)
@@ -77,7 +74,6 @@ class EnterPhoneFragment : BaseFragment() {
             findNavController().navigate(direction, extras)
         }
         is AuthResponse.Failure -> {
-            Log.i("Response::phone:", "Failure")
             binding.root.showPrimarySnackBar(exception.toString())
         }
         is AuthResponse.Loading -> {

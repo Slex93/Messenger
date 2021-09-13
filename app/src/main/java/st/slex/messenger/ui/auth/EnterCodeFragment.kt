@@ -2,7 +2,6 @@ package st.slex.messenger.ui.auth
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,7 +58,7 @@ class EnterCodeFragment : BaseFragment() {
         binding.fragmentCodeTextInput.addTextChangedListener { code ->
             if (code?.length == 6) {
                 binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
-                viewLifecycleOwner.lifecycleScope.launch {
+                requireActivity().lifecycleScope.launch {
                     viewModel.sendCode(id = id, code = code.toString()).collect {
                         it.collector()
                     }
@@ -71,16 +70,13 @@ class EnterCodeFragment : BaseFragment() {
     private fun AuthResponse.collector() {
         when (this) {
             is AuthResponse.Success -> {
-                Log.i("Response::code:", "Success")
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                 requireActivity().start(MainActivity())
             }
             is AuthResponse.Failure -> {
-                Log.i("Response::code:", "Failure")
                 binding.root.showPrimarySnackBar(exception.toString())
             }
             else -> {
-                Log.e("EnterCode: Loading", "loading...")
             }
         }
     }

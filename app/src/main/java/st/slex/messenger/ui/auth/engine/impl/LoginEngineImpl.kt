@@ -1,7 +1,6 @@
 package st.slex.messenger.ui.auth.engine.impl
 
 import android.app.Activity
-import android.util.Log
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
@@ -24,24 +23,17 @@ class LoginEngineImpl @Inject constructor() : LoginEngine {
     override suspend fun login(phone: String, activity: Activity): Flow<AuthResponse> =
         callbackFlow {
             val callback = makeCallback({ credential ->
-                Log.i("Response::LoginEngineImpl:", "SuccessCredential")
-
-                Log.i("Response::LoginEngineImpl:", "Successlaunch")
                 Firebase.auth.signInWithCredential(credential).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.i("Response::LoginEngineImpl:", "Success")
                         trySendBlocking(AuthResponse.Success)
                     } else {
-                        Log.i("Response::LoginEngineImpl:", "SuccessFailure")
                         trySendBlocking(AuthResponse.Failure(task.exception!!))
                     }
                 }
 
             }, {
-                Log.i("Response::LoginEngineImpl:", "Failure")
                 trySendBlocking(AuthResponse.Failure(it))
             }, {
-                Log.i("Response::LoginEngineImpl:", "Send")
                 trySendBlocking(AuthResponse.Send(it))
             })
 

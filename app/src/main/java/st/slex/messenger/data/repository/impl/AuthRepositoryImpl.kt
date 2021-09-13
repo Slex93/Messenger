@@ -1,6 +1,5 @@
 package st.slex.messenger.data.repository.impl
 
-import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
@@ -18,28 +17,24 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
-    override suspend fun saveUser(): Flow<VoidResponse> = callbackFlow {
-        Log.i("Response::save:", "start")
 
-        val uid = Firebase.auth.currentUser!!.uid
+    override suspend fun saveUser(): Flow<VoidResponse> = callbackFlow {
+        val currentUser = Firebase.auth.currentUser!!
         val map = mapOf<String, Any>(
-            CHILD_PHONE to Firebase.auth.currentUser?.phoneNumber.toString(),
-            CHILD_ID to uid
+            CHILD_PHONE to currentUser.phoneNumber.toString(),
+            CHILD_ID to currentUser.uid
         )
         val value = FirebaseDatabase.getInstance().reference
             .child(NODE_USER)
-            .child(uid)
-            .setValue(map)
+            .child(currentUser.uid)
+            .updateChildren(map)
         value.addOnCompleteListener {
             if (it.isSuccessful) {
-                Log.i("Response::save:", "Success")
                 trySendBlocking(VoidResponse.Success)
             } else {
-                Log.i("Response::save:", "Failure")
                 trySendBlocking(VoidResponse.Failure(it.exception!!))
             }
         }
         awaitClose {}
     }
-
 }

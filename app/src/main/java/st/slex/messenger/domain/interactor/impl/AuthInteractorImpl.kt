@@ -1,7 +1,6 @@
 package st.slex.messenger.domain.interactor.impl
 
 import android.app.Activity
-import android.util.Log
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -51,7 +50,6 @@ class AuthInteractorImpl @Inject constructor(
     ) {
         when (this) {
             is AuthResponse.Success -> {
-                Log.i("Response::authinteractor:", "Success")
                 repository.saveUser().collect {
                     when (it) {
                         is VoidResponse.Success -> success()
@@ -62,12 +60,9 @@ class AuthInteractorImpl @Inject constructor(
                 }
             }
             is AuthResponse.Send -> {
-                Log.i("Response::authinteractor:", "ResponseSend")
-
                 sendCode(id)
             }
             is AuthResponse.Failure -> {
-                Log.i("Response::authinteractor:", "ResponseFailure")
                 failure(exception)
             }
             else -> {
