@@ -9,12 +9,12 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
+import st.slex.messenger.core.AppValueEventListener
 import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.SingleChatRepository
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.base.AppChildEventListener
-import st.slex.messenger.utilites.base.AppValueEventListener
 import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.Response
 import javax.inject.Inject
@@ -27,17 +27,23 @@ class SingleChatRepositoryImpl @Inject constructor(
 
     override suspend fun getUser(uid: String): Flow<Response<UserModel>> = callbackFlow {
         val reference = databaseReference.child(NODE_USER).child(uid)
-        val listener = AppValueEventListener { snapshot ->
+        val listener = AppValueEventListener({ snapshot ->
             val user = snapshot.getThisValue<UserModel>()
             databaseReference
                 .child(NODE_CONTACT)
                 .child(auth.uid)
                 .child(uid)
                 .child(CHILD_FULL_NAME)
-                .addListenerForSingleValueEvent(AppValueEventListener {
-                    trySendBlocking(Response.Success(user.copy(full_name = it.value.toString())))
-                })
-        }
+                .addListenerForSingleValueEvent(
+                    AppValueEventListener({
+                        trySendBlocking(Response.Success(user.copy(full_name = it.value.toString())))
+                    }, {
+                        trySendBlocking(Response.Failure(it))
+                    })
+                )
+        }, {
+            trySendBlocking(Response.Failure(it))
+        })
         reference.addValueEventListener(listener)
         awaitClose { reference.removeEventListener(listener) }
     }
@@ -57,24 +63,33 @@ class SingleChatRepositoryImpl @Inject constructor(
 
     override suspend fun getCurrentUser(uid: String): Flow<Response<UserModel>> = callbackFlow {
         val reference = databaseReference.child(NODE_USER).child(auth.uid)
-        val listener = AppValueEventListener { snapshot ->
+        val listener = AppValueEventListener({ snapshot ->
             val currentUser = snapshot.getThisValue<UserModel>()
             if (currentUser.full_name.isEmpty()) {
-                databaseReference.child(NODE_CONTACT).child(uid).child(auth.uid).child(
-                    CHILD_FULL_NAME
-                ).addValueEventListener(AppValueEventListener {
-                    val fullName = it.getThisValue<String>()
-                    val name = if (fullName.isEmpty()) {
-                        currentUser.username
-                    } else {
-                        fullName
-                    }
-                    trySendBlocking(Response.Success(currentUser.copy(full_name = name)))
-                })
+                databaseReference
+                    .child(NODE_CONTACT)
+                    .child(uid)
+                    .child(auth.uid)
+                    .child(CHILD_FULL_NAME)
+                    .addValueEventListener(
+                        AppValueEventListener({
+                            val fullName = it.getThisValue<String>()
+                            val name = if (fullName.isEmpty()) {
+                                currentUser.username
+                            } else {
+                                fullName
+                            }
+                            trySendBlocking(Response.Success(currentUser.copy(full_name = name)))
+                        }, {
+                            trySendBlocking(Response.Failure(it))
+                        })
+                    )
             } else {
                 trySendBlocking(Response.Success(currentUser))
             }
-        }
+        }, {
+            trySendBlocking(Response.Failure(it))
+        })
         reference.addValueEventListener(listener)
         awaitClose { reference.removeEventListener(listener) }
     }

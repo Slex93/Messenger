@@ -1,71 +1,66 @@
 package st.slex.messenger.data.repository.impl
 
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
+import st.slex.messenger.core.AppValueEventListener
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.interf.ActivityRepository
 import st.slex.messenger.utilites.*
-import st.slex.messenger.utilites.base.AppValueEventListener
-import st.slex.messenger.utilites.funs.getThisValue
+import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class ActivityRepositoryImpl @Inject constructor(
-    private val databaseReference: DatabaseReference,
+    private val reference: DatabaseReference,
     private val auth: FirebaseUser,
 ) : ActivityRepository {
 
     override suspend fun changeState(state: String): Unit = withContext(Dispatchers.IO) {
-        databaseReference.child(NODE_USER).child(auth.uid)
+        reference.child(NODE_USER).child(auth.uid)
             .child(CHILD_STATE).setValue(state)
     }
 
-    override suspend fun updateContacts(list: List<ContactModel>): Unit =
-        withContext(Dispatchers.IO) {
-            databaseReference.child(NODE_PHONE).addValueEventListener(
-                AppValueEventListener { snapshotParent ->
-                    snapshotParent.children.forEach { snapshot ->
-                        list.forEach { contact ->
-                            if (auth.uid != snapshot.key && snapshot.value == contact.phone) {
-                                databaseReference.child(NODE_USER).child(snapshot.key.toString())
-                                    .child(CHILD_URL)
-                                    .addValueEventListener(AppValueEventListener { url ->
-                                        val map = mapOf(
-                                            CHILD_ID to snapshot.key.toString(),
-                                            CHILD_FULL_NAME to contact.full_name,
-                                            CHILD_PHONE to contact.phone,
-                                            CHILD_URL to url.value.toString()
-                                        )
-                                        databaseReference.child(NODE_CONTACT)
-                                            .child(auth.uid)
-                                            .child(snapshot.key.toString())
-                                            .updateChildren(map)
-                                    })
+    override suspend fun updateContacts(contactList: List<ContactModel>): Flow<VoidResponse> =
+        callbackFlow {
+            val phonesReference = reference.child(NODE_PHONE)
+            val listener = AppValueEventListener({ snapshotListPhone ->
+                snapshotListPhone.children.forEach { snapshotPhone ->
+                    contactList.forEach { contact ->
+                        if (auth.uid != snapshotPhone.key && contact.phone == snapshotPhone.value) {
+                            val map = mapOf(
+                                CHILD_ID to snapshotPhone.key.toString(),
+                                CHILD_PHONE to contact.phone,
+                                CHILD_FULL_NAME to contact.full_name
+                            )
+                            val contactTask = reference
+                                .child(NODE_CONTACT)
+                                .child(auth.uid)
+                                .child(snapshotPhone.key.toString())
+                                .updateChildren(map)
+                            contactTask.addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                    trySendBlocking(VoidResponse.Success)
+                                } else {
+                                    trySendBlocking(VoidResponse.Failure(it.exception!!))
+                                }
                             }
                         }
                     }
+
                 }
-            )
+            }, {
+                trySendBlocking(VoidResponse.Failure(it))
+            })
+
+            phonesReference.addValueEventListener(listener)
+            awaitClose { phonesReference.removeEventListener(listener) }
         }
 
-
-    class ApplicationValueEventListener<T>(
-        val success: (type: Class<T>) -> Unit,
-        val cancel: (Exception) -> Unit
-    ) : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            success(snapshot.getThisValue())
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            cancel(error.toException())
-        }
-
-    }
 }

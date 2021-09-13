@@ -7,14 +7,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
 import st.slex.messenger.utilites.funs.appComponent
 import st.slex.messenger.utilites.funs.setContacts
+import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -33,10 +33,27 @@ class MainActivity : AppCompatActivity() {
         applicationContext.appComponent.inject(this)
         CoroutineScope(Dispatchers.IO).launch {
             this@MainActivity.setContacts {
-                viewModel.updateContacts(it)
+                lifecycleScope.launch {
+                    viewModel.updateContacts(it).collect {
+                        it.collector()
+                    }
+                }
             }
         }
     }
+
+    private fun VoidResponse.collector(): Unit =
+        when (this) {
+            is VoidResponse.Success -> {
+
+            }
+            is VoidResponse.Failure -> {
+
+            }
+            is VoidResponse.Loading -> {
+
+            }
+        }
 
     override fun onStart() {
         super.onStart()
@@ -66,7 +83,11 @@ class MainActivity : AppCompatActivity() {
         ) {
             CoroutineScope(Dispatchers.IO).launch {
                 this@MainActivity.setContacts {
-                    viewModel.updateContacts(it)
+                    lifecycleScope.launch {
+                        viewModel.updateContacts(it).collect {
+                            it.collector()
+                        }
+                    }
                 }
             }
         }

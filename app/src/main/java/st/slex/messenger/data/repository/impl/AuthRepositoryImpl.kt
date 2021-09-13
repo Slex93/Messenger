@@ -2,16 +2,14 @@ package st.slex.messenger.data.repository.impl
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import dagger.Lazy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import st.slex.messenger.core.AppValueEventListener
 import st.slex.messenger.data.repository.interf.AuthRepository
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.funs.getThisValue
@@ -29,52 +27,49 @@ class AuthRepositoryImpl @Inject constructor(
             .child(NODE_USER)
             .child(currentUser.get().uid)
             .child(CHILD_USERNAME)
-        val listener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val username = if (snapshot.value != null) {
-                    snapshot.getThisValue<String>()
-                } else currentUser.get().uid
+        val listener = AppValueEventListener({ snapshot ->
+            val username = if (snapshot.value != null) {
+                snapshot.getThisValue<String>()
+            } else currentUser.get().uid
 
-                val map = mapOf<String, Any>(
-                    CHILD_PHONE to currentUser.get().phoneNumber.toString(),
-                    CHILD_ID to currentUser.get().uid,
-                    CHILD_USERNAME to username
-                )
+            val map = mapOf<String, Any>(
+                CHILD_PHONE to currentUser.get().phoneNumber.toString(),
+                CHILD_ID to currentUser.get().uid,
+                CHILD_USERNAME to username
+            )
 
-                val userTask = reference.get()
-                    .child(NODE_USER)
-                    .child(currentUser.get().uid)
-                    .updateChildren(map)
+            val userTask = reference.get()
+                .child(NODE_USER)
+                .child(currentUser.get().uid)
+                .updateChildren(map)
 
-                val phonesTask = reference.get()
-                    .child(NODE_PHONE)
-                    .child(currentUser.get().uid)
-                    .setValue(currentUser.get().phoneNumber.toString())
+            val phonesTask = reference.get()
+                .child(NODE_PHONE)
+                .child(currentUser.get().uid)
+                .setValue(currentUser.get().phoneNumber.toString())
 
-                val usernameTask = reference.get()
-                    .child(NODE_USERNAME)
-                    .child(currentUser.get().uid)
-                    .setValue(username)
+            val usernameTask = reference.get()
+                .child(NODE_USERNAME)
+                .child(currentUser.get().uid)
+                .setValue(username)
 
-                userTask.listener({
-                    phonesTask.listener({
-                        usernameTask.listener({
-                            trySendBlocking(it)
-                        }, {
-                            trySendBlocking(it)
-                        })
+            userTask.listener({
+                phonesTask.listener({
+                    usernameTask.listener({
+                        trySendBlocking(it)
                     }, {
                         trySendBlocking(it)
                     })
                 }, {
                     trySendBlocking(it)
                 })
-            }
+            }, {
+                trySendBlocking(it)
+            })
 
-            override fun onCancelled(error: DatabaseError) {
-                trySendBlocking(VoidResponse.Failure(error.toException()))
-            }
-        }
+        }, {
+            trySendBlocking(VoidResponse.Failure(it))
+        })
         usernameReference.addValueEventListener(listener)
         awaitClose { usernameReference.removeEventListener(listener) }
     }

@@ -1,19 +1,18 @@
-package st.slex.messenger.utilites.base
+package st.slex.messenger.core
 
-import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
-@JvmInline
-value class AppValueEventListener(
-    val onSuccess: (DataSnapshot) -> Unit
+class AppValueEventListener(
+    val success: (DataSnapshot) -> Unit,
+    val failure: (Exception) -> Unit
 ) : ValueEventListener {
     override fun onDataChange(snapshot: DataSnapshot) {
-        onSuccess(snapshot)
+        success(snapshot)
     }
 
     override fun onCancelled(error: DatabaseError) {
-        Log.e("EventListener", error.message, error.toException())
+        failure(error.toException())
     }
 }
