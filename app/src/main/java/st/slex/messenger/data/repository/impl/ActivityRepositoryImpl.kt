@@ -27,45 +27,48 @@ class ActivityRepositoryImpl @Inject constructor(
             .child(CHILD_STATE).setValue(state)
     }
 
-    override suspend fun updateContacts(contactList: List<ContactModel>): Flow<VoidResponse> =
+    override suspend fun updateContacts(list: List<ContactModel>): Flow<VoidResponse> =
         callbackFlow {
             val phonesReference = reference.child(NODE_PHONE)
             val listener = AppValueEventListener({ snapshotListPhone ->
                 snapshotListPhone.children.forEach { snapshotPhone ->
-                    contactList.forEach { contact ->
-                        if (auth.uid != snapshotPhone.key && contact.phone == snapshotPhone.value) {
-                            reference
-                                .child(NODE_USER)
-                                .child(snapshotPhone.key.toString())
-                                .child(CHILD_URL)
-                                .addValueEventListener(
-                                    AppValueEventListener({ snapshotUrl ->
-                                        val url = snapshotUrl.value
-                                        val map = mapOf(
-                                            CHILD_ID to snapshotPhone.key.toString(),
-                                            CHILD_PHONE to contact.phone,
-                                            CHILD_FULL_NAME to contact.full_name,
-                                            CHILD_URL to url
-                                        )
-                                        val contactTask = reference
-                                            .child(NODE_CONTACT)
-                                            .child(auth.uid)
-                                            .child(snapshotPhone.key.toString())
-                                            .setValue(map)
-                                        contactTask.addOnCompleteListener {
-                                            if (it.isSuccessful) {
-                                                trySendBlocking(VoidResponse.Success)
-                                            } else {
-                                                trySendBlocking(VoidResponse.Failure(it.exception!!))
+                    if (list.isNullOrEmpty()) {
+                        reference.child(NODE_CONTACT).child(auth.uid).setValue(list)
+                    } else {
+                        list.forEach { contact ->
+                            if (auth.uid != snapshotPhone.key && contact.phone == snapshotPhone.value) {
+                                reference
+                                    .child(NODE_USER)
+                                    .child(snapshotPhone.key.toString())
+                                    .child(CHILD_URL)
+                                    .addValueEventListener(
+                                        AppValueEventListener({ snapshotUrl ->
+                                            val url = snapshotUrl.value
+                                            val map = mapOf(
+                                                CHILD_ID to snapshotPhone.key.toString(),
+                                                CHILD_PHONE to contact.phone,
+                                                CHILD_FULL_NAME to contact.full_name,
+                                                CHILD_URL to url
+                                            )
+                                            val contactTask = reference
+                                                .child(NODE_CONTACT)
+                                                .child(auth.uid)
+                                                .child(snapshotPhone.key.toString())
+                                                .setValue(map)
+                                            contactTask.addOnCompleteListener {
+                                                if (it.isSuccessful) {
+                                                    trySendBlocking(VoidResponse.Success)
+                                                } else {
+                                                    trySendBlocking(VoidResponse.Failure(it.exception!!))
+                                                }
                                             }
-                                        }
-                                    }, {
-                                        trySendBlocking(VoidResponse.Failure(it))
-                                    })
-                                )
+                                        }, {
+                                            trySendBlocking(VoidResponse.Failure(it))
+                                        })
+                                    )
+                            }
                         }
                     }
-
                 }
             }, {
                 trySendBlocking(VoidResponse.Failure(it))

@@ -85,7 +85,7 @@ suspend fun Activity.checkPermission(permission: String): Boolean = withContext(
 suspend inline fun Activity.setContacts(crossinline function: (list: List<ContactModel>) -> Unit) =
     withContext(Dispatchers.IO) {
         if (checkPermission(Manifest.permission.READ_CONTACTS)) {
-            val list = mutableListOf<ContactModel>()
+            val list = emptyList<ContactModel>()
             val cursor = contentResolver.query(
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 null,
@@ -101,7 +101,7 @@ suspend inline fun Activity.setContacts(crossinline function: (list: List<Contac
                         it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                     val setPhone = phone.replace(Regex("[\\s,-]"), "")
                     val newModel = ContactModel(full_name = fullName, phone = setPhone)
-                    list.add(newModel)
+                    list.toMutableList().add(newModel)
                 }
             }
             cursor?.close()

@@ -42,6 +42,9 @@ android {
 }
 
 dependencies {
+    /*Paging*/
+    implementation "androidx.paging:paging-runtime-ktx:3.0.1"
+
     /*Dagger 2*/
     implementation("com.google.dagger:dagger:2.37")
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -51,7 +54,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.firebase:firebase-database:20.0.1'
+    implementation 'com.google.firebase:firebase-database:20.0.2'
     implementation "com.google.android.gms:play-services-gcm:17.0.0"
     kapt('com.google.firebase:firebase-auth:21.0.1')
 
