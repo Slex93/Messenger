@@ -36,5 +36,8 @@
     <string name="label_username">Username</string>
     <string name="label_fullname">Fullname</string>
     <string name="label_bio">Bio</string>
+    <string name="label_save">save</string>
+    <string name="transition_username">transition_edit_username</string>
+    <string name="description_write_message">write new message</string>
 
 </resources>

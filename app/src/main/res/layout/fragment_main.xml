@@ -31,6 +31,15 @@
             android:layout_marginTop="?actionBarSize"
             tools:listitem="@layout/item_recycler_main" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fragment_main_btn_create_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/primary_padding"
+            android:contentDescription="@string/description_write_message"
+            android:src="@drawable/ic_baseline_create_24" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView

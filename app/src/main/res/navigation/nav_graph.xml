@@ -28,7 +28,11 @@
         android:id="@+id/nav_user_profile"
         android:name="st.slex.messenger.ui.user_profile.UserProfileFragment"
         android:label="fragment_user_profile"
-        tools:layout="@layout/fragment_user_profile" />
+        tools:layout="@layout/fragment_user_profile">
+        <action
+            android:id="@+id/action_nav_user_profile_to_editUsernameFragment"
+            app:destination="@id/editUsernameFragment" />
+    </fragment>
     <fragment
         android:id="@+id/nav_contact"
         android:name="st.slex.messenger.ui.contacts.ContactFragment"
@@ -54,5 +58,14 @@
         android:name="st.slex.messenger.ui.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/editUsernameFragment"
+        android:name="st.slex.messenger.ui.user_profile.EditUsernameFragment"
+        android:label="fragment_edit_username"
+        tools:layout="@layout/fragment_edit_username">
+        <argument
+            android:name="username"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

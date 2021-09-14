@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.41875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.23279758915118032" />
         <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.2259963768115942" />
+        <entry key="app/src/main/res/layout/fragment_edit_username.xml" value="0.46979166666666666" />
         <entry key="app/src/main/res/layout/fragment_enter_code.xml" value="0.291213768115942" />
         <entry key="app/src/main/res/layout/fragment_enter_phone.xml" value="0.4466666666666667" />
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.291213768115942" />

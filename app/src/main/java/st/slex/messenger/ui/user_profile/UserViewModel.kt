@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.stateIn
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.UserRepository
 import st.slex.messenger.utilites.result.Response
+import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 class UserViewModel @Inject constructor(
@@ -18,5 +19,12 @@ class UserViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
             initialValue = Response.Loading
+        )
+
+    suspend fun saveUsername(username: String): StateFlow<VoidResponse> =
+        repository.saveUsername(username).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = VoidResponse.Loading
         )
 }
