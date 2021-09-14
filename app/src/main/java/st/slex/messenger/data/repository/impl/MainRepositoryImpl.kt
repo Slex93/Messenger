@@ -36,17 +36,19 @@ class MainRepositoryImpl @Inject constructor(
         awaitClose { reference.removeEventListener(listener) }
     }
 
-    override suspend fun getChatList(): Flow<Response<List<ChatListModel>>> = callbackFlow {
-        val reference = databaseReference
-            .child(NODE_CHAT_LIST)
-            .child(user.uid)
-        val listener = AppValueEventListener({ snapshot ->
-            val result = snapshot.children.map { it.getThisValue<ChatListModel>() }
-            trySendBlocking(Response.Success(value = result))
-        }, {
-            trySendBlocking(Response.Failure(it))
-        })
-        reference.addValueEventListener(listener)
-        awaitClose { reference.removeEventListener(listener) }
-    }
+    override suspend fun getChatList(page: Int): Flow<Response<List<ChatListModel>>> =
+        callbackFlow {
+            val reference = databaseReference
+                .child(NODE_CHAT_LIST)
+                .child(user.uid)
+                .limitToLast(page)
+            val listener = AppValueEventListener({ snapshot ->
+                val result = snapshot.children.map { it.getThisValue<ChatListModel>() }
+                trySendBlocking(Response.Success(value = result))
+            }, {
+                trySendBlocking(Response.Failure(it))
+            })
+            reference.addValueEventListener(listener)
+            awaitClose { reference.removeEventListener(listener) }
+        }
 }

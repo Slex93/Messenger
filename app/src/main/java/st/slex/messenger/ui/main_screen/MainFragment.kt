@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
+import st.slex.messenger.data.model.ChatListModel
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.base.CardClickListener
@@ -70,23 +70,27 @@ class MainFragment : BaseFragment() {
         )
         binding.navView.setupWithNavController(findNavController())
         initRecyclerView()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getChatList().collect {
-                when (it) {
-                    is Response.Success -> {
-                        adapter.addChat(it.value)
-                    }
-                    is Response.Failure -> {
-                        Log.e(
-                            "Exception im MainList from the flow",
-                            it.exception.message.toString(),
-                            it.exception.cause
-                        )
-                    }
-                    is Response.Loading -> {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewModel.getChatList(10).collect {
+                it.collect()
+            }
+        }
+    }
 
-                    }
-                }
+    private fun Response<List<ChatListModel>>.collect() {
+        when (this) {
+            is Response.Success -> {
+                adapter.addChat(value)
+            }
+            is Response.Failure -> {
+                Log.e(
+                    "Exception im MainList from the flow",
+                    exception.message.toString(),
+                    exception.cause
+                )
+            }
+            is Response.Loading -> {
+
             }
         }
     }

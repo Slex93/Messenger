@@ -46,6 +46,6 @@
         android:layout_gravity="center_horizontal|top"
         android:layout_marginTop="@dimen/big_padding"
         android:indeterminate="true"
-        tools:visibility="visible"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible" />
 </FrameLayout>

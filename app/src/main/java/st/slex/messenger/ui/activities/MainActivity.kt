@@ -31,12 +31,14 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         applicationContext.appComponent.inject(this)
-        CoroutineScope(Dispatchers.IO).launch {
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launchWhenResumed {
             this@MainActivity.setContacts {
-                lifecycleScope.launch {
-                    viewModel.updateContacts(it).collect {
-                        it.collector()
-                    }
+                this.launch {
+                    viewModel.updateContacts(it).collect()
                 }
             }
         }

@@ -57,7 +57,6 @@ class EnterCodeFragment : BaseFragment() {
         val id = args.id
         binding.fragmentCodeTextInput.addTextChangedListener { code ->
             if (code?.length == 6) {
-                binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
                 requireActivity().lifecycleScope.launch {
                     viewModel.sendCode(id = id, code = code.toString()).collect {
                         it.collector()
@@ -70,13 +69,16 @@ class EnterCodeFragment : BaseFragment() {
     private fun AuthResponse.collector() {
         when (this) {
             is AuthResponse.Success -> {
+                binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                 requireActivity().start(MainActivity())
             }
             is AuthResponse.Failure -> {
+                binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 binding.root.showPrimarySnackBar(exception.toString())
             }
-            else -> {
+            is AuthResponse.Loading -> {
+                binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             }
         }
     }

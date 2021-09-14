@@ -45,9 +45,7 @@ class EnterPhoneFragment : BaseFragment() {
             binding.fragmentPhoneFab.isEnabled = it?.length == 12
         }
         binding.fragmentPhoneFab.setOnClickListener {
-            binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             val phone = binding.fragmentPhoneInput.editText?.text.toString()
-
             requireActivity().lifecycleScope.launch {
                 viewModel.login(phone, requireActivity()).collect {
                     it.collector()
@@ -66,6 +64,7 @@ class EnterPhoneFragment : BaseFragment() {
             requireActivity().start(MainActivity())
         }
         is AuthResponse.Send -> {
+            binding.fragmentCodeProgressIndicator.visibility = View.GONE
             binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
             val direction =
                 EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(this.id)
@@ -74,9 +73,11 @@ class EnterPhoneFragment : BaseFragment() {
             findNavController().navigate(direction, extras)
         }
         is AuthResponse.Failure -> {
+            binding.fragmentCodeProgressIndicator.visibility = View.GONE
             binding.root.showPrimarySnackBar(exception.toString())
         }
         is AuthResponse.Loading -> {
+            binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
         }
     }
 

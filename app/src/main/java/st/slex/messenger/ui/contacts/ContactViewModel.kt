@@ -12,7 +12,6 @@ import javax.inject.Inject
 
 class ContactViewModel @Inject constructor(private val repository: ContactsRepository) :
     ViewModel() {
-
     suspend fun getContact(): StateFlow<Response<List<ContactModel>>> =
         repository.getContacts().stateIn(
             viewModelScope,

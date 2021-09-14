@@ -41,11 +41,10 @@
         android:id="@+id/fragment_code_progress_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="@dimen/big_padding"
         android:indeterminate="true"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/fragment_code_layout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:visibility="visible" />
 
 </FrameLayout>

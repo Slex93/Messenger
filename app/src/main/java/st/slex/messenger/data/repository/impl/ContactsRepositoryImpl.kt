@@ -20,6 +20,7 @@ class ContactsRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
     private val user: FirebaseUser
 ) : ContactsRepository {
+
     override suspend fun getContacts(): Flow<Response<List<ContactModel>>> = callbackFlow {
         val reference = databaseReference
             .child(NODE_CONTACT)
@@ -35,4 +36,5 @@ class ContactsRepositoryImpl @Inject constructor(
         reference.addValueEventListener(listener)
         awaitClose { reference.removeEventListener(listener) }
     }
+
 }

@@ -19,7 +19,7 @@ class ActivityViewModel @Inject constructor(
     suspend fun updateContacts(list: List<ContactModel>): StateFlow<VoidResponse> =
         repository.updateContacts(list).stateIn(
             viewModelScope,
-            started = SharingStarted.WhileSubscribed(1000),
+            started = SharingStarted.Lazily,
             initialValue = VoidResponse.Loading
         )
 

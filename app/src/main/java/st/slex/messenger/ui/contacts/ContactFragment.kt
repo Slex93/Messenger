@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
+import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.base.CardClickListener
@@ -53,21 +54,25 @@ class ContactFragment : BaseFragment() {
         initRecyclerView()
         viewLifecycleOwner.lifecycleScope.launch {
             contactViewModel.getContact().collect {
-                when (it) {
-                    is Response.Success -> {
-                        adapter.addItems(it.value)
-                    }
-                    is Response.Failure -> {
-                        Log.e(
-                            "Exception im ContactList from the flow",
-                            it.exception.message.toString(),
-                            it.exception.cause
-                        )
-                    }
-                    is Response.Loading -> {
+                it.collect()
+            }
+        }
+    }
 
-                    }
-                }
+    private fun Response<List<ContactModel>>.collect() {
+        when (this) {
+            is Response.Success -> {
+                adapter.addItems(value)
+            }
+            is Response.Failure -> {
+                Log.e(
+                    "Exception in ContactList from the flow",
+                    exception.message.toString(),
+                    exception.cause
+                )
+            }
+            is Response.Loading -> {
+
             }
         }
     }

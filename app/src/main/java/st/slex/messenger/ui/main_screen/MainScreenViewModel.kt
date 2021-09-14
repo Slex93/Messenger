@@ -17,11 +17,12 @@ import st.slex.messenger.utilites.result.Response
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class MainScreenViewModel @Inject constructor(private val repository: MainRepository) :
-    ViewModel() {
+class MainScreenViewModel @Inject constructor(
+    private val repository: MainRepository
+) : ViewModel() {
 
-    suspend fun getChatList(): StateFlow<Response<List<ChatListModel>>> =
-        repository.getChatList().stateIn(
+    suspend fun getChatList(page: Int): StateFlow<Response<List<ChatListModel>>> =
+        repository.getChatList(page).stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
             initialValue = Response.Loading

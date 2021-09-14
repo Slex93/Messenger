@@ -50,7 +50,10 @@ class SingleChatRepositoryImpl @Inject constructor(
 
     override suspend fun getMessages(uid: String, limitToLast: Int): Flow<Response<MessageModel>> =
         callbackFlow {
-            val reference = databaseReference.child(NODE_CHAT).child(auth.uid).child(uid)
+            val reference = databaseReference
+                .child(NODE_CHAT)
+                .child(auth.uid)
+                .child(uid)
                 .limitToLast(limitToLast)
             val listener = AppChildEventListener({ snapshot ->
                 trySendBlocking(Response.Success(snapshot.getThisValue()))
@@ -113,15 +116,15 @@ class SingleChatRepositoryImpl @Inject constructor(
             databaseReference
                 .updateChildren(mapDialog)
                 .addOnSuccessListener {
-                    setInChatList(user, message, messageKey.toString(), currentUser)
+                    setInChatList(user, currentUser, message, messageKey.toString())
                 }
         }
 
     private fun setInChatList(
         user: UserModel,
+        currentUser: UserModel,
         message: String,
         messageKey: String,
-        currentUser: UserModel
     ) {
         val mapUser = mutableMapOf<String, Any>(
             CHILD_MESSAGE_KEY to messageKey,
