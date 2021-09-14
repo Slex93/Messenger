@@ -31,5 +31,10 @@
     <string name="label_nav_connect_me">Connect me</string>
     <string name="label_nav_help">Help</string>
     <string name="label_nav_user_profile">Profile</string>
+    <string name="label_account">Account</string>
+    <string name="label_phone_number">Phone number</string>
+    <string name="label_username">Username</string>
+    <string name="label_fullname">Fullname</string>
+    <string name="label_bio">Bio</string>
 
 </resources>

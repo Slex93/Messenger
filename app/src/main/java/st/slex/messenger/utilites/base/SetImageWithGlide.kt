@@ -7,7 +7,8 @@ class SetImageWithGlide(
         imageView: ImageView,
         url: String,
         needCrop: Boolean,
-        needCircleCrop: Boolean
+        needCircleCrop: Boolean,
+        needOriginal: Boolean
     ) -> Unit
 ) {
 
@@ -15,7 +16,8 @@ class SetImageWithGlide(
         imageView: ImageView,
         url: String,
         needCrop: Boolean = false,
-        needCircleCrop: Boolean = false
-    ) = makeGlideImage(imageView, url, needCrop, needCircleCrop)
+        needCircleCrop: Boolean = false,
+        needOriginal: Boolean = false
+    ) = makeGlideImage(imageView, url, needCrop, needCircleCrop, needOriginal)
 
 }

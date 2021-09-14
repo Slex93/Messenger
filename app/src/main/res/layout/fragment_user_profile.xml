@@ -1,139 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/big_padding"
+    android:orientation="vertical"
     tools:context="st.slex.messenger.ui.user_profile.UserProfileFragment">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/big_padding"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            tools:src="@drawable/test_image" />
-    </com.google.android.material.card.MaterialCardView>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tableLayout">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Username:" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:lines="1"
-                tools:text="username adadasdas" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fullname:" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bio:" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Url:" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/big_padding"
-        android:text="save"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
-
-    <TableLayout
-        android:id="@+id/tableLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialCardView">
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/primary_padding"
+        app:cardCornerRadius="@dimen/big_padding">
 
-        <TableRow
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/primary_padding"
+            android:src="@drawable/ic_baseline_add_photo_alternate_24" />
+
+        <ImageView
+            android:id="@+id/profile_image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="250dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/test_image" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
+                style="@style/TextAppearance.MaterialComponents.Headline3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Url:" />
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:text="@string/label_account" />
 
-            <EditText
-                android:layout_width="wrap_content"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/profile_phone_card"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/big_padding"
-                android:text="Url:" />
-        </TableRow>
+                android:layout_margin="@dimen/primary_padding"
+                app:cardCornerRadius="@dimen/primary_padding"
+                app:cardElevation="@dimen/primary_padding">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/primary_padding">
 
-            <TextView
-                android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/profile_phone_number"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="+79998887766" />
+
+                    <TextView
+                        style="@style/TextAppearance.MaterialComponents.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_phone_number" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/profile_username_card"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Url:" />
-        </TableRow>
+                android:layout_margin="@dimen/primary_padding"
+                app:cardCornerRadius="@dimen/primary_padding"
+                app:cardElevation="@dimen/primary_padding">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/primary_padding">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </TableLayout>
+                    <TextView
+                        android:id="@+id/profile_username"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="StSlex" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        style="@style/TextAppearance.MaterialComponents.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_username" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/profile_full_name_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/primary_padding"
+                app:cardCornerRadius="@dimen/primary_padding"
+                app:cardElevation="@dimen/primary_padding">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/primary_padding">
+
+                    <TextView
+                        android:id="@+id/profile_full_name"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Ilya" />
+
+                    <TextView
+                        style="@style/TextAppearance.MaterialComponents.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_fullname" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/profile_bio_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/primary_padding"
+                app:cardCornerRadius="@dimen/primary_padding"
+                app:cardElevation="@dimen/primary_padding">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/primary_padding">
+
+                    <TextView
+                        android:id="@+id/profile_bio"
+                        style="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        tools:text="Poor app performance can ruin the user experience and destroy your app's reputation. If it ever responds slowly, shows choppy animations, freezes, crashes, or consumes a lot of power, your users will notice. To avoid these performance problems, use the Android Profiler to measure your app's memory, CPU, and network usage." />
+
+                    <TextView
+                        style="@style/TextAppearance.MaterialComponents.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/small_padding"
+                        android:text="@string/label_bio" />
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -26,4 +26,7 @@ interface RepositoryModule {
 
     @Binds
     fun bindSettingsRepository(repository: SettingsRepositoryImpl): SettingsRepository
+
+    @Binds
+    fun bindUserRepositoryImpl(repository: UserRepositoryImpl): UserRepository
 }

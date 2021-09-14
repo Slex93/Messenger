@@ -19,7 +19,8 @@ value class GlideBase(
         imageView: ImageView,
         url: String,
         needCrop: Boolean = false,
-        needCircleCrop: Boolean = false
+        needCircleCrop: Boolean = false,
+        needOriginal: Boolean = false
     ) {
         val urlSet = if (url == "null" || url == "") {
             R.drawable.test_image
@@ -29,6 +30,7 @@ value class GlideBase(
             .listener(primaryRequestListener)
         if (needCrop) glide.centerCrop()
         if (needCircleCrop) glide.circleCrop()
+        if (needOriginal) glide.override(Target.SIZE_ORIGINAL)
         glide.into(imageView)
     }
 

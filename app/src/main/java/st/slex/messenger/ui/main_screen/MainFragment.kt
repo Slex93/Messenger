@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
@@ -98,24 +99,28 @@ class MainFragment : BaseFragment() {
     private fun setUserInfoInHeader() {
         val headerView = binding.navView.getHeaderView(0)
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
-        viewModel.currentUser.observe(viewLifecycleOwner) {
-            when (it) {
-                is Response.Success -> {
-                    GlideBase {}.setImageWithRequest(
-                        headerBinding.navigationHeaderImage,
-                        it.value.url,
-                        needCrop = true
-                    )
-                    headerBinding.navigationHeaderUserName.text = it.value.username
-                    headerBinding.navigationHeaderPhoneNumber.text = it.value.phone
-                }
-                is Response.Failure -> {
-                    Log.i("Cancelled", it.exception.message.toString())
-                }
-                is Response.Loading -> {
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentUser().collect {
+                when (it) {
+                    is Response.Success -> {
+                        GlideBase {}.setImageWithRequest(
+                            headerBinding.navigationHeaderImage,
+                            it.value.url,
+                            needCrop = true
+                        )
+                        headerBinding.navigationHeaderUserName.text = it.value.username
+                        headerBinding.navigationHeaderPhoneNumber.text = it.value.phone
+                    }
+                    is Response.Failure -> {
+                        Log.i("Cancelled", it.exception.message.toString())
+                    }
+                    is Response.Loading -> {
+                    }
                 }
             }
         }
+
     }
 
     private fun initRecyclerView() {

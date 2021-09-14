@@ -12,6 +12,7 @@ import st.slex.messenger.ui.contacts.ContactViewModel
 import st.slex.messenger.ui.main_screen.MainScreenViewModel
 import st.slex.messenger.ui.settings.SettingsViewModel
 import st.slex.messenger.ui.single_chat.SingleChatViewModel
+import st.slex.messenger.ui.user_profile.UserViewModel
 
 @ExperimentalCoroutinesApi
 @Module
@@ -46,4 +47,9 @@ interface ViewModelModule {
     @Binds
     @ViewModelKey(SettingsViewModel::class)
     fun bindsSettingsViewModel(viewModel: SettingsViewModel): ViewModel
+
+    @IntoMap
+    @Binds
+    @ViewModelKey(UserViewModel::class)
+    fun bindsUserViewModel(viewModel: UserViewModel): ViewModel
 }

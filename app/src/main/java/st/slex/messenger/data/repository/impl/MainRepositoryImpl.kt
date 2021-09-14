@@ -9,10 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.core.AppValueEventListener
 import st.slex.messenger.data.model.ChatListModel
-import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.data.repository.interf.MainRepository
 import st.slex.messenger.utilites.NODE_CHAT_LIST
-import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.Response
 import javax.inject.Inject
@@ -22,19 +20,6 @@ class MainRepositoryImpl @Inject constructor(
     private val databaseReference: DatabaseReference,
     private val user: FirebaseUser
 ) : MainRepository {
-
-    override suspend fun getCurrentUser(): Flow<Response<UserModel>> = callbackFlow {
-        val reference = databaseReference
-            .child(NODE_USER)
-            .child(user.uid)
-        val listener = AppValueEventListener({ snapshot ->
-            trySendBlocking(Response.Success(snapshot.getThisValue()))
-        }, {
-            trySendBlocking(Response.Failure(it))
-        })
-        reference.addListenerForSingleValueEvent(listener)
-        awaitClose { reference.removeEventListener(listener) }
-    }
 
     override suspend fun getChatList(page: Int): Flow<Response<List<ChatListModel>>> =
         callbackFlow {
