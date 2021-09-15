@@ -1,4 +1,4 @@
-package st.slex.messenger.utilites.base
+package st.slex.messenger.core
 
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot

@@ -10,65 +10,91 @@
     android:focusable="true"
     app:cardElevation="0dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="@dimen/primary_padding"
-            android:weightSum="10">
+            app:cardBackgroundColor="@color/blue_gray_200"
+            app:cardCornerRadius="@dimen/big_padding"
+            app:layout_constraintBottom_toBottomOf="@+id/item_main_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_main_username"
+            app:layout_constraintTop_toTopOf="@+id/item_main_content">
 
-            <ImageView
-                android:id="@+id/item_main_image"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                tools:src="@drawable/test_image" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                style="@style/TextAppearance.MaterialComponents.Body2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/primary_padding"
-                android:orientation="vertical">
+                android:layout_margin="4dp"
+                android:textColor="@color/black"
+                android:visibility="gone"
+                tools:text="1"
+                tools:visibility="visible" />
 
-                <TextView
-                    android:id="@+id/item_main_username"
-                    style="@style/TextAppearance.MaterialComponents.Body1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    tools:text="Title" />
+        </com.google.android.material.card.MaterialCardView>
 
-                <TextView
-                    android:id="@+id/item_main_content"
-                    style="@style/TextAppearance.MaterialComponents.Body2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/small_padding"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    tools:text="Contentsdsdsdsdsdsdsdsdsdsdsdsdseekrk ekekek ekekek eheheh eheh" />
+        <ImageView
+            android:id="@+id/item_main_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="@dimen/primary_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/test_image" />
 
-                <TextView
-                    android:id="@+id/item_main_timestamp"
-                    style="@style/TextAppearance.MaterialComponents.Caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:gravity="end"
-                    android:maxLines="1"
-                    tools:text="12:30" />
-            </LinearLayout>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/item_main_username"
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/big_padding"
+            android:layout_marginEnd="@dimen/primary_padding"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintEnd_toStartOf="@+id/item_main_timestamp"
+            app:layout_constraintStart_toEndOf="@+id/item_main_image"
+            app:layout_constraintTop_toTopOf="@id/item_main_image"
+            tools:text="Title" />
+
+        <TextView
+            android:id="@+id/item_main_content"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/primary_padding"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintBottom_toBottomOf="@+id/item_main_image"
+            app:layout_constraintEnd_toStartOf="@+id/item_main_timestamp"
+            app:layout_constraintStart_toStartOf="@+id/item_main_username"
+            tools:text="Contentsdsdsdsdsdsdsdsdsdsdsdsdseekrk ekekek ekekek eheheh eheh" />
+
+        <TextView
+            android:id="@+id/item_main_timestamp"
+            style="@style/TextAppearance.MaterialComponents.Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/primary_padding"
+            android:gravity="end"
+            android:maxLines="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/item_main_username"
+            tools:text="12:30" />
 
         <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
+            android:id="@+id/materialDivider"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:dividerInsetStart="82dp" />
-    </LinearLayout>
+            android:layout_marginTop="@dimen/primary_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/item_main_content"
+            app:layout_constraintTop_toBottomOf="@+id/item_main_content" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

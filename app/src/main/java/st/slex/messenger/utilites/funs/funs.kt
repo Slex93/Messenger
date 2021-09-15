@@ -50,7 +50,7 @@ fun String.convertToTime(): String {
     val compareDate = sdfComp.format(System.currentTimeMillis()).toInt()
     val format = if (compareDate == compareCurrentDate) {
         "HH:mm"
-    } else "EEE d MMMM"
+    } else "EEE d"
     val date = SimpleDateFormat(format, Locale.getDefault()).apply {
         TimeZone.getDefault()
     }.format(Date(toLong()))
