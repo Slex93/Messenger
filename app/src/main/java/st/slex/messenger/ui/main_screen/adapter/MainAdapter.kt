@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
-import st.slex.messenger.data.model.ChatListModel
+import st.slex.messenger.ui.main_screen.ChatsUI
 import st.slex.messenger.ui.single_chat.adapter.ChatsDiffUtilCallback
 import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.base.SetImageWithGlide
@@ -15,7 +15,7 @@ class MainAdapter(
     private val glide: SetImageWithGlide
 ) : RecyclerView.Adapter<MainViewHolder>() {
 
-    private var chats = mutableListOf<ChatListModel>()
+    private var chats = mutableListOf<ChatsUI>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -30,14 +30,10 @@ class MainAdapter(
 
     override fun getItemCount(): Int = chats.size
 
-    fun addChat(data: List<ChatListModel>) {
+    fun addChat(data: List<ChatsUI>) {
         val result = DiffUtil.calculateDiff(ChatsDiffUtilCallback(chats, data))
-        chats.apply {
-            clear()
-            addAll(data)
-            sortBy { it.timestamp.toString() }
-            reverse()
-        }
+        chats.clear()
+        chats.addAll(data)
         result.dispatchUpdatesTo(this)
     }
 }

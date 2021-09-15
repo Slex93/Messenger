@@ -8,11 +8,11 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.core.AppValueEventListener
+import st.slex.messenger.core.Response
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.data.repository.interf.ContactsRepository
 import st.slex.messenger.utilites.NODE_CONTACT
 import st.slex.messenger.utilites.funs.getThisValue
-import st.slex.messenger.utilites.result.Response
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi

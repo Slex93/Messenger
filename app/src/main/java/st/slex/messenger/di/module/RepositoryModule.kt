@@ -3,6 +3,7 @@ package st.slex.messenger.di.module
 import dagger.Binds
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import st.slex.messenger.data.chats.ChatsRepository
 import st.slex.messenger.data.repository.impl.*
 import st.slex.messenger.data.repository.interf.*
 
@@ -29,4 +30,7 @@ interface RepositoryModule {
 
     @Binds
     fun bindUserRepositoryImpl(repository: UserRepositoryImpl): UserRepository
+
+    @Binds
+    fun bindChatsTestRepository(repository: ChatsRepository.Base): ChatsRepository
 }

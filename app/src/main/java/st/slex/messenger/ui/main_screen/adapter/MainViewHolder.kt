@@ -1,19 +1,37 @@
 package st.slex.messenger.ui.main_screen.adapter
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
-import st.slex.messenger.data.model.ChatListModel
+import st.slex.messenger.ui.main_screen.ChatsUI
 import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.base.SetImageWithGlide
-import st.slex.messenger.utilites.funs.convertToTime
 
-class MainViewHolder(private val binding: ItemRecyclerMainBinding) :
-    RecyclerView.ViewHolder(binding.root) {
+abstract class MainViewHolder(view: View) :
+    RecyclerView.ViewHolder(view) {
+
+    open fun bind(item: ChatsUI) {
+
+    }
+
+    class Base(
+        private val binding: ItemRecyclerMainBinding,
+        private val clickListener: CardClickListener,
+        private val glide: SetImageWithGlide
+    ) : MainViewHolder(binding.root) {
+        override fun bind(item: ChatsUI) = with(binding) {
+            item.map(
+                userName = itemMainUsername,
+                userAvatar = itemMainImage
+            )
+        }
+    }
 
     private var _url: String? = null
     private val url get() = _url!!
 
-    fun bind(item: ChatListModel, glide: SetImageWithGlide) {
+    open fun bind(item: ChatsUI, glide: SetImageWithGlide) {
+
         _url = item.url
         val name = if (item.full_name.isEmpty()) {
             item.username

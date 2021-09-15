@@ -10,6 +10,13 @@ interface ChatsUI {
         userAvatar: AbstractView.Image
     )
 
+    fun get(
+        username: String,
+        id: String,
+        url: String,
+        timestamp: Any
+    ): BasicChatList
+
     fun same(userData: ChatsUI): Boolean
 
     data class Base(
@@ -30,6 +37,13 @@ interface ChatsUI {
             userId.map(id)
             userAvatar.load(url)
         }
+
+        override fun get(
+            username: String,
+            id: String,
+            url: String,
+            timestamp: Any
+        ) = BasicChatList(username, id, url, timestamp)
 
         override fun same(userData: ChatsUI) = userData is Base && userData.id == id
     }

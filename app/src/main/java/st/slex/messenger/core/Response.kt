@@ -1,4 +1,4 @@
-package st.slex.messenger.utilites.result
+package st.slex.messenger.core
 
 sealed class Response<out R> {
     data class Success<out T>(val value: T) : Response<T>()

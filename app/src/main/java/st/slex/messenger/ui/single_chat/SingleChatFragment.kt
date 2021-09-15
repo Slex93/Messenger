@@ -22,11 +22,11 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
+import st.slex.messenger.core.Response
 import st.slex.messenger.data.model.MessageModel
 import st.slex.messenger.data.model.UserModel
 import st.slex.messenger.ui.single_chat.adapter.ChatAdapter
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.result.Response
 
 
 @ExperimentalCoroutinesApi

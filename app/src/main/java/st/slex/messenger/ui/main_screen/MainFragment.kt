@@ -23,12 +23,12 @@ import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
-import st.slex.messenger.data.model.ChatListModel
+import st.slex.messenger.core.Response
+import st.slex.messenger.core.TestResponse
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.base.GlideBase
-import st.slex.messenger.utilites.result.Response
 
 @ExperimentalCoroutinesApi
 class MainFragment : BaseFragment() {
@@ -72,25 +72,25 @@ class MainFragment : BaseFragment() {
         binding.navView.setupWithNavController(findNavController())
         initRecyclerView()
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            viewModel.getChatList(10).collect {
+            viewModel.getChats(10).collect {
                 it.collect()
             }
         }
     }
 
-    private fun Response<List<ChatListModel>>.collect() {
+    private fun TestResponse<List<ChatsUI>>.collect() {
         when (this) {
-            is Response.Success -> {
+            is TestResponse.Success -> {
                 adapter.addChat(value)
             }
-            is Response.Failure -> {
+            is TestResponse.Failure -> {
                 Log.e(
                     "Exception im MainList from the flow",
                     exception.message.toString(),
                     exception.cause
                 )
             }
-            is Response.Loading -> {
+            is TestResponse.Loading -> {
 
             }
         }

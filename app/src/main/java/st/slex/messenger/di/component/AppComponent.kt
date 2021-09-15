@@ -15,7 +15,8 @@ import st.slex.messenger.utilites.base.RawFragment
         EngineModule::class,
         ViewModelModule::class,
         ViewModelFactoryModule::class,
-        ReferencesModule::class
+        ReferencesModule::class,
+        MapperModule::class
     ]
 )
 interface AppComponent {

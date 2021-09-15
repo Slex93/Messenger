@@ -16,12 +16,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
+import st.slex.messenger.core.Response
 import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.funs.setSupportActionBar
-import st.slex.messenger.utilites.result.Response
 
 @ExperimentalCoroutinesApi
 class ContactFragment : BaseFragment() {
