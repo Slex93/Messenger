@@ -1,34 +1,30 @@
 package st.slex.messenger.ui.contacts.adapter
 
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
-import st.slex.messenger.data.model.ContactModel
-import st.slex.messenger.utilites.base.CardClickListener
-import st.slex.messenger.utilites.base.SetImageWithGlide
+import st.slex.messenger.ui.contacts.ContactsUI
+import st.slex.messenger.ui.core.ClickListener
 
-class ContactViewHolder(private val binding: ItemRecyclerContactBinding) :
-    RecyclerView.ViewHolder(binding.root) {
+abstract class ContactViewHolder(view: View) :
+    RecyclerView.ViewHolder(view) {
 
-    private var _url: String? = null
-    private val url get() = _url!!
+    open fun bind(item: ContactsUI) = Unit
 
-    fun bind(contact: ContactModel, glide: SetImageWithGlide) {
-        _url = contact.url
-        binding.itemContactCard.transitionName = contact.id
-        binding.recyclerContactUsername.text = contact.full_name
-        binding.recyclerContactPhone.text = contact.phone
-        glide.setImage(
-            binding.recyclerContactImage,
-            url,
-            needCrop = true,
-            needCircleCrop = true
-        )
-    }
-
-    fun clickListener(clickListener: CardClickListener) {
-        binding.itemContactCard.setOnClickListener {
-            clickListener.onClick(it, url)
+    class Base(
+        private val binding: ItemRecyclerContactBinding,
+        private val clickListener: ClickListener<ContactsUI>
+    ) : ContactViewHolder(binding.root) {
+        override fun bind(item: ContactsUI) = with(binding) {
+            item.map(
+                userName = usernameTextView,
+                userPhone = phoneTextView,
+                userAvatar = avatarImageView,
+                userCardView = itemCardView
+            )
+            itemCardView.setOnClickListener {
+                clickListener.click(item)
+            }
         }
     }
-
 }

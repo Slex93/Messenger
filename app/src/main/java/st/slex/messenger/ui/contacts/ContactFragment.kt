@@ -16,11 +16,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
-import st.slex.messenger.core.Response
-import st.slex.messenger.data.model.ContactModel
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
+import st.slex.messenger.ui.core.ClickListener
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
 @ExperimentalCoroutinesApi
@@ -53,25 +51,25 @@ class ContactFragment : BaseFragment() {
         setSupportActionBar(binding.fragmentContactToolbar)
         initRecyclerView()
         viewLifecycleOwner.lifecycleScope.launch {
-            contactViewModel.getContact().collect {
+            contactViewModel.getContacts().collect {
                 it.collect()
             }
         }
     }
 
-    private fun Response<List<ContactModel>>.collect() {
+    private fun ContactsUIResult.collect() {
         when (this) {
-            is Response.Success -> {
-                adapter.addItems(value)
+            is ContactsUIResult.Success -> {
+                adapter.addItems(data)
             }
-            is Response.Failure -> {
+            is ContactsUIResult.Failure -> {
                 Log.e(
                     "Exception in ContactList from the flow",
                     exception.message.toString(),
                     exception.cause
                 )
             }
-            is Response.Loading -> {
+            is ContactsUIResult.Loading -> {
 
             }
         }
@@ -79,7 +77,7 @@ class ContactFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         recycler = binding.fragmentContactRecycler
-        adapter = ContactAdapter(clickListener, glide)
+        adapter = ContactAdapter(OpenChat())
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         postponeEnterTransition()
         recycler.doOnPreDraw {
@@ -89,11 +87,18 @@ class ContactFragment : BaseFragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    private val clickListener = CardClickListener { card, url ->
-        val directions =
-            ContactFragmentDirections.actionNavContactToNavSingleChat(card.transitionName, url)
-        val extras = FragmentNavigatorExtras(card to card.transitionName)
-        findNavController().navigate(directions, extras)
+    private inner class OpenChat : ClickListener<ContactsUI> {
+        override fun click(item: ContactsUI) {
+            item.startChat { card, url ->
+                val directions =
+                    ContactFragmentDirections.actionNavContactToNavSingleChat(
+                        card.transitionName,
+                        url
+                    )
+                val extras = FragmentNavigatorExtras(card to card.transitionName)
+                findNavController().navigate(directions, extras)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

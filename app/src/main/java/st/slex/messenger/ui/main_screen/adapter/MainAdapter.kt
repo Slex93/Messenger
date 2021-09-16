@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
 import st.slex.messenger.ui.core.ClickListener
+import st.slex.messenger.ui.main_screen.ChatsDiffUtilCallback
 import st.slex.messenger.ui.main_screen.ChatsUI
-import st.slex.messenger.ui.single_chat.adapter.ChatsDiffUtilCallback
 
 class MainAdapter(
     private val clickListener: ClickListener<ChatsUI>,

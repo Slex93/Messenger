@@ -1,20 +1,18 @@
 package st.slex.messenger.ui.contacts.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import st.slex.messenger.data.model.ContactModel
+import st.slex.messenger.ui.contacts.ContactsUI
 
 class ContactsDiffUtilCallback(
-    private val oldList: List<ContactModel>,
-    private val newList: List<ContactModel>
+    private val oldList: List<ContactsUI>,
+    private val newList: List<ContactsUI>
 ) : DiffUtil.Callback() {
-    override fun getOldListSize(): Int = oldList.size
+    override fun getOldListSize() = oldList.size
+    override fun getNewListSize() = newList.size
 
-    override fun getNewListSize(): Int = newList.size
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition].same(newList[newItemPosition])
 
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-        newList[newItemPosition].id == oldList[oldItemPosition].id
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-        newList[newItemPosition] == oldList[oldItemPosition]
-
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+        oldList[oldItemPosition] == newList[newItemPosition]
 }

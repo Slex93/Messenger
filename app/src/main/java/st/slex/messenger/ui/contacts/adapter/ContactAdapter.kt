@@ -5,37 +5,31 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
-import st.slex.messenger.data.model.ContactModel
-import st.slex.messenger.utilites.base.CardClickListener
-import st.slex.messenger.utilites.base.SetImageWithGlide
+import st.slex.messenger.ui.contacts.ContactsUI
+import st.slex.messenger.ui.core.ClickListener
 
 class ContactAdapter(
-    private val clickListener: CardClickListener,
-    private val glide: SetImageWithGlide
+    private val clickListener: ClickListener<ContactsUI>,
 ) : RecyclerView.Adapter<ContactViewHolder>() {
 
-    private var contacts = mutableListOf<ContactModel>()
+    private var contacts = mutableListOf<ContactsUI>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemRecyclerContactBinding.inflate(inflater, parent, false)
-        return ContactViewHolder(binding)
+        return ContactViewHolder.Base(binding, clickListener)
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-        holder.bind(contacts[position], glide)
-        holder.clickListener(clickListener)
+        holder.bind(contacts[position])
     }
 
     override fun getItemCount(): Int = contacts.size
 
-    fun addItems(data: List<ContactModel>) {
+    fun addItems(data: List<ContactsUI>) {
         val result = DiffUtil.calculateDiff(ContactsDiffUtilCallback(contacts, data))
-        contacts.apply {
-            clear()
-            addAll(data)
-            sortBy { it.full_name }
-        }
+        contacts.clear()
+        contacts.addAll(data)
         result.dispatchUpdatesTo(this)
     }
 
