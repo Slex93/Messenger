@@ -1,4 +1,4 @@
-package st.slex.messenger.domain.chats
+package st.slex.messenger.domain.contacts
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -6,21 +6,22 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
-import st.slex.messenger.data.chats.ChatsDataMapper
-import st.slex.messenger.data.chats.ChatsRepository
+import st.slex.messenger.data.contacts.ContactsDataMapper
+import st.slex.messenger.data.contacts.ContactsRepository
+import st.slex.messenger.domain.chats.ChatsDomainResult
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-interface ChatsInteractor {
-    fun getChatsList(page: Int): Flow<ChatsDomainResult>
+interface ContactsInteractor {
+    fun getContacts(): Flow<ContactsDomainResult>
     class Base @Inject constructor(
-        private val repository: ChatsRepository,
-        private val mapper: ChatsDataMapper<ChatsDomainResult>
-    ) : ChatsInteractor {
+        private val repository: ContactsRepository,
+        private val mapper: ContactsDataMapper<ContactsDomainResult>
+    ) : ContactsInteractor {
 
-        override fun getChatsList(page: Int): Flow<ChatsDomainResult> = callbackFlow {
+        override fun getContacts(): Flow<ContactsDomainResult> = callbackFlow {
             try {
-                repository.getChats(page).collect {
+                repository.getContacts().collect {
                     trySendBlocking(it.map(mapper))
                 }
             } catch (exception: Exception) {

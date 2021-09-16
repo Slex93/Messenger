@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.data.chats.ChatsRepository
+import st.slex.messenger.data.contacts.ContactsRepository
 import st.slex.messenger.data.repository.impl.*
 import st.slex.messenger.data.repository.interf.*
 
@@ -17,10 +18,7 @@ interface RepositoryModule {
     fun bindsLoginRepository(repository: AuthRepositoryImpl): AuthRepository
 
     @Binds
-    fun bindMainRepository(repository: MainRepositoryImpl): MainRepository
-
-    @Binds
-    fun bindContactRepository(repository: ContactsRepositoryImpl): ContactsRepository
+    fun bindContactRepository(repository: ContactsRepository.Base): ContactsRepository
 
     @Binds
     fun bindSingleChatRepository(repository: SingleChatRepositoryImpl): SingleChatRepository

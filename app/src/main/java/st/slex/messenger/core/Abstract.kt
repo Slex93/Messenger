@@ -18,7 +18,7 @@ abstract class Abstract {
         }
 
         interface DataToDomain<S, R> : Data<S, R> {
-            fun map(e: Exception): R
+            fun map(exception: Exception): R
         }
 
         interface DomainToUi<S, T> : Data<S, T> {

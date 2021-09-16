@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.domain.chats.ChatsInteractor
+import st.slex.messenger.domain.contacts.ContactsInteractor
 import st.slex.messenger.domain.interactor.impl.AuthInteractorImpl
 import st.slex.messenger.domain.interactor.interf.AuthInteractor
 
@@ -15,4 +16,7 @@ interface InteractorModule {
 
     @Binds
     fun bindsChatsInteractor(interactor: ChatsInteractor.Base): ChatsInteractor
+
+    @Binds
+    fun bindsContactsInteractor(interactor: ContactsInteractor.Base): ContactsInteractor
 }
