@@ -3,7 +3,7 @@ package st.slex.messenger.ui.single_chat.adapter
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerSingleChatBinding
-import st.slex.messenger.data.model.MessageModel
+import st.slex.messenger.data.chat.MessageModel
 import st.slex.messenger.utilites.funs.convertToTime
 
 class ChatViewHolder(private val binding: ItemRecyclerSingleChatBinding) :

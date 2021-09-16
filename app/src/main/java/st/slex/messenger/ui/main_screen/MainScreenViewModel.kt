@@ -8,8 +8,8 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import st.slex.messenger.core.Response
 import st.slex.messenger.core.TestResponse
-import st.slex.messenger.data.model.UserModel
-import st.slex.messenger.data.repository.interf.UserRepository
+import st.slex.messenger.data.profile.UserModel
+import st.slex.messenger.data.profile.UserRepository
 import st.slex.messenger.domain.chats.ChatsDomainMapper
 import st.slex.messenger.domain.chats.ChatsDomainResult
 import st.slex.messenger.domain.chats.ChatsInteractor

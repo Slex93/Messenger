@@ -1,6 +1,6 @@
-package st.slex.messenger.domain
+package st.slex.messenger.domain.auth
 
-import st.slex.messenger.data.model.UserInitial
+import st.slex.messenger.data.auth.UserInitial
 
 sealed class Auth {
 
@@ -10,7 +10,7 @@ sealed class Auth {
         override fun <T> map(mapper: AuthResultMapper<T>): T = mapper.map(profile)
     }
 
-    data class Fail(val e: Exception) : Auth() {
+    data class Failure(val e: Exception) : Auth() {
         override fun <T> map(mapper: AuthResultMapper<T>): T = mapper.map(emptyMap())
     }
 

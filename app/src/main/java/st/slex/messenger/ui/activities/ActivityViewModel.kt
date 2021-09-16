@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import st.slex.messenger.data.model.ContactModel
-import st.slex.messenger.data.repository.interf.ActivityRepository
+import st.slex.messenger.data.contacts.ContactModel
+import st.slex.messenger.data.main_activity.ActivityRepository
 import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 

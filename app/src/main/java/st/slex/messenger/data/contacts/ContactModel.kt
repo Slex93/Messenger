@@ -1,4 +1,4 @@
-package st.slex.messenger.data.model
+package st.slex.messenger.data.contacts
 
 data class ContactModel(
     val id: String = "",

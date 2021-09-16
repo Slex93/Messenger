@@ -1,4 +1,4 @@
-package st.slex.messenger.data.model
+package st.slex.messenger.data.auth
 
 data class UserInitial(
     val uid: String,

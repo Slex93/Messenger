@@ -22,7 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
 import st.slex.common.messenger.R
 import st.slex.messenger.MessengerApplication
-import st.slex.messenger.data.model.ContactModel
+import st.slex.messenger.data.contacts.ContactModel
 import st.slex.messenger.di.component.AppComponent
 import st.slex.messenger.utilites.PERMISSION_REQUEST
 import java.text.SimpleDateFormat
@@ -34,7 +34,6 @@ val Context.appComponent: AppComponent
         is MessengerApplication -> appComponent
         else -> this.applicationContext.appComponent
     }
-
 
 fun Activity.start(activity: Activity) {
     val intent = Intent(this, activity.javaClass)

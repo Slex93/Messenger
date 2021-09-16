@@ -5,9 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.databinding.ActivityAuthBinding
 import st.slex.messenger.utilites.funs.appComponent
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class AuthActivity : AppCompatActivity() {
+class AuthActivity @Inject constructor() : AppCompatActivity() {
 
     private var _binding: ActivityAuthBinding? = null
     private val binding get() = _binding!!
@@ -15,7 +16,7 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityAuthBinding.inflate(layoutInflater)
-        applicationContext.appComponent.inject(this)
+        appComponent.inject(this)
         setContentView(binding.root)
     }
 

@@ -1,4 +1,4 @@
-package st.slex.messenger.data.model
+package st.slex.messenger.data.profile
 
 data class UserModel(
     val id: String = "",

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import st.slex.messenger.data.repository.interf.SettingsRepository
+import st.slex.messenger.data.settings.SettingsRepository
 import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 

@@ -9,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.messenger.core.Response
-import st.slex.messenger.data.model.MessageModel
-import st.slex.messenger.data.model.UserModel
-import st.slex.messenger.data.repository.interf.SingleChatRepository
+import st.slex.messenger.data.chat.MessageModel
+import st.slex.messenger.data.chat.SingleChatRepository
+import st.slex.messenger.data.profile.UserModel
 import javax.inject.Inject
 
 class SingleChatViewModel @Inject constructor(private val repository: SingleChatRepository) :
