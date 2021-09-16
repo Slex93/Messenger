@@ -19,11 +19,12 @@ import javax.inject.Singleton
         ViewModelFactoryModule::class,
         ReferencesModule::class,
         MapperModule::class,
-        ActivityModule::class
+        SubcomponentsModule::class
     ]
 )
 interface AppComponent {
     fun inject(activity: MainActivity)
     fun inject(activity: AuthActivity)
     fun inject(fragment: RawFragment)
+    fun authComponent(): AuthComponent.Factory
 }
