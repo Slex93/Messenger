@@ -10,6 +10,7 @@ interface AbstractView {
     interface Text : AbstractView, TextMapper.Void
     interface Card : AbstractView {
         fun transit(transitionName: String)
+        fun getCard(): CustomCardView
     }
 
     interface Image : AbstractView {

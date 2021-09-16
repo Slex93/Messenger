@@ -24,7 +24,7 @@ abstract class MainViewHolder(view: View) :
                 this.timestampTextView,
                 this.itemCardView
             )
-            itemView.setOnClickListener {
+            itemCardView.setOnClickListener {
                 clickListener.click(item)
             }
         }

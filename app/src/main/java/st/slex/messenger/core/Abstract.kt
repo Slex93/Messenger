@@ -22,7 +22,7 @@ abstract class Abstract {
         }
 
         interface DomainToUi<S, T> : Data<S, T> {
-            fun map(error: String): T
+            fun map(error: Exception): T
         }
 
         class Empty : Mapper

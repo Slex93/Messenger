@@ -24,7 +24,6 @@ import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.core.Response
-import st.slex.messenger.core.TestResponse
 import st.slex.messenger.ui.core.ClickListener
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
@@ -78,19 +77,19 @@ class MainFragment : BaseFragment() {
         }
     }
 
-    private fun TestResponse<List<ChatsUI>>.collect() {
+    private fun ChatsUIResult.collect() {
         when (this) {
-            is TestResponse.Success -> {
-                adapter.addChat(value)
+            is ChatsUIResult.Success -> {
+                adapter.addChat(data)
             }
-            is TestResponse.Failure -> {
+            is ChatsUIResult.Failure -> {
                 Log.e(
                     "Exception im MainList from the flow",
                     exception.message.toString(),
                     exception.cause
                 )
             }
-            is TestResponse.Loading -> {
+            is ChatsUIResult.Loading -> {
 
             }
         }
@@ -138,7 +137,10 @@ class MainFragment : BaseFragment() {
         override fun click(item: ChatsUI) {
             item.startChat { card, url ->
                 val directions =
-                    MainFragmentDirections.actionNavHomeToNavSingleChat(card.transitionName, url)
+                    MainFragmentDirections.actionNavHomeToNavSingleChat(
+                        card.transitionName,
+                        url
+                    )
                 val extras = FragmentNavigatorExtras(card to card.transitionName)
                 findNavController().navigate(directions, extras)
             }

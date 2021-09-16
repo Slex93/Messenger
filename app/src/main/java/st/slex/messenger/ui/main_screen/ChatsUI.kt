@@ -18,13 +18,11 @@ interface ChatsUI {
     fun same(userData: ChatsUI): Boolean
 
     data class Base(
-        private val from: String,
-        private val text: String,
-        private val timestamp: Any,
+        private val id: String,
         private val username: String,
-        private val full_name: String,
+        private val text: String,
         private val url: String,
-        private val id: String
+        private val timestamp: Any
     ) : ChatsUI {
         override fun map(
             userName: AbstractView.Text,
@@ -33,14 +31,19 @@ interface ChatsUI {
             userTimestamp: AbstractView.Text,
             userCardView: AbstractView.Card
         ) {
-            userName.map(full_name)
+            userName.map(username)
             userMessage.map(text)
             userAvatar.load(url)
             userTimestamp.map(timestamp.toString().convertToTime())
             userCardView.transit(id)
+            _cardView = userCardView.getCard()
         }
 
-        override fun startChat(function: (CustomCardView, String) -> Unit) = Unit
+        private var _cardView: CustomCardView? = null
+        private val cardView get() = _cardView!!
+
+        override fun startChat(function: (CustomCardView, String) -> Unit) =
+            function(cardView, url)
 
         override fun same(userData: ChatsUI) = userData is Base && userData.id == id
     }

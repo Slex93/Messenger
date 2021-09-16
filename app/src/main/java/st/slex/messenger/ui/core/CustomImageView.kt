@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import com.bumptech.glide.Glide
+import st.slex.common.messenger.R
 
 class CustomImageView : androidx.appcompat.widget.AppCompatImageView, AbstractView.Image {
 
@@ -16,9 +17,11 @@ class CustomImageView : androidx.appcompat.widget.AppCompatImageView, AbstractVi
     )
 
     override fun load(url: String) {
+        val urlSet = if (url.isEmpty()) {
+            R.drawable.test_image
+        } else url
         this.transitionName = url
-        if (url.isNotEmpty())
-            Glide.with(this).load(url).circleCrop().into(this)
+        Glide.with(this).load(urlSet).circleCrop().into(this)
     }
 
     override fun show() {

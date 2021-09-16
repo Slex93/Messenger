@@ -1,0 +1,27 @@
+package st.slex.messenger.domain.chats
+
+import st.slex.messenger.core.Abstract
+import st.slex.messenger.ui.main_screen.ChatsUI
+import st.slex.messenger.ui.main_screen.ChatsUIResult
+
+interface ChatsDomainMapper<T> : Abstract.Mapper.DomainToUi<List<ChatsDomain>, T> {
+
+    class Base : ChatsDomainMapper<ChatsUIResult> {
+        override fun map(data: List<ChatsDomain>): ChatsUIResult {
+            return ChatsUIResult.Success(data.map {
+                ChatsUI.Base(
+                    id = it.chatId(),
+                    username = it.username(),
+                    text = it.text(),
+                    url = it.url(),
+                    timestamp = it.timestamp()
+                )
+            })
+        }
+
+        override fun map(error: Exception): ChatsUIResult {
+            return ChatsUIResult.Failure(error)
+        }
+
+    }
+}

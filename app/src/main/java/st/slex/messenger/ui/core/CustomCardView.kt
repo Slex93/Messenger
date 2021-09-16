@@ -18,6 +18,8 @@ class CustomCardView : com.google.android.material.card.MaterialCardView, Abstra
         this.transitionName = transitionName
     }
 
+    override fun getCard(): CustomCardView = this
+
     override fun show() {
         visibility = View.VISIBLE
     }

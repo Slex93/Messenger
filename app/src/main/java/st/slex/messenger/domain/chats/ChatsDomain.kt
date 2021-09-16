@@ -1,46 +1,24 @@
 package st.slex.messenger.domain.chats
 
-import st.slex.messenger.ui.main_screen.ChatsUI
-
 interface ChatsDomain {
 
-    fun <T> map(mapper: ChatsDomainMapper<T>): T
+    fun chatId(): String
+    fun username(): String
+    fun text(): String
+    fun url(): String
+    fun timestamp(): String
 
     data class Base(
-        private val from: String,
-        private val text: String,
-        private val timestamp: Any,
+        private val id: String,
         private val username: String,
-        private val full_name: String,
+        private val text: String,
         private val url: String,
-        private val id: String
+        private val timestamp: String
     ) : ChatsDomain {
-        override fun <T> map(mapper: ChatsDomainMapper<T>) =
-            mapper.map(from, text, timestamp, username, full_name, url, id)
+        override fun chatId(): String = id
+        override fun username(): String = username
+        override fun text(): String = text
+        override fun url(): String = url
+        override fun timestamp(): String = timestamp
     }
-
-    interface ChatsDomainMapper<T> {
-        fun map(
-            from: String,
-            text: String,
-            timestamp: Any,
-            username: String,
-            full_name: String,
-            url: String,
-            id: String
-        ): T
-
-        class Base : ChatsDomainMapper<ChatsUI> {
-            override fun map(
-                from: String,
-                text: String,
-                timestamp: Any,
-                username: String,
-                full_name: String,
-                url: String,
-                id: String
-            ) = ChatsUI.Base(from, text, timestamp, username, full_name, url, id)
-        }
-    }
-
 }
