@@ -8,6 +8,9 @@ interface AbstractView {
     fun hide()
 
     interface Text : AbstractView, TextMapper.Void
+    interface Card : AbstractView {
+        fun transit(transitionName: String)
+    }
 
     interface Image : AbstractView {
 

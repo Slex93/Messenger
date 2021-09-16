@@ -1,22 +1,20 @@
 package st.slex.messenger.ui.main_screen
 
 import st.slex.messenger.ui.core.AbstractView
+import st.slex.messenger.ui.core.CustomCardView
+import st.slex.messenger.utilites.funs.convertToTime
 
 interface ChatsUI {
 
     fun map(
         userName: AbstractView.Text,
-        userId: AbstractView.Text,
-        userAvatar: AbstractView.Image
+        userMessage: AbstractView.Text,
+        userAvatar: AbstractView.Image,
+        userTimestamp: AbstractView.Text,
+        userCardView: AbstractView.Card
     )
 
-    fun get(
-        username: String,
-        id: String,
-        url: String,
-        timestamp: Any
-    ): BasicChatList
-
+    fun startChat(function: (CustomCardView, String) -> Unit)
     fun same(userData: ChatsUI): Boolean
 
     data class Base(
@@ -30,20 +28,19 @@ interface ChatsUI {
     ) : ChatsUI {
         override fun map(
             userName: AbstractView.Text,
-            userId: AbstractView.Text,
-            userAvatar: AbstractView.Image
+            userMessage: AbstractView.Text,
+            userAvatar: AbstractView.Image,
+            userTimestamp: AbstractView.Text,
+            userCardView: AbstractView.Card
         ) {
             userName.map(full_name)
-            userId.map(id)
+            userMessage.map(text)
             userAvatar.load(url)
+            userTimestamp.map(timestamp.toString().convertToTime())
+            userCardView.transit(id)
         }
 
-        override fun get(
-            username: String,
-            id: String,
-            url: String,
-            timestamp: Any
-        ) = BasicChatList(username, id, url, timestamp)
+        override fun startChat(function: (CustomCardView, String) -> Unit) = Unit
 
         override fun same(userData: ChatsUI) = userData is Base && userData.id == id
     }

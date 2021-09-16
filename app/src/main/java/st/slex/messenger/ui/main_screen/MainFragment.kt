@@ -25,9 +25,9 @@ import st.slex.common.messenger.databinding.FragmentMainBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.core.Response
 import st.slex.messenger.core.TestResponse
+import st.slex.messenger.ui.core.ClickListener
 import st.slex.messenger.ui.main_screen.adapter.MainAdapter
 import st.slex.messenger.utilites.base.BaseFragment
-import st.slex.messenger.utilites.base.CardClickListener
 import st.slex.messenger.utilites.base.GlideBase
 
 @ExperimentalCoroutinesApi
@@ -125,7 +125,7 @@ class MainFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         recyclerView = binding.fragmentMainRecyclerView
-        adapter = MainAdapter(clickListener, glide)
+        adapter = MainAdapter(OpenChat())
         postponeEnterTransition()
         recyclerView.doOnPreDraw {
             startPostponedEnterTransition()
@@ -134,11 +134,15 @@ class MainFragment : BaseFragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
-    private val clickListener = CardClickListener { card, url ->
-        val directions =
-            MainFragmentDirections.actionNavHomeToNavSingleChat(card.transitionName, url)
-        val extras = FragmentNavigatorExtras(card to card.transitionName)
-        findNavController().navigate(directions, extras)
+    private inner class OpenChat : ClickListener<ChatsUI> {
+        override fun click(item: ChatsUI) {
+            item.startChat { card, url ->
+                val directions =
+                    MainFragmentDirections.actionNavHomeToNavSingleChat(card.transitionName, url)
+                val extras = FragmentNavigatorExtras(card to card.transitionName)
+                findNavController().navigate(directions, extras)
+            }
+        }
     }
 
     override fun onDestroyView() {

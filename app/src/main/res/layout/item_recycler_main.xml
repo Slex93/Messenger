@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<st.slex.messenger.ui.core.CustomCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/item_main_card"
+    android:id="@+id/itemCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:checkable="true"
@@ -20,12 +20,12 @@
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/blue_gray_200"
             app:cardCornerRadius="@dimen/big_padding"
-            app:layout_constraintBottom_toBottomOf="@+id/item_main_content"
+            app:layout_constraintBottom_toBottomOf="@+id/messageTextView"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/item_main_username"
-            app:layout_constraintTop_toTopOf="@+id/item_main_content">
+            app:layout_constraintStart_toEndOf="@+id/usernameTextView"
+            app:layout_constraintTop_toTopOf="@+id/messageTextView">
 
-            <TextView
+            <st.slex.messenger.ui.core.CustomTextView
                 style="@style/TextAppearance.MaterialComponents.Body2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,8 +37,8 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <ImageView
-            android:id="@+id/item_main_image"
+        <st.slex.messenger.ui.core.CustomImageView
+            android:id="@+id/photoImageView"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_margin="@dimen/primary_padding"
@@ -47,8 +47,8 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/test_image" />
 
-        <TextView
-            android:id="@+id/item_main_username"
+        <st.slex.messenger.ui.core.CustomTextView
+            android:id="@+id/usernameTextView"
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -56,26 +56,26 @@
             android:layout_marginEnd="@dimen/primary_padding"
             android:ellipsize="end"
             android:maxLines="1"
-            app:layout_constraintEnd_toStartOf="@+id/item_main_timestamp"
-            app:layout_constraintStart_toEndOf="@+id/item_main_image"
-            app:layout_constraintTop_toTopOf="@id/item_main_image"
+            app:layout_constraintEnd_toStartOf="@+id/timestampTextView"
+            app:layout_constraintStart_toEndOf="@+id/photoImageView"
+            app:layout_constraintTop_toTopOf="@id/photoImageView"
             tools:text="Title" />
 
-        <TextView
-            android:id="@+id/item_main_content"
+        <st.slex.messenger.ui.core.CustomTextView
+            android:id="@+id/messageTextView"
             style="@style/TextAppearance.MaterialComponents.Body2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/primary_padding"
             android:ellipsize="end"
             android:maxLines="1"
-            app:layout_constraintBottom_toBottomOf="@+id/item_main_image"
-            app:layout_constraintEnd_toStartOf="@+id/item_main_timestamp"
-            app:layout_constraintStart_toStartOf="@+id/item_main_username"
+            app:layout_constraintBottom_toBottomOf="@+id/photoImageView"
+            app:layout_constraintEnd_toStartOf="@+id/timestampTextView"
+            app:layout_constraintStart_toStartOf="@+id/usernameTextView"
             tools:text="Contentsdsdsdsdsdsdsdsdsdsdsdsdseekrk ekekek ekekek eheheh eheh" />
 
-        <TextView
-            android:id="@+id/item_main_timestamp"
+        <st.slex.messenger.ui.core.CustomTextView
+            android:id="@+id/timestampTextView"
             style="@style/TextAppearance.MaterialComponents.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
             android:gravity="end"
             android:maxLines="1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/item_main_username"
+            app:layout_constraintTop_toTopOf="@+id/usernameTextView"
             tools:text="12:30" />
 
         <com.google.android.material.divider.MaterialDivider
@@ -93,8 +93,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/primary_padding"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/item_main_content"
-            app:layout_constraintTop_toBottomOf="@+id/item_main_content" />
+            app:layout_constraintStart_toStartOf="@+id/messageTextView"
+            app:layout_constraintTop_toBottomOf="@+id/messageTextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</st.slex.messenger.ui.core.CustomCardView>
