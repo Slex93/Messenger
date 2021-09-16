@@ -15,14 +15,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterPhoneBinding
-import st.slex.messenger.ui.activities.MainActivity
-import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.ui.core.BaseAuthFragment
+import st.slex.messenger.ui.main.MainActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.funs.start
 import st.slex.messenger.utilites.result.AuthResponse
 
 @ExperimentalCoroutinesApi
-class EnterPhoneFragment : BaseFragment() {
+class EnterPhoneFragment : BaseAuthFragment() {
 
     private var _binding: FragmentEnterPhoneBinding? = null
     private val binding get() = _binding!!
@@ -47,7 +47,7 @@ class EnterPhoneFragment : BaseFragment() {
         binding.fragmentPhoneFab.setOnClickListener {
             val phone = binding.fragmentPhoneInput.editText?.text.toString()
             requireActivity().lifecycleScope.launch {
-                viewModel.login(phone).collect {
+                viewModel.login(phone, requireActivity()).collect {
                     it.collector()
                 }
             }

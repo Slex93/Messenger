@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.single_chat.adapter
+package st.slex.messenger.ui.chat.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

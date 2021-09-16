@@ -1,8 +1,8 @@
 package st.slex.messenger.domain.chats
 
 import st.slex.messenger.core.Abstract
-import st.slex.messenger.ui.main_screen.ChatsUI
-import st.slex.messenger.ui.main_screen.ChatsUIResult
+import st.slex.messenger.ui.chats.ChatsUI
+import st.slex.messenger.ui.chats.ChatsUIResult
 
 interface ChatsDomainMapper<T> : Abstract.Mapper.DomainToUi<List<ChatsDomain>, T> {
 

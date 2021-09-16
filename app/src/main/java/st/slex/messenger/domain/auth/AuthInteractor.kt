@@ -1,5 +1,6 @@
 package st.slex.messenger.domain.auth
 
+import android.app.Activity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 interface AuthInteractor {
 
-    suspend fun login(phone: String): Flow<AuthResponse>
+    suspend fun login(phone: String, activity: Activity): Flow<AuthResponse>
     suspend fun sendCode(id: String, code: String): Flow<AuthResponse>
 
     @ExperimentalCoroutinesApi
@@ -25,8 +26,8 @@ interface AuthInteractor {
         private val sendCodeEngine: SendCodeEngine,
     ) : AuthInteractor {
 
-        override suspend fun login(phone: String): Flow<AuthResponse> =
-            loginEngine.login(phone).collectThis()
+        override suspend fun login(phone: String, activity: Activity): Flow<AuthResponse> =
+            loginEngine.login(phone, activity).collectThis()
 
         override suspend fun sendCode(id: String, code: String): Flow<AuthResponse> =
             sendCodeEngine.sendCode(id, code).collectThis()

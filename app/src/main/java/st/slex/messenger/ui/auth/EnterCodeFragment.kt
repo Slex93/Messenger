@@ -16,14 +16,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
-import st.slex.messenger.ui.activities.MainActivity
-import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.ui.core.BaseAuthFragment
+import st.slex.messenger.ui.main.MainActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.funs.start
 import st.slex.messenger.utilites.result.AuthResponse
 
 @ExperimentalCoroutinesApi
-class EnterCodeFragment : BaseFragment() {
+class EnterCodeFragment : BaseAuthFragment() {
 
     private var _binding: FragmentEnterCodeBinding? = null
     private val binding get() = _binding!!

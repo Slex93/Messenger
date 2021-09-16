@@ -1,7 +1,6 @@
 package st.slex.messenger.ui.auth
 
 import android.app.Activity
-import android.util.Log
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthOptions
@@ -18,16 +17,13 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 interface LoginEngine {
-    suspend fun login(phone: String): Flow<AuthResponse>
+    suspend fun login(phone: String, activity: Activity): Flow<AuthResponse>
 
     @ExperimentalCoroutinesApi
-    class Base @Inject constructor(
-        private val activity: Activity
-    ) : LoginEngine {
+    class Base @Inject constructor() : LoginEngine {
 
-        override suspend fun login(phone: String): Flow<AuthResponse> =
+        override suspend fun login(phone: String, activity: Activity): Flow<AuthResponse> =
             callbackFlow {
-                Log.i("Activity:::::", activity.toString())
                 val callback = makeCallback({ credential ->
                     Firebase.auth.signInWithCredential(credential).addOnCompleteListener { task ->
                         if (task.isSuccessful) {

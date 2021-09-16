@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.main_screen
+package st.slex.messenger.ui.chats
 
 import androidx.recyclerview.widget.DiffUtil
 

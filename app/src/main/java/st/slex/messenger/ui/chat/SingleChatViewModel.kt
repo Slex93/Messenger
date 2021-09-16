@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.single_chat
+package st.slex.messenger.ui.chat
 
 import android.util.Log
 import androidx.lifecycle.LiveData

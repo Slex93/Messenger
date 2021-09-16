@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.main_screen
+package st.slex.messenger.ui.chats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,7 +16,7 @@ import st.slex.messenger.domain.chats.ChatsInteractor
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class MainScreenViewModel @Inject constructor(
+class ChatsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val interactor: ChatsInteractor,
     private val mapper: ChatsDomainMapper<ChatsUIResult>

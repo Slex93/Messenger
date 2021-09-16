@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.main_screen
+package st.slex.messenger.ui.chats
 
 import android.graphics.Color
 import android.os.Bundle
@@ -21,24 +21,24 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
-import st.slex.common.messenger.databinding.FragmentMainBinding
+import st.slex.common.messenger.databinding.FragmentChatsBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.core.Response
+import st.slex.messenger.ui.chats.adapter.ChatsAdapter
+import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.ClickListener
-import st.slex.messenger.ui.main_screen.adapter.MainAdapter
-import st.slex.messenger.utilites.base.BaseFragment
 import st.slex.messenger.utilites.base.GlideBase
 
 @ExperimentalCoroutinesApi
-class MainFragment : BaseFragment() {
+class ChatsFragment : BaseFragment() {
 
-    private var _binding: FragmentMainBinding? = null
+    private var _binding: FragmentChatsBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: MainAdapter
+    private lateinit var adapter: ChatsAdapter
 
-    private val viewModel: MainScreenViewModel by viewModels {
+    private val viewModel: ChatsViewModel by viewModels {
         viewModelFactory.get()
     }
 
@@ -56,7 +56,7 @@ class MainFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentChatsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -124,7 +124,7 @@ class MainFragment : BaseFragment() {
 
     private fun initRecyclerView() {
         recyclerView = binding.fragmentMainRecyclerView
-        adapter = MainAdapter(OpenChat())
+        adapter = ChatsAdapter(OpenChat())
         postponeEnterTransition()
         recyclerView.doOnPreDraw {
             startPostponedEnterTransition()
@@ -137,7 +137,7 @@ class MainFragment : BaseFragment() {
         override fun click(item: ChatsUI) {
             item.startChat { card, url ->
                 val directions =
-                    MainFragmentDirections.actionNavHomeToNavSingleChat(
+                    ChatsFragmentDirections.actionNavHomeToNavSingleChat(
                         card.transitionName,
                         url
                     )

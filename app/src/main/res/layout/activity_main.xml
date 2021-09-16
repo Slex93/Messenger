@@ -9,5 +9,5 @@
     android:layout_height="match_parent"
     app:defaultNavHost="true"
     app:navGraph="@navigation/nav_graph"
-    tools:context="st.slex.messenger.ui.activities.MainActivity" />
+    tools:context="st.slex.messenger.ui.main.MainActivity" />
 

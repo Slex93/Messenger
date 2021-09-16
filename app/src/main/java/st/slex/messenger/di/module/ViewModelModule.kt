@@ -6,12 +6,12 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.di.key.ViewModelKey
-import st.slex.messenger.ui.activities.ActivityViewModel
 import st.slex.messenger.ui.auth.AuthViewModel
+import st.slex.messenger.ui.chat.SingleChatViewModel
+import st.slex.messenger.ui.chats.ChatsViewModel
 import st.slex.messenger.ui.contacts.ContactViewModel
-import st.slex.messenger.ui.main_screen.MainScreenViewModel
+import st.slex.messenger.ui.main.ActivityViewModel
 import st.slex.messenger.ui.settings.SettingsViewModel
-import st.slex.messenger.ui.single_chat.SingleChatViewModel
 import st.slex.messenger.ui.user_profile.UserViewModel
 
 @ExperimentalCoroutinesApi
@@ -30,8 +30,8 @@ interface ViewModelModule {
 
     @IntoMap
     @Binds
-    @ViewModelKey(MainScreenViewModel::class)
-    fun bindsMainScreenViewModel(viewModel: MainScreenViewModel): ViewModel
+    @ViewModelKey(ChatsViewModel::class)
+    fun bindsMainScreenViewModel(viewModel: ChatsViewModel): ViewModel
 
     @IntoMap
     @Binds

@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.activities
+package st.slex.messenger.ui.main
 
 import android.Manifest.permission.READ_CONTACTS
 import android.content.pm.PackageManager

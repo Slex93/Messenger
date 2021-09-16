@@ -1,27 +1,27 @@
-package st.slex.messenger.ui.main_screen.adapter
+package st.slex.messenger.ui.chats.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
+import st.slex.messenger.ui.chats.ChatsDiffUtilCallback
+import st.slex.messenger.ui.chats.ChatsUI
 import st.slex.messenger.ui.core.ClickListener
-import st.slex.messenger.ui.main_screen.ChatsDiffUtilCallback
-import st.slex.messenger.ui.main_screen.ChatsUI
 
-class MainAdapter(
+class ChatsAdapter(
     private val clickListener: ClickListener<ChatsUI>,
-) : RecyclerView.Adapter<MainViewHolder>() {
+) : RecyclerView.Adapter<ChatsViewHolder>() {
 
     private var chats = mutableListOf<ChatsUI>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemRecyclerMainBinding.inflate(inflater, parent, false)
-        return MainViewHolder.Base(binding, clickListener)
+        return ChatsViewHolder.Base(binding, clickListener)
     }
 
-    override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ChatsViewHolder, position: Int) {
         holder.bind(chats[position])
     }
 

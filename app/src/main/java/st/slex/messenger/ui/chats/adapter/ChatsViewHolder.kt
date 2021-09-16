@@ -1,21 +1,20 @@
-package st.slex.messenger.ui.main_screen.adapter
+package st.slex.messenger.ui.chats.adapter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
+import st.slex.messenger.ui.chats.ChatsUI
 import st.slex.messenger.ui.core.ClickListener
-import st.slex.messenger.ui.main_screen.ChatsUI
 
-abstract class MainViewHolder(view: View) :
+abstract class ChatsViewHolder(view: View) :
     RecyclerView.ViewHolder(view) {
 
-    open fun bind(item: ChatsUI) {
-    }
+    open fun bind(item: ChatsUI) = Unit
 
     class Base(
         private val binding: ItemRecyclerMainBinding,
         private val clickListener: ClickListener<ChatsUI>
-    ) : MainViewHolder(binding.root) {
+    ) : ChatsViewHolder(binding.root) {
         override fun bind(item: ChatsUI) = with(binding) {
             item.map(
                 this.usernameTextView,

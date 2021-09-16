@@ -5,7 +5,7 @@
     android:id="@+id/main_screen_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="st.slex.messenger.ui.main_screen.MainFragment">
+    tools:context="st.slex.messenger.ui.chats.ChatsFragment">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"

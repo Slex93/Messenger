@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.main_screen
+package st.slex.messenger.ui.chats
 
 sealed interface ChatsUIResult {
     data class Success(val data: List<ChatsUI>) : ChatsUIResult

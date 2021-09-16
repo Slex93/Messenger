@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/ProjectTheme">
         <activity
-            android:name="st.slex.messenger.ui.activities.SplashActivity"
+            android:name="st.slex.messenger.ui.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -23,10 +23,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="st.slex.messenger.ui.activities.AuthActivity"
+            android:name="st.slex.messenger.ui.auth.AuthActivity"
             android:exported="true" />
         <activity
-            android:name="st.slex.messenger.ui.activities.MainActivity"
+            android:name="st.slex.messenger.ui.main.MainActivity"
             android:exported="true" />
     </application>
 

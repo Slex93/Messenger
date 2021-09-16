@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="st.slex.messenger.ui.main_screen.MainFragment"
+        android:name="st.slex.messenger.ui.chats.ChatsFragment"
         android:label="Main screen"
-        tools:layout="@layout/fragment_main">
+        tools:layout="@layout/fragment_chats">
         <action
             android:id="@+id/action_nav_home_to_nav_user_profile"
             app:destination="@id/nav_user_profile" />
@@ -44,7 +44,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_single_chat"
-        android:name="st.slex.messenger.ui.single_chat.SingleChatFragment"
+        android:name="st.slex.messenger.ui.chat.SingleChatFragment"
         tools:layout="@layout/fragment_single_chat">
         <argument
             android:name="id"

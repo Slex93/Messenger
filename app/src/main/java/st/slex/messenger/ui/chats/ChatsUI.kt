@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.main_screen
+package st.slex.messenger.ui.chats
 
 import st.slex.messenger.ui.core.AbstractView
 import st.slex.messenger.ui.core.CustomCardView

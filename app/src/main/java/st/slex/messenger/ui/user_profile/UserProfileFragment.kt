@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentUserProfileBinding
 import st.slex.messenger.core.Response
-import st.slex.messenger.utilites.base.BaseFragment
+import st.slex.messenger.ui.core.BaseFragment
 
 @ExperimentalCoroutinesApi
 class UserProfileFragment : BaseFragment() {

@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.activities
+package st.slex.messenger.ui.auth
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -6,10 +6,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.databinding.ActivityAuthBinding
 import st.slex.messenger.di.component.AuthComponent
 import st.slex.messenger.utilites.funs.appComponent
-import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class AuthActivity @Inject constructor() : AppCompatActivity() {
+class AuthActivity : AppCompatActivity() {
 
     private var _binding: ActivityAuthBinding? = null
     private val binding get() = _binding!!

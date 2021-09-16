@@ -8,8 +8,8 @@ import st.slex.messenger.domain.chats.ChatsDomainMapper
 import st.slex.messenger.domain.chats.ChatsDomainResult
 import st.slex.messenger.domain.contacts.ContactsDomainMapper
 import st.slex.messenger.domain.contacts.ContactsDomainResult
+import st.slex.messenger.ui.chats.ChatsUIResult
 import st.slex.messenger.ui.contacts.ContactsUIResult
-import st.slex.messenger.ui.main_screen.ChatsUIResult
 
 @Module
 class MapperModule {
