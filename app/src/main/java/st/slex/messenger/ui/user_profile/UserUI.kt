@@ -4,7 +4,6 @@ import st.slex.messenger.ui.core.AbstractView
 import st.slex.messenger.ui.core.CustomCardView
 
 interface UserUI {
-
     fun mapMainScreen(
         phoneNumber: AbstractView.Text,
         userName: AbstractView.Text,
@@ -20,7 +19,20 @@ interface UserUI {
         usernameCard: AbstractView.Card
     )
 
+    fun mapChat(
+        userName: AbstractView.Text,
+        stateText: AbstractView.Text
+    )
+
     fun changeUsername(function: (CustomCardView, String) -> Unit)
+
+    fun id(): String
+    fun phone(): String
+    fun username(): String
+    fun url(): String
+    fun bio(): String
+    fun fullName(): String
+    fun state(): String
 
     data class Base(
         private val id: String = "",
@@ -61,7 +73,20 @@ interface UserUI {
             _usernameCard = usernameCard.getCard()
         }
 
+        override fun mapChat(userName: AbstractView.Text, stateText: AbstractView.Text) {
+            userName.map(username)
+            stateText.map(state)
+        }
+
         override fun changeUsername(function: (CustomCardView, String) -> Unit) =
             function(usernameCard, username)
+
+        override fun id(): String = id
+        override fun phone(): String = phone
+        override fun username(): String = username
+        override fun url(): String = url
+        override fun bio(): String = bio
+        override fun fullName(): String = full_name
+        override fun state(): String = state
     }
 }

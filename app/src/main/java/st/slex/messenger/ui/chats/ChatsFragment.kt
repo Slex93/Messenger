@@ -27,7 +27,6 @@ import st.slex.messenger.ui.chats.adapter.ChatsAdapter
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.ClickListener
 import st.slex.messenger.ui.user_profile.UserUiResult
-import st.slex.messenger.utilites.base.GlideBase
 
 @ExperimentalCoroutinesApi
 class ChatsFragment : BaseFragment() {
@@ -62,7 +61,11 @@ class ChatsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setUserInfoInHeader()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentUser().collect {
+                it.collector()
+            }
+        }
         NavigationUI.setupWithNavController(
             binding.mainScreenToolbar,
             findNavController(),
@@ -90,36 +93,25 @@ class ChatsFragment : BaseFragment() {
                 )
             }
             is ChatsUIResult.Loading -> {
-
+                /*Start progress bar*/
             }
         }
-    }
-
-    private fun setUserInfoInHeader() {
-        val headerView = binding.navView.getHeaderView(0)
-        val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.currentUser().collect {
-                it.collector()
-            }
-        }
-
     }
 
     private fun UserUiResult.collector() {
+        val headerView = binding.navView.getHeaderView(0)
+        val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
         when (this) {
             is UserUiResult.Success -> {
-                GlideBase {}.setImageWithRequest(
-                    headerBinding.navigationHeaderImage,
-                    it.value.url,
-                    needCrop = true
+
+                data.mapMainScreen(
+                    phoneNumber = headerBinding.phoneTextView,
+                    userName = headerBinding.usernameTextView,
+                    avatar = headerBinding.avatarImageView
                 )
-                headerBinding.navigationHeaderUserName.text = it.value.username
-                headerBinding.navigationHeaderPhoneNumber.text = it.value.phone
             }
             is UserUiResult.Failure -> {
-                Log.i("Cancelled", it.exception.message.toString())
+                Log.i("Cancelled", exception.message.toString())
             }
             is UserUiResult.Loading -> {
                 /*Start progress bar*/

@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/big_padding">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/navigation_header_image"
+    <st.slex.messenger.ui.core.CustomImageView
+        android:id="@+id/avatarImageView"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_gravity="center"
@@ -22,8 +22,8 @@
         android:orientation="vertical"
         android:padding="4dp">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/navigation_header_user_name"
+        <st.slex.messenger.ui.core.CustomTextView
+            android:id="@+id/usernameTextView"
             style="@style/TextAppearance.MaterialComponents.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,8 +32,8 @@
             android:maxLines="1"
             tools:text="UserName" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/navigation_header_phone_number"
+        <st.slex.messenger.ui.core.CustomTextView
+            android:id="@+id/phoneTextView"
             style="@style/TextAppearance.MaterialComponents.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

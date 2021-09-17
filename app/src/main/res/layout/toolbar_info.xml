@@ -21,15 +21,15 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/toolbar_info_username"
+        <st.slex.messenger.ui.core.CustomTextView
+            android:id="@+id/usernameTextView"
             style="@style/TextAppearance.MaterialComponents.Body2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Username" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/toolbar_info_status"
+        <st.slex.messenger.ui.core.CustomTextView
+            android:id="@+id/stateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="status" />

@@ -15,7 +15,7 @@ import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 interface UserRepository {
-    suspend fun getCurrentUser(): Flow<UserDataResult>
+    suspend fun getUser(uid: String): Flow<UserDataResult>
     suspend fun saveUsername(username: String): Flow<VoidResponse>
 
     @ExperimentalCoroutinesApi
@@ -24,10 +24,10 @@ interface UserRepository {
         private val user: FirebaseUser
     ) : UserRepository {
 
-        override suspend fun getCurrentUser(): Flow<UserDataResult> = callbackFlow {
+        override suspend fun getUser(uid: String): Flow<UserDataResult> = callbackFlow {
             val reference = databaseReference
                 .child(NODE_USER)
-                .child(user.uid)
+                .child(uid)
             val listener = AppValueEventListener({ snapshot ->
                 trySendBlocking(
                     UserDataResult.Success(snapshot.getValue(UserData::class.java)!!)

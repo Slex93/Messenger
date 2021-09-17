@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
@@ -20,13 +21,16 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
 import st.slex.messenger.core.Response
 import st.slex.messenger.data.chat.MessageModel
-import st.slex.messenger.data.profile.UserModel
 import st.slex.messenger.ui.chat.adapter.ChatAdapter
 import st.slex.messenger.ui.core.BaseFragment
+import st.slex.messenger.ui.user_profile.UserUI
+import st.slex.messenger.ui.user_profile.UserUiResult
 
 
 @ExperimentalCoroutinesApi
@@ -76,7 +80,11 @@ class SingleChatFragment : BaseFragment() {
             findNavController(),
             AppBarConfiguration(setOf(R.id.nav_contact))
         )
-        viewModel.getUser(uid).observe(viewLifecycleOwner, userObserver)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getUser(uid).collect {
+
+            }
+        }
         initRecyclerView()
     }
 
@@ -155,23 +163,25 @@ class SingleChatFragment : BaseFragment() {
         )
     }
 
-    private val userObserver: Observer<Response<UserModel>> = Observer { user ->
-        when (user) {
-            is Response.Success -> {
-                binding.toolbarInfo.toolbarInfoUsername.text = user.value.full_name
-                binding.toolbarInfo.toolbarInfoStatus.text = user.value.state
-                binding.singleChatRecyclerButton.setOnClickListener(user.value.sendClicker)
+    private fun UserUiResult.collect() {
+        when (this) {
+            is UserUiResult.Success -> {
+                data.mapChat(
+                    userName = binding.toolbarInfo.usernameTextView,
+                    stateText = binding.toolbarInfo.stateTextView
+                )
+                binding.singleChatRecyclerButton.setOnClickListener(data.sendClicker)
             }
-            is Response.Failure -> {
-                Log.e("$this", user.exception.toString())
+            is UserUiResult.Failure -> {
+                Log.i("Failure User in Chat", exception.message, exception.cause)
             }
-            is Response.Loading -> {
-
+            is UserUiResult.Loading -> {
+                /*Start response*/
             }
         }
     }
 
-    private val UserModel.sendClicker: View.OnClickListener
+    private val UserUI.sendClicker: View.OnClickListener
         get() = View.OnClickListener {
             isScrollToPosition = true
             val message = binding.singleChatRecyclerTextInput.editText?.text.toString()
