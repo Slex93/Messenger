@@ -23,10 +23,10 @@ import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentChatsBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
-import st.slex.messenger.core.Response
 import st.slex.messenger.ui.chats.adapter.ChatsAdapter
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.ClickListener
+import st.slex.messenger.ui.user_profile.UserUiResult
 import st.slex.messenger.utilites.base.GlideBase
 
 @ExperimentalCoroutinesApi
@@ -101,25 +101,30 @@ class ChatsFragment : BaseFragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.currentUser().collect {
-                when (it) {
-                    is Response.Success -> {
-                        GlideBase {}.setImageWithRequest(
-                            headerBinding.navigationHeaderImage,
-                            it.value.url,
-                            needCrop = true
-                        )
-                        headerBinding.navigationHeaderUserName.text = it.value.username
-                        headerBinding.navigationHeaderPhoneNumber.text = it.value.phone
-                    }
-                    is Response.Failure -> {
-                        Log.i("Cancelled", it.exception.message.toString())
-                    }
-                    is Response.Loading -> {
-                    }
-                }
+                it.collector()
             }
         }
 
+    }
+
+    private fun UserUiResult.collector() {
+        when (this) {
+            is UserUiResult.Success -> {
+                GlideBase {}.setImageWithRequest(
+                    headerBinding.navigationHeaderImage,
+                    it.value.url,
+                    needCrop = true
+                )
+                headerBinding.navigationHeaderUserName.text = it.value.username
+                headerBinding.navigationHeaderPhoneNumber.text = it.value.phone
+            }
+            is UserUiResult.Failure -> {
+                Log.i("Cancelled", it.exception.message.toString())
+            }
+            is UserUiResult.Loading -> {
+                /*Start progress bar*/
+            }
+        }
     }
 
     private fun initRecyclerView() {

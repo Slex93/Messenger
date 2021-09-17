@@ -30,8 +30,8 @@ interface RepositoryModule {
     fun bindSettingsRepository(repository: SettingsRepository.Base): SettingsRepository
 
     @Binds
-    fun bindUserRepositoryImpl(repository: UserRepository.Base): UserRepository
+    fun bindUserRepository(repository: UserRepository.Base): UserRepository
 
     @Binds
-    fun bindChatsTestRepository(repository: ChatsRepository.Base): ChatsRepository
+    fun bindChatsRepository(repository: ChatsRepository.Base): ChatsRepository
 }

@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentUserProfileBinding
-import st.slex.messenger.core.Response
 import st.slex.messenger.ui.core.BaseFragment
 
 @ExperimentalCoroutinesApi
@@ -48,37 +47,44 @@ class UserProfileFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.currentUser().collect {
-                when (it) {
-                    is Response.Success -> {
-                        binding.profileProgress.visibility = View.GONE
-                        glide.makeGlideImage(
-                            binding.profileImage,
-                            it.value.url,
-                            true,
-                            false,
-                            true
-                        )
-                        binding.profilePhoneNumber.text = it.value.phone
-                        binding.profileUsername.text = it.value.username
-                        binding.profileFullName.text = it.value.full_name
-                        binding.profileBio.text = it.value.bio
+                it.collector()
+            }
+        }
+    }
 
-                        binding.profileUsernameCard.setOnClickListener { card ->
-                            val directions =
-                                UserProfileFragmentDirections.actionNavUserProfileToEditUsernameFragment(
-                                    it.value.username
-                                )
-                            val extras = FragmentNavigatorExtras(card to card.transitionName)
-                            findNavController().navigate(directions, extras)
-                        }
-                    }
-                    is Response.Loading -> {
-                        binding.profileProgress.visibility = View.VISIBLE
-                    }
-                    is Response.Failure -> {
-                        binding.profileProgress.visibility = View.GONE
-                    }
+    private fun UserUiResult.collector() {
+        when (this) {
+            is UserUiResult.Success -> {
+                binding.profileProgress.visibility = View.GONE
+                this.data.map(
+
+                )
+                glide.makeGlideImage(
+                    binding.profileImage,
+                    it.value.url,
+                    true,
+                    false,
+                    true
+                )
+                binding.profilePhoneNumber.text = it.value.phone
+                binding.profileUsername.text = it.value.username
+                binding.profileFullName.text = it.value.full_name
+                binding.profileBio.text = it.value.bio
+
+                binding.profileUsernameCard.setOnClickListener { card ->
+                    val directions =
+                        UserProfileFragmentDirections.actionNavUserProfileToEditUsernameFragment(
+                            it.value.username
+                        )
+                    val extras = FragmentNavigatorExtras(card to card.transitionName)
+                    findNavController().navigate(directions, extras)
                 }
+            }
+            is UserUiResult.Loading -> {
+                binding.profileProgress.visibility = View.VISIBLE
+            }
+            is UserUiResult.Failure -> {
+                binding.profileProgress.visibility = View.GONE
             }
         }
     }

@@ -8,16 +8,14 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.core.AppValueEventListener
-import st.slex.messenger.core.Response
 import st.slex.messenger.utilites.CHILD_USERNAME
 import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.NODE_USERNAME
-import st.slex.messenger.utilites.funs.getThisValue
 import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 interface UserRepository {
-    suspend fun getCurrentUser(): Flow<Response<UserModel>>
+    suspend fun getCurrentUser(): Flow<UserDataResult>
     suspend fun saveUsername(username: String): Flow<VoidResponse>
 
     @ExperimentalCoroutinesApi
@@ -26,14 +24,16 @@ interface UserRepository {
         private val user: FirebaseUser
     ) : UserRepository {
 
-        override suspend fun getCurrentUser(): Flow<Response<UserModel>> = callbackFlow {
+        override suspend fun getCurrentUser(): Flow<UserDataResult> = callbackFlow {
             val reference = databaseReference
                 .child(NODE_USER)
                 .child(user.uid)
             val listener = AppValueEventListener({ snapshot ->
-                trySendBlocking(Response.Success(snapshot.getThisValue()))
+                trySendBlocking(
+                    UserDataResult.Success(snapshot.getValue(UserData::class.java)!!)
+                )
             }, {
-                trySendBlocking(Response.Failure(it))
+                trySendBlocking(UserDataResult.Failure(it))
             })
             reference.addListenerForSingleValueEvent(listener)
             awaitClose { reference.removeEventListener(listener) }

@@ -30,8 +30,8 @@
             android:layout_margin="@dimen/primary_padding"
             android:src="@drawable/ic_baseline_add_photo_alternate_24" />
 
-        <ImageView
-            android:id="@+id/profile_image"
+        <st.slex.messenger.ui.core.CustomImageView
+            android:id="@+id/avatarImageView"
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:adjustViewBounds="true"
@@ -73,8 +73,8 @@
                     android:orientation="vertical"
                     android:padding="@dimen/primary_padding">
 
-                    <TextView
-                        android:id="@+id/profile_phone_number"
+                    <st.slex.messenger.ui.core.CustomTextView
+                        android:id="@+id/phoneTextView"
                         style="@style/TextAppearance.AppCompat.Body1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -111,8 +111,8 @@
                     android:orientation="vertical"
                     android:padding="@dimen/primary_padding">
 
-                    <TextView
-                        android:id="@+id/profile_username"
+                    <st.slex.messenger.ui.core.CustomTextView
+                        android:id="@+id/usernameTextView"
                         style="@style/TextAppearance.AppCompat.Body1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -147,8 +147,8 @@
                     android:orientation="vertical"
                     android:padding="@dimen/primary_padding">
 
-                    <TextView
-                        android:id="@+id/profile_full_name"
+                    <st.slex.messenger.ui.core.CustomTextView
+                        android:id="@+id/fullNameTextView"
                         style="@style/TextAppearance.AppCompat.Body1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -184,8 +184,8 @@
                     android:orientation="vertical"
                     android:padding="@dimen/primary_padding">
 
-                    <TextView
-                        android:id="@+id/profile_bio"
+                    <st.slex.messenger.ui.core.CustomTextView
+                        android:id="@+id/bioTextView"
                         style="@style/TextAppearance.AppCompat.Body1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

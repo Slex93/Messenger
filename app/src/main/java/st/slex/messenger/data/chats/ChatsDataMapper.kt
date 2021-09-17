@@ -7,7 +7,6 @@ import st.slex.messenger.domain.chats.ChatsDomainResult
 interface ChatsDataMapper<T> : Abstract.Mapper.DataToDomain<List<ChatsData>, T> {
 
     class Base : ChatsDataMapper<ChatsDomainResult> {
-
         override fun map(data: List<ChatsData>): ChatsDomainResult =
             ChatsDomainResult.Success(data.map {
                 ChatsDomain.Base(
