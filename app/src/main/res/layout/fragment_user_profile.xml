@@ -94,8 +94,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/profile_username_card"
+            <st.slex.messenger.ui.core.CustomCardView
+                android:id="@+id/usernameCardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/primary_padding"
@@ -125,7 +125,7 @@
                         android:text="@string/label_username" />
                 </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+            </st.slex.messenger.ui.core.CustomCardView>
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"

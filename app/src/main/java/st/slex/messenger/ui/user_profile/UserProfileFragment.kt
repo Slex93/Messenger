@@ -56,28 +56,22 @@ class UserProfileFragment : BaseFragment() {
         when (this) {
             is UserUiResult.Success -> {
                 binding.profileProgress.visibility = View.GONE
-                this.data.map(
-
+                this.data.mapProfile(
+                    phoneNumber = binding.phoneTextView,
+                    userName = binding.usernameTextView,
+                    avatar = binding.avatarImageView,
+                    bioText = binding.bioTextView,
+                    fullName = binding.fullNameTextView,
+                    usernameCard = binding.usernameCardView
                 )
-                glide.makeGlideImage(
-                    binding.profileImage,
-                    it.value.url,
-                    true,
-                    false,
-                    true
-                )
-                binding.profilePhoneNumber.text = it.value.phone
-                binding.profileUsername.text = it.value.username
-                binding.profileFullName.text = it.value.full_name
-                binding.profileBio.text = it.value.bio
 
-                binding.profileUsernameCard.setOnClickListener { card ->
-                    val directions =
-                        UserProfileFragmentDirections.actionNavUserProfileToEditUsernameFragment(
-                            it.value.username
-                        )
-                    val extras = FragmentNavigatorExtras(card to card.transitionName)
-                    findNavController().navigate(directions, extras)
+                binding.usernameCardView.setOnClickListener {
+                    data.changeUsername { card, username ->
+                        val directions = UserProfileFragmentDirections
+                            .actionNavUserProfileToEditUsernameFragment(username)
+                        val extras = FragmentNavigatorExtras(card to card.transitionName)
+                        findNavController().navigate(directions, extras)
+                    }
                 }
             }
             is UserUiResult.Loading -> {
