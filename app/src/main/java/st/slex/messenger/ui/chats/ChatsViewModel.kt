@@ -6,7 +6,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.core.TestResponse
 import st.slex.messenger.domain.chats.ChatsDomainMapper
 import st.slex.messenger.domain.chats.ChatsDomainResult
 import st.slex.messenger.domain.chats.ChatsInteractor
@@ -40,22 +39,32 @@ class ChatsViewModel @Inject constructor(
 
     private suspend fun Flow<ChatsDomainResult>.mapIt(): Flow<ChatsUIResult> =
         callbackFlow {
-            try {
-                this@mapIt.collect {
-                    trySendBlocking(it.map(mapper))
-                }
-            } catch (exception: Exception) {
-                trySendBlocking(TestResponse.Failure(exception))
-            }
+            this@mapIt.response { trySendBlocking(it) }
             awaitClose { }
         }
 
-    private suspend fun Flow<UserDomainResult>.mapUser(): Flow<UserUiResult> = callbackFlow {
-        this@mapUser.collect {
-            trySendBlocking(it.map(userMapper))
+    private suspend inline fun Flow<ChatsDomainResult>.response(crossinline function: (ChatsUIResult) -> Unit) =
+        try {
+            this.collect {
+                function(it.map(mapper))
+            }
+        } catch (exception: Exception) {
+            function(ChatsUIResult.Failure(exception))
         }
+
+    private suspend fun Flow<UserDomainResult>.mapUser(): Flow<UserUiResult> = callbackFlow {
+        this@mapUser.responseUser { trySendBlocking(it) }
         awaitClose { }
     }
+
+    private suspend inline fun Flow<UserDomainResult>.responseUser(crossinline function: (UserUiResult) -> Unit) =
+        try {
+            this.collect {
+                function(it.map(userMapper))
+            }
+        } catch (exception: Exception) {
+            function(UserUiResult.Failure(exception))
+        }
 
 }
 

@@ -1,7 +1,6 @@
 package st.slex.messenger.domain.auth
 
 sealed interface LoginResult {
-
     fun <T> map(mapper: AuthResultMapper<T>): T
 
     data class Success(private val profile: Map<String, Any>) : LoginResult {

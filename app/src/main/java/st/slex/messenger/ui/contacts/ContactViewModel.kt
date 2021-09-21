@@ -6,7 +6,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.core.TestResponse
 import st.slex.messenger.domain.contacts.ContactsDomainMapper
 import st.slex.messenger.domain.contacts.ContactsDomainResult
 import st.slex.messenger.domain.contacts.ContactsInteractor
@@ -33,7 +32,7 @@ class ContactViewModel
                     trySendBlocking(it.map(mapper))
                 }
             } catch (exception: Exception) {
-                trySendBlocking(TestResponse.Failure(exception))
+                trySendBlocking(ContactsUIResult.Failure(exception))
             }
             awaitClose { }
         }
