@@ -7,17 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEditUsernameBinding
 import st.slex.messenger.ui.core.BaseFragment
-import st.slex.messenger.utilites.funs.showPrimarySnackBar
-import st.slex.messenger.utilites.result.VoidResponse
 
 @ExperimentalCoroutinesApi
 class EditUsernameFragment : BaseFragment() {

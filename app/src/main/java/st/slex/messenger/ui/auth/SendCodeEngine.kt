@@ -9,21 +9,22 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.utilites.result.AuthResponse
+import st.slex.messenger.domain.auth.LoginDomainResult
 import javax.inject.Inject
 
 interface SendCodeEngine {
-    suspend fun sendCode(id: String, code: String): Flow<AuthResponse>
+    suspend fun sendCode(id: String, code: String): Flow<LoginDomainResult>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor() : SendCodeEngine {
-        override suspend fun sendCode(id: String, code: String): Flow<AuthResponse> = callbackFlow {
-            val credential = PhoneAuthProvider.getCredential(id, code)
-            signInWithCredential(credential,
-                { trySendBlocking(AuthResponse.Success) },
-                { trySendBlocking(AuthResponse.Failure(it)) })
-            awaitClose {}
-        }
+        override suspend fun sendCode(id: String, code: String): Flow<LoginDomainResult> =
+            callbackFlow {
+                val credential = PhoneAuthProvider.getCredential(id, code)
+                signInWithCredential(credential,
+                    { trySendBlocking(LoginDomainResult.Success) },
+                    { trySendBlocking(LoginDomainResult.Failure(it)) })
+                awaitClose {}
+            }
 
         private inline fun signInWithCredential(
             credential: PhoneAuthCredential,

@@ -19,7 +19,6 @@ import st.slex.messenger.ui.core.BaseAuthFragment
 import st.slex.messenger.ui.main.MainActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.funs.start
-import st.slex.messenger.utilites.result.AuthResponse
 
 @ExperimentalCoroutinesApi
 class EnterPhoneFragment : BaseAuthFragment() {
@@ -59,11 +58,11 @@ class EnterPhoneFragment : BaseAuthFragment() {
         _binding = null
     }
 
-    private fun AuthResponse.collector() = when (this) {
-        is AuthResponse.Success -> {
+    private fun LoginUIResult.collector() = when (this) {
+        is LoginUIResult.Success -> {
             requireActivity().start(MainActivity())
         }
-        is AuthResponse.Send -> {
+        is LoginUIResult.SendCode -> {
             binding.fragmentCodeProgressIndicator.visibility = View.GONE
             binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
             val direction =
@@ -72,11 +71,11 @@ class EnterPhoneFragment : BaseAuthFragment() {
                 FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
             findNavController().navigate(direction, extras)
         }
-        is AuthResponse.Failure -> {
+        is LoginUIResult.Failure -> {
             binding.fragmentCodeProgressIndicator.visibility = View.GONE
             binding.root.showPrimarySnackBar(exception.toString())
         }
-        is AuthResponse.Loading -> {
+        is LoginUIResult.Loading -> {
             binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
         }
     }

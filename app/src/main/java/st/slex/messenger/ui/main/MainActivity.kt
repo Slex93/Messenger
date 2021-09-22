@@ -14,7 +14,6 @@ import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
 import st.slex.messenger.utilites.funs.appComponent
 import st.slex.messenger.utilites.funs.setContacts
-import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi

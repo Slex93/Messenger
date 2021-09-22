@@ -10,7 +10,6 @@ import st.slex.messenger.data.profile.UserRepository
 import st.slex.messenger.domain.user.UserDomainMapper
 import st.slex.messenger.domain.user.UserDomainResult
 import st.slex.messenger.domain.user.UserInteractor
-import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi

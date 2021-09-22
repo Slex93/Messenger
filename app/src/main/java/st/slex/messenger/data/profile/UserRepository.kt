@@ -11,7 +11,6 @@ import st.slex.messenger.core.AppValueEventListener
 import st.slex.messenger.utilites.CHILD_USERNAME
 import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.NODE_USERNAME
-import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 interface UserRepository {

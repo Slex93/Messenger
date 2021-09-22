@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.utilites.CHILD_STATE
 import st.slex.messenger.utilites.NODE_USER
-import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 interface SettingsRepository {

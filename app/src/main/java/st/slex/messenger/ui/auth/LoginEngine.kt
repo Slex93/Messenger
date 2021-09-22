@@ -12,31 +12,31 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.utilites.result.AuthResponse
+import st.slex.messenger.domain.auth.LoginDomainResult
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 interface LoginEngine {
-    suspend fun login(phone: String, activity: Activity): Flow<AuthResponse>
+    suspend fun login(phone: String, activity: Activity): Flow<LoginDomainResult>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor() : LoginEngine {
 
-        override suspend fun login(phone: String, activity: Activity): Flow<AuthResponse> =
+        override suspend fun login(phone: String, activity: Activity): Flow<LoginDomainResult> =
             callbackFlow {
                 val callback = makeCallback({ credential ->
                     Firebase.auth.signInWithCredential(credential).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            trySendBlocking(AuthResponse.Success)
+                            trySendBlocking(LoginDomainResult.Success)
                         } else {
-                            trySendBlocking(AuthResponse.Failure(task.exception!!))
+                            trySendBlocking(LoginDomainResult.Failure(task.exception!!))
                         }
                     }
 
                 }, {
-                    trySendBlocking(AuthResponse.Failure(it))
+                    trySendBlocking(LoginDomainResult.Failure(it))
                 }, {
-                    trySendBlocking(AuthResponse.Send(it))
+                    trySendBlocking(LoginDomainResult.SendCode(it))
                 })
 
                 val phoneOptions = PhoneAuthOptions

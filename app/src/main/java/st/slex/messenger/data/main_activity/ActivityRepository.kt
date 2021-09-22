@@ -12,7 +12,6 @@ import kotlinx.coroutines.withContext
 import st.slex.messenger.core.AppValueEventListener
 import st.slex.messenger.data.contacts.ContactModel
 import st.slex.messenger.utilites.*
-import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 interface ActivityRepository {

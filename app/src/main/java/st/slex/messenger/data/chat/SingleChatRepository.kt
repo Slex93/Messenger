@@ -12,7 +12,6 @@ import st.slex.messenger.core.Response
 import st.slex.messenger.ui.user_profile.UserUI
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.funs.getThisValue
-import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 interface SingleChatRepository {

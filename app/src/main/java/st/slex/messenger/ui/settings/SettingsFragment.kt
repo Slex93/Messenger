@@ -1,22 +1,17 @@
 package st.slex.messenger.ui.settings
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSettingsBinding
-import st.slex.messenger.ui.auth.AuthActivity
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.utilites.funs.setSupportActionBar
-import st.slex.messenger.utilites.result.VoidResponse
 
 @ExperimentalCoroutinesApi
 class SettingsFragment : BaseFragment() {

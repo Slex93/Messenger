@@ -14,13 +14,12 @@ import st.slex.messenger.data.auth.AuthDataResult
 import st.slex.messenger.data.auth.AuthRepository
 import st.slex.messenger.ui.auth.LoginEngine
 import st.slex.messenger.ui.auth.SendCodeEngine
-import st.slex.messenger.utilites.result.AuthResponse
 import javax.inject.Inject
 
 interface AuthInteractor {
 
-    suspend fun login(phone: String, activity: Activity): Flow<AuthResponse>
-    suspend fun sendCode(id: String, code: String): Flow<AuthResponse>
+    suspend fun login(phone: String, activity: Activity): Flow<LoginDomainResult>
+    suspend fun sendCode(id: String, code: String): Flow<LoginDomainResult>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -29,33 +28,34 @@ interface AuthInteractor {
         private val sendCodeEngine: SendCodeEngine,
     ) : AuthInteractor {
 
-        override suspend fun login(phone: String, activity: Activity): Flow<AuthResponse> =
+        override suspend fun login(phone: String, activity: Activity): Flow<LoginDomainResult> =
             loginEngine.login(phone, activity).collectThis()
 
-        override suspend fun sendCode(id: String, code: String): Flow<AuthResponse> =
+        override suspend fun sendCode(id: String, code: String): Flow<LoginDomainResult> =
             sendCodeEngine.sendCode(id, code).collectThis()
 
 
-        private suspend fun Flow<AuthResponse>.collectThis(): Flow<AuthResponse> = callbackFlow {
-            this@collectThis.collect { response ->
-                response.collectionBase({
-                    trySendBlocking(AuthResponse.Success)
-                }, {
-                    trySendBlocking(AuthResponse.Send(it))
-                }, {
-                    trySendBlocking(AuthResponse.Failure(it))
-                })
-            }
-            awaitClose { }
+        private suspend fun Flow<LoginDomainResult>.collectThis(): Flow<LoginDomainResult> =
+            callbackFlow {
+                this@collectThis.collect { response ->
+                    response.collectionBase({
+                        trySendBlocking(LoginDomainResult.Success)
+                    }, {
+                        trySendBlocking(LoginDomainResult.SendCode(it))
+                    }, {
+                        trySendBlocking(LoginDomainResult.Failure(it))
+                    })
+                }
+                awaitClose { }
         }
 
-        private suspend inline fun AuthResponse.collectionBase(
+        private suspend inline fun LoginDomainResult.collectionBase(
             crossinline success: () -> Unit,
             crossinline sendCode: (String) -> Unit,
             crossinline failure: (Exception) -> Unit
         ) {
             when (this) {
-                is AuthResponse.Success -> {
+                is LoginDomainResult.Success -> {
                     repository.saveUser(
                         AuthData.Base(
                             Firebase.auth.uid.toString(),
@@ -68,13 +68,11 @@ interface AuthInteractor {
                         }
                     }
                 }
-                is AuthResponse.Send -> {
+                is LoginDomainResult.SendCode -> {
                     sendCode(id)
                 }
-                is AuthResponse.Failure -> {
+                is LoginDomainResult.Failure -> {
                     failure(exception)
-                }
-                else -> {
                 }
             }
         }
