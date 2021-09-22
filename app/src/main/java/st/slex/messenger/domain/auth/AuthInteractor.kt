@@ -1,17 +1,20 @@
 package st.slex.messenger.domain.auth
 
 import android.app.Activity
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
+import st.slex.messenger.data.auth.AuthData
+import st.slex.messenger.data.auth.AuthDataResult
 import st.slex.messenger.data.auth.AuthRepository
 import st.slex.messenger.ui.auth.LoginEngine
 import st.slex.messenger.ui.auth.SendCodeEngine
 import st.slex.messenger.utilites.result.AuthResponse
-import st.slex.messenger.utilites.result.VoidResponse
 import javax.inject.Inject
 
 interface AuthInteractor {
@@ -53,12 +56,15 @@ interface AuthInteractor {
         ) {
             when (this) {
                 is AuthResponse.Success -> {
-                    repository.saveUser().collect {
+                    repository.saveUser(
+                        AuthData.Base(
+                            Firebase.auth.uid.toString(),
+                            Firebase.auth.currentUser?.phoneNumber.toString()
+                        )
+                    ).collect {
                         when (it) {
-                            is VoidResponse.Success -> success()
-                            is VoidResponse.Failure -> failure(it.exception)
-                            else -> {
-                            }
+                            is AuthDataResult.Success -> success()
+                            is AuthDataResult.Failure -> failure(it.exception)
                         }
                     }
                 }

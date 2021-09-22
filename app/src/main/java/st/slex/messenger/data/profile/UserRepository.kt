@@ -30,7 +30,7 @@ interface UserRepository {
                 .child(uid)
             val listener = AppValueEventListener({ snapshot ->
                 trySendBlocking(
-                    UserDataResult.Success(snapshot.getValue(UserData::class.java)!!)
+                    UserDataResult.Success(snapshot.getValue(UserData.Base::class.java)!!)
                 )
             }, {
                 trySendBlocking(UserDataResult.Failure(it))
