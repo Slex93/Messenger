@@ -1,15 +1,19 @@
 package st.slex.messenger.ui.auth
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -40,17 +44,36 @@ class EnterPhoneFragment : BaseAuthFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.fragmentPhoneInput.editText?.addTextChangedListener {
-            binding.fragmentPhoneFab.isEnabled = it?.length == 12
+        showKeyboard(binding.phoneEditText)
+        val locale = requireContext().applicationContext.resources.configuration.locale.country
+        binding.phoneEditText.setRegionCode(locale)
+        val filters = mutableListOf<InputFilter>()
+        binding.phoneEditText.addTextChangedListener {
+            if (binding.phoneEditText.isTextValidInternationalPhoneNumber()) {
+                binding.fragmentPhoneFab.isEnabled = true
+                val filter = InputFilter.LengthFilter(it.toString().length)
+                filters.add(filter)
+                binding.phoneEditText.filters = filters.toTypedArray()
+            } else {
+                binding.fragmentPhoneFab.isEnabled = false
+            }
         }
+
         binding.fragmentPhoneFab.setOnClickListener {
-            val phone = binding.fragmentPhoneInput.editText?.text.toString()
+            val phone = binding.phoneEditText.text.toString()
             requireActivity().lifecycleScope.launch {
                 viewModel.login(phone, requireActivity()).collect {
                     it.collector()
                 }
             }
         }
+    }
+
+    private fun showKeyboard(textInputEditText: TextInputEditText) {
+        textInputEditText.requestFocus()
+        val inputMethodManager =
+            requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.showSoftInput(textInputEditText, InputMethodManager.SHOW_IMPLICIT)
     }
 
     override fun onDestroyView() {

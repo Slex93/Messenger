@@ -24,10 +24,23 @@
         </activity>
         <activity
             android:name="st.slex.messenger.ui.auth.AuthActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize|stateAlwaysVisible" />
         <activity
             android:name="st.slex.messenger.ui.main.MainActivity"
             android:exported="true" />
+
+        <provider xmlns:tools="http://schemas.android.com/tools"
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+
+            <meta-data
+                android:name="st.slex.messenger.ui.auth.phone.PhoneNumberUtilInitializer"
+                android:value="androidx.startup" />
+
+        </provider>
     </application>
 
 </manifest>

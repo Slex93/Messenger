@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="st.slex.messenger.ui.auth.EnterPhoneFragment">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <st.slex.messenger.ui.auth.phone.PhoneTextInputLayout
         android:id="@+id/fragment_phone_input"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
@@ -14,19 +14,15 @@
         android:layout_gravity="center"
         android:layout_margin="@dimen/big_padding"
         android:hint="@string/hint_phone_number"
-        android:selectAllOnFocus="true"
-        app:counterEnabled="true"
-        app:counterMaxLength="12"
-        app:endIconMode="clear_text"
+        app:phone_showFlag="false"
         app:startIconDrawable="@drawable/ic_baseline_call_24">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <st.slex.messenger.ui.auth.phone.PhoneTextInputEditText
+            android:id="@+id/phoneEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:maxLength="12"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="match_parent" />
+
+    </st.slex.messenger.ui.auth.phone.PhoneTextInputLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_phone_fab"
