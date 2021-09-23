@@ -7,13 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEditUsernameBinding
 import st.slex.messenger.ui.core.BaseFragment
+import st.slex.messenger.ui.core.VoidUIResult
+import st.slex.messenger.utilites.funs.showPrimarySnackBar
 
 @ExperimentalCoroutinesApi
 class EditUsernameFragment : BaseFragment() {
@@ -54,18 +58,18 @@ class EditUsernameFragment : BaseFragment() {
         }
     }
 
-    private fun VoidResponse.collector() {
+    private fun VoidUIResult.collector() {
         when (this) {
-            is VoidResponse.Success -> {
+            is VoidUIResult.Success -> {
                 binding.editUnProgress.visibility = View.GONE
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                 findNavController().popBackStack()
             }
-            is VoidResponse.Failure -> {
+            is VoidUIResult.Failure -> {
                 binding.editUnProgress.visibility = View.GONE
                 binding.root.showPrimarySnackBar(exception.message.toString())
             }
-            is VoidResponse.Loading -> {
+            is VoidUIResult.Loading -> {
                 binding.editUnProgress.visibility = View.VISIBLE
             }
         }

@@ -12,6 +12,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
+import st.slex.messenger.ui.core.VoidUIResult
 import st.slex.messenger.utilites.funs.appComponent
 import st.slex.messenger.utilites.funs.setContacts
 import javax.inject.Inject
@@ -39,18 +40,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun VoidResponse.collector(): Unit =
+    private fun VoidUIResult.collector(): Unit =
         when (this) {
-            is VoidResponse.Success -> {
+            is VoidUIResult.Success -> {
 
             }
-            is VoidResponse.Failure -> {
+            is VoidUIResult.Failure -> {
 
             }
-            is VoidResponse.Loading -> {
+            is VoidUIResult.Loading -> {
 
             }
-        }
+        } //TODO
 
     override fun onStart() {
         super.onStart()

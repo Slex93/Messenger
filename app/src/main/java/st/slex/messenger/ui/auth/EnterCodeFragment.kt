@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.ui.core.BaseAuthFragment
-import st.slex.messenger.ui.core.VoidUIResponse
+import st.slex.messenger.ui.core.VoidUIResult
 import st.slex.messenger.ui.main.MainActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.funs.start
@@ -66,18 +66,18 @@ class EnterCodeFragment : BaseAuthFragment() {
         }
     }
 
-    private fun VoidUIResponse.collector() {
+    private fun VoidUIResult.collector() {
         when (this) {
-            is VoidUIResponse.Success -> {
+            is VoidUIResult.Success -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                 requireActivity().start(MainActivity())
             }
-            is VoidUIResponse.Failure -> {
+            is VoidUIResult.Failure -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 binding.root.showPrimarySnackBar(exception.toString())
             }
-            is VoidUIResponse.Loading -> {
+            is VoidUIResult.Loading -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             }
         }

@@ -8,6 +8,7 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.core.AppValueEventListener
+import st.slex.messenger.core.VoidResult
 import st.slex.messenger.utilites.CHILD_USERNAME
 import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.NODE_USERNAME
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 interface UserRepository {
     suspend fun getUser(uid: String): Flow<UserDataResult>
-    suspend fun saveUsername(username: String): Flow<VoidResponse>
+    suspend fun saveUsername(username: String): Flow<VoidResult>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -38,7 +39,7 @@ interface UserRepository {
             awaitClose { reference.removeEventListener(listener) }
         }
 
-        override suspend fun saveUsername(username: String): Flow<VoidResponse> = callbackFlow {
+        override suspend fun saveUsername(username: String): Flow<VoidResult> = callbackFlow {
             val reference = databaseReference
                 .child(NODE_USERNAME)
             val listener = AppValueEventListener({ snapshotUsernames ->
@@ -48,7 +49,7 @@ interface UserRepository {
                     it.value
                 }
                 if (listOfUsernames.contains(username)) {
-                    trySendBlocking(VoidResponse.Failure(Exception("Take another username")))
+                    trySendBlocking(VoidResult.Failure(Exception("Take another username")))
                 } else {
                     val taskUser = databaseReference
                         .child(NODE_USER)
@@ -64,19 +65,19 @@ interface UserRepository {
                         if (responseUser.isSuccessful) {
                             taskUsername.addOnCompleteListener { responseUsername ->
                                 if (responseUsername.isSuccessful) {
-                                    trySendBlocking(VoidResponse.Success)
+                                    trySendBlocking(VoidResult.Success)
                                 } else {
-                                    trySendBlocking(VoidResponse.Failure(responseUsername.exception!!))
+                                    trySendBlocking(VoidResult.Failure(responseUsername.exception!!))
                                 }
                             }
                         } else {
-                            trySendBlocking(VoidResponse.Failure(responseUser.exception!!))
+                            trySendBlocking(VoidResult.Failure(responseUser.exception!!))
                         }
                     }
                 }
 
             }, {
-                trySendBlocking(VoidResponse.Failure(it))
+                trySendBlocking(VoidResult.Failure(it))
             })
 
             reference.addValueEventListener(listener)

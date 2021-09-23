@@ -8,7 +8,7 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import st.slex.messenger.domain.auth.AuthInteractor
 import st.slex.messenger.domain.auth.LoginDomainResult
-import st.slex.messenger.ui.core.VoidUIResponse
+import st.slex.messenger.ui.core.VoidUIResult
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -23,11 +23,11 @@ class AuthViewModel @Inject constructor(
             initialValue = LoginUIResult.Loading
         )
 
-    suspend fun sendCode(id: String, code: String): StateFlow<VoidUIResponse> =
+    suspend fun sendCode(id: String, code: String): StateFlow<VoidUIResult> =
         interactor.sendCode(id, code).mapSendCode().stateIn(
             viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = VoidUIResponse.Loading
+            initialValue = VoidUIResult.Loading
         )
 
     private fun Flow<LoginDomainResult>.mapLogin(): Flow<LoginUIResult> = callbackFlow {
@@ -40,11 +40,11 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun Flow<LoginDomainResult>.mapSendCode(): Flow<VoidUIResponse> = callbackFlow {
+    private fun Flow<LoginDomainResult>.mapSendCode(): Flow<VoidUIResult> = callbackFlow {
         this@mapSendCode.collect {
             when (it) {
-                is LoginDomainResult.Success -> trySendBlocking(VoidUIResponse.Success)
-                is LoginDomainResult.Failure -> trySendBlocking(VoidUIResponse.Failure(it.exception))
+                is LoginDomainResult.Success -> trySendBlocking(VoidUIResult.Success)
+                is LoginDomainResult.Failure -> trySendBlocking(VoidUIResult.Failure(it.exception))
                 is LoginDomainResult.SendCode -> {
                 }
             }

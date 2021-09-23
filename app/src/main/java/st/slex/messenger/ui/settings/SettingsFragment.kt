@@ -1,16 +1,21 @@
 package st.slex.messenger.ui.settings
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSettingsBinding
+import st.slex.messenger.ui.auth.AuthActivity
 import st.slex.messenger.ui.core.BaseFragment
+import st.slex.messenger.ui.core.VoidUIResult
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
 @ExperimentalCoroutinesApi
@@ -42,16 +47,16 @@ class SettingsFragment : BaseFragment() {
         }
     }
 
-    private fun VoidResponse.collector() {
+    private fun VoidUIResult.collector() {
         when (this) {
-            is VoidResponse.Success -> {
+            is VoidUIResult.Success -> {
                 requireActivity().startActivity(Intent(requireContext(), AuthActivity::class.java))
                 requireActivity().finish()
             }
-            is VoidResponse.Failure -> {
+            is VoidUIResult.Failure -> {
                 Log.i("$this", exception.toString())
             }
-            is VoidResponse.Loading -> {
+            is VoidUIResult.Loading -> {
 
             }
         }

@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.core.AppChildEventListener
 import st.slex.messenger.core.Response
+import st.slex.messenger.core.VoidResult
 import st.slex.messenger.ui.user_profile.UserUI
 import st.slex.messenger.utilites.*
 import st.slex.messenger.utilites.funs.getThisValue
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 interface SingleChatRepository {
     suspend fun getMessages(uid: String, limitToLast: Int): Flow<Response<MessageModel>>
-    suspend fun sendMessage(message: String, user: UserUI, currentUser: UserUI): Flow<VoidResponse>
+    suspend fun sendMessage(message: String, user: UserUI, currentUser: UserUI): Flow<VoidResult>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -47,7 +48,7 @@ interface SingleChatRepository {
             message: String,
             user: UserUI,
             currentUser: UserUI
-        ): Flow<VoidResponse> = callbackFlow {
+        ): Flow<VoidResult> = callbackFlow {
             val refDialogUser = "$NODE_CHAT/${auth.uid}/${user.id()}"
             val refDialogReceivingUser = "$NODE_CHAT/${user.id()}/${auth.uid}"
             val messageKey = databaseReference.child(refDialogUser).push().key
@@ -81,17 +82,17 @@ interface SingleChatRepository {
                         if (it.isSuccessful) {
                             taskReceiver.addOnCompleteListener { rTask ->
                                 if (rTask.isSuccessful) {
-                                    trySendBlocking(VoidResponse.Success)
+                                    trySendBlocking(VoidResult.Success)
                                 } else {
-                                    trySendBlocking(VoidResponse.Failure(rTask.exception!!))
+                                    trySendBlocking(VoidResult.Failure(rTask.exception!!))
                                 }
                             }
                         } else {
-                            trySendBlocking(VoidResponse.Failure(uTask.exception!!))
+                            trySendBlocking(VoidResult.Failure(uTask.exception!!))
                         }
                     }
                 } else {
-                    trySendBlocking(VoidResponse.Failure(it.exception!!))
+                    trySendBlocking(VoidResult.Failure(it.exception!!))
                 }
             }
         }
