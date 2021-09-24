@@ -4,18 +4,12 @@
     <attr name="phone_initialCountryCode" format="integer" />
     <attr name="phone_initialRegionCode" format="string" />
 
-    <declare-styleable name="PhoneTextInputLayout">
-        <attr name="phone_flagSize" format="dimension" />
-        <attr name="phone_showFlag" format="boolean" />
-    </declare-styleable>
-
     <declare-styleable name="PhoneTextInputEditText">
         <attr name="phone_initialCountryCode" />
         <attr name="phone_initialRegionCode" />
     </declare-styleable>
 
     <declare-styleable name="PhoneFlagTextView">
-        <attr name="phone_flagFor" format="reference" />
         <attr name="phone_initialCountryCode" />
         <attr name="phone_initialRegionCode" />
     </declare-styleable>

@@ -48,6 +48,7 @@ class EnterPhoneFragment : BaseAuthFragment() {
         val locale = requireContext().applicationContext.resources.configuration.locale.country
         binding.phoneEditText.setRegionCode(locale)
         val filters = mutableListOf<InputFilter>()
+
         binding.phoneEditText.addTextChangedListener {
             if (binding.phoneEditText.isTextValidInternationalPhoneNumber()) {
                 binding.fragmentPhoneFab.isEnabled = true
@@ -56,6 +57,7 @@ class EnterPhoneFragment : BaseAuthFragment() {
                 binding.phoneEditText.filters = filters.toTypedArray()
             } else {
                 binding.fragmentPhoneFab.isEnabled = false
+                filters.clear()
             }
         }
 
