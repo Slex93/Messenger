@@ -16,12 +16,12 @@
         android:hint="@string/hint_phone_number"
         app:startIconDrawable="@drawable/ic_baseline_call_24">
 
-        <st.slex.messenger.ui.auth.phone.PhoneTextInputEditText
+        <st.slex.library.PhoneTextInputEditText
             android:id="@+id/phoneEditText"
             style="@style/TextAppearance.MaterialComponents.Headline5"
-            tools:text="+799998887766"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:text="+799998887766" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

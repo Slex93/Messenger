@@ -23,6 +23,7 @@ import st.slex.messenger.ui.core.BaseAuthFragment
 import st.slex.messenger.ui.main.MainActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.funs.start
+import java.util.*
 
 @ExperimentalCoroutinesApi
 class EnterPhoneFragment : BaseAuthFragment() {
@@ -45,8 +46,10 @@ class EnterPhoneFragment : BaseAuthFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showKeyboard(binding.phoneEditText)
-        val locale = requireContext().applicationContext.resources.configuration.locale.country
-        binding.phoneEditText.setRegionCode(locale)
+
+        val country = Locale.getDefault().country
+        binding.phoneEditText.setRegionCode(country)
+
         val filters = mutableListOf<InputFilter>()
 
         binding.phoneEditText.addTextChangedListener {
