@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentUserProfileBinding
 import st.slex.messenger.ui.core.BaseFragment
+import st.slex.messenger.utilites.funs.setSupportActionBar
 
 @ExperimentalCoroutinesApi
 class UserProfileFragment : BaseFragment() {
@@ -24,7 +25,6 @@ class UserProfileFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: UserViewModel by viewModels { viewModelFactory.get() }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +45,7 @@ class UserProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setToolbar()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.currentUser().collect {
                 it.collector()
@@ -52,20 +53,25 @@ class UserProfileFragment : BaseFragment() {
         }
     }
 
+    private fun setToolbar() {
+        setHasOptionsMenu(true)
+        setSupportActionBar(binding.userProfileToolbar)
+    }
+
     private fun UserUiResult.collector() {
         when (this) {
             is UserUiResult.Success -> {
-                binding.profileProgress.visibility = View.GONE
                 this.data.mapProfile(
-                    phoneNumber = binding.phoneTextView,
-                    userName = binding.usernameTextView,
+                    glide = glide,
+                    phoneNumber = binding.container.phoneTextView,
+                    userName = binding.container.usernameTextView,
                     avatar = binding.avatarImageView,
-                    bioText = binding.bioTextView,
-                    fullName = binding.fullNameTextView,
-                    usernameCard = binding.usernameCardView
+                    bioText = binding.container.bioTextView,
+                    fullName = binding.container.fullNameTextView,
+                    usernameCard = binding.container.usernameCardView
                 )
 
-                binding.usernameCardView.setOnClickListener {
+                binding.container.usernameCardView.setOnClickListener {
                     data.changeUsername { card, username ->
                         val directions = UserProfileFragmentDirections
                             .actionNavUserProfileToEditUsernameFragment(username)
@@ -75,10 +81,8 @@ class UserProfileFragment : BaseFragment() {
                 }
             }
             is UserUiResult.Loading -> {
-                binding.profileProgress.visibility = View.VISIBLE
             }
             is UserUiResult.Failure -> {
-                binding.profileProgress.visibility = View.GONE
             }
         }
     }

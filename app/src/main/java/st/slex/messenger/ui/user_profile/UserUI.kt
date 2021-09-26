@@ -2,6 +2,7 @@ package st.slex.messenger.ui.user_profile
 
 import st.slex.messenger.ui.core.AbstractView
 import st.slex.messenger.ui.core.CustomCardView
+import st.slex.messenger.utilites.base.SetImageWithGlide
 
 interface UserUI {
     fun mapMainScreen(
@@ -11,6 +12,7 @@ interface UserUI {
     )
 
     fun mapProfile(
+        glide: SetImageWithGlide,
         phoneNumber: AbstractView.Text,
         userName: AbstractView.Text,
         avatar: AbstractView.Image,
@@ -57,6 +59,7 @@ interface UserUI {
         }
 
         override fun mapProfile(
+            glide: SetImageWithGlide,
             phoneNumber: AbstractView.Text,
             userName: AbstractView.Text,
             avatar: AbstractView.Image,
@@ -66,7 +69,7 @@ interface UserUI {
         ) {
             phoneNumber.map(phone)
             userName.map(username)
-            avatar.load(url)
+            glide.setImage(avatar.getImage(), url, needCrop = false)
             bioText.map(bio)
             fullName.map(full_name)
             usernameCard.transit(id)
