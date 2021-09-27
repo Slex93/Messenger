@@ -18,12 +18,21 @@
         <item name="android:statusBarColor">@color/black</item>
     </style>
 
-    <style name="MainToolBar" parent="Widget.MaterialComponents.Toolbar.Primary">
-        <item name="android:background"> @color/black </item>
+    <style name="Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@color/black</item>
     </style>
 
-    <style name="MainAppBar" parent="Theme.AppCompat.DayNight.DarkActionBar">
-        <item name="android:background"> @color/black </item>
+    <style name="Appbar" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="android:background">@color/black</item>
+    </style>
+
+    <style name="CodeCardView" parent="Widget.MaterialComponents.CardView" />
+
+    <style name="CodeTextView" parent="TextAppearance.MaterialComponents.Headline2">
+        <item name="android:maxLength">1</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:inputType">numberDecimal</item>
     </style>
 
 </resources>

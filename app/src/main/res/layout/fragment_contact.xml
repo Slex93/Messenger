@@ -14,13 +14,13 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/MainAppBar">
+            style="@style/Appbar">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/fragment_contact_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/MainToolBar"/>
+                style="@style/Toolbar" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView

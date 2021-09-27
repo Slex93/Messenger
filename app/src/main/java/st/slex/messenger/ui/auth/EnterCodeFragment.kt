@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -55,13 +56,43 @@ class EnterCodeFragment : BaseAuthFragment() {
         super.onViewCreated(view, savedInstanceState)
         val args: EnterCodeFragmentArgs by navArgs()
         val id = args.id
-        binding.fragmentCodeTextInput.addTextChangedListener { code ->
-            if (code?.length == 6) {
-                requireActivity().lifecycleScope.launch {
-                    viewModel.sendCode(id = id, code = code.toString()).collect {
-                        it.collector()
+
+        binding.codeEditText1.check {
+            binding.codeEditText2.check {
+                binding.codeEditText3.check {
+                    binding.codeEditText4.check {
+                        binding.codeEditText5.check {
+                            binding.codeEditText6.check {
+                                requireActivity().lifecycleScope.launch {
+                                    val code = getCodeFromEditText()
+                                    viewModel.sendCode(id = id, code = code).collect {
+                                        it.collector()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
+            }
+        }
+
+    }
+
+    private fun getCodeFromEditText(): String =
+        binding.codeEditText1.getString() +
+                binding.codeEditText2.getString() +
+                binding.codeEditText3.getString() +
+                binding.codeEditText4.getString() +
+                binding.codeEditText5.getString() +
+                binding.codeEditText6.getString()
+
+    private fun EditText.getString() = this.text.toString()
+
+    private inline fun EditText.check(crossinline function: () -> Unit) {
+        this.requestFocus()
+        this.addTextChangedListener {
+            if (it?.length == 1) {
+                function()
             }
         }
     }

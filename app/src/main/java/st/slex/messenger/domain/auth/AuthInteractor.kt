@@ -47,7 +47,7 @@ interface AuthInteractor {
                     })
                 }
                 awaitClose { }
-        }
+            }
 
         private suspend inline fun LoginDomainResult.collectionBase(
             crossinline success: () -> Unit,

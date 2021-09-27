@@ -34,7 +34,7 @@
         android:contentDescription="@string/next_step"
         android:enabled="false"
         android:src="@drawable/ic_next_step"
-        android:transitionName="activity_trans" />
+        android:transitionName="@string/authTransitionName" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/fragment_code_progress_indicator"

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,32 +7,63 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/fragment_code_layout"
-        style="@style/Widget.MaterialComponents.CardView"
+        style="@style/CodeCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/primary_padding"
-        android:transitionName="activity_trans"
-        app:cardBackgroundColor="@color/teal_200"
-        app:cardCornerRadius="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_margin="@dimen/big_padding"
+        android:transitionName="@string/authTransitionName">
 
-        <EditText
-            android:id="@+id/fragment_code_text_input"
-            style="@style/TextAppearance.MaterialComponents.Headline3"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="50dp"
+            android:layout_margin="@dimen/primary_padding"
             android:gravity="center"
-            android:hint="@string/enter_code"
-            android:maxLength="6"
-            android:maxLines="1"
-            android:selectAllOnFocus="true"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/codeEditText1"
+                style="@style/CodeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1" />
+
+            <EditText
+                android:id="@+id/codeEditText2"
+                style="@style/CodeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1" />
+
+            <EditText
+                android:id="@+id/codeEditText3"
+                style="@style/CodeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1" />
+
+            <EditText
+                android:id="@+id/codeEditText4"
+                style="@style/CodeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1" />
+
+            <EditText
+                android:id="@+id/codeEditText5"
+                style="@style/CodeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1" />
+
+            <EditText
+                android:id="@+id/codeEditText6"
+                style="@style/CodeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="1" />
+        </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

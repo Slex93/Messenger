@@ -8,12 +8,12 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
-        style="@style/MainAppBar"
+        style="@style/Appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            style="@style/MainToolBar"
+            style="@style/Toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:expandedTitleGravity="top"
@@ -32,7 +32,7 @@
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/user_profile_toolbar"
-                style="@style/MainToolBar"
+                style="@style/Toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="top"

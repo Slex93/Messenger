@@ -19,8 +19,8 @@ interface ChatsDomainMapper<T> : Abstract.Mapper.DomainToUi<List<ChatsDomain>, T
             })
         }
 
-        override fun map(error: Exception): ChatsUIResult {
-            return ChatsUIResult.Failure(error)
+        override fun map(exception: Exception): ChatsUIResult {
+            return ChatsUIResult.Failure(exception)
         }
 
     }

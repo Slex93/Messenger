@@ -5,13 +5,13 @@
     tools:context="st.slex.messenger.ui.settings.SettingsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
-        style="@style/MainAppBar"
+        style="@style/Appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/settings_toolbar"
-            style="@style/MainToolBar"
+            style="@style/Toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

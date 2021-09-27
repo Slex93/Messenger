@@ -40,5 +40,6 @@
     <string name="transition_username">transition_edit_username</string>
     <string name="description_write_message">write new message</string>
     <string name="description_user_avatar">user avatar</string>
+    <string name="authTransitionName">auth_transition_name</string>
 
 </resources>
