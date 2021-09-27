@@ -9,7 +9,7 @@ It'll be updated as soon as possible
 
 ### Description
 
-Messenger with end-to-end encryption
+Messenger 
 
 ### Tools
 
