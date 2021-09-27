@@ -13,6 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
@@ -56,46 +61,52 @@ class EnterCodeFragment : BaseAuthFragment() {
         super.onViewCreated(view, savedInstanceState)
         val args: EnterCodeFragmentArgs by navArgs()
         val id = args.id
+        val editTextList = getEditTextList()
+        editTextList[0].requestFocus()
+        editTextList.foreachCodeList {
+            launchAuth(id, editTextList.getCodeFromList())
+        }
+    }
 
-        binding.codeEditText1.check {
-            binding.codeEditText2.check {
-                binding.codeEditText3.check {
-                    binding.codeEditText4.check {
-                        binding.codeEditText5.check {
-                            binding.codeEditText6.check {
-                                requireActivity().lifecycleScope.launch {
-                                    val code = getCodeFromEditText()
-                                    viewModel.sendCode(id = id, code = code).collect {
-                                        it.collector()
-                                    }
-                                }
-                            }
-                        }
+    private fun getEditTextList() = listOf(
+        binding.codeEditText1,
+        binding.codeEditText2,
+        binding.codeEditText3,
+        binding.codeEditText4,
+        binding.codeEditText5,
+        binding.codeEditText6
+    )
+
+    private inline fun List<EditText>.foreachCodeList(crossinline function: () -> Unit) {
+        for (number in this.indices) {
+            lifecycleScope.launch {
+                listenCode(this@foreachCodeList[number]).collect {
+                    if (number == this@foreachCodeList.size - 1) {
+                        function()
+                    } else {
+                        this@foreachCodeList[number + 1].requestFocus()
                     }
+                    this.cancel()
                 }
             }
         }
-
     }
 
-    private fun getCodeFromEditText(): String =
-        binding.codeEditText1.getString() +
-                binding.codeEditText2.getString() +
-                binding.codeEditText3.getString() +
-                binding.codeEditText4.getString() +
-                binding.codeEditText5.getString() +
-                binding.codeEditText6.getString()
+    private suspend fun listenCode(editText: EditText): Flow<Nothing?> = callbackFlow {
+        editText.addTextChangedListener {
+            if (it?.length == 1) trySendBlocking(null)
+        }
+        awaitClose { }
+    }
 
-    private fun EditText.getString() = this.text.toString()
-
-    private inline fun EditText.check(crossinline function: () -> Unit) {
-        this.requestFocus()
-        this.addTextChangedListener {
-            if (it?.length == 1) {
-                function()
-            }
+    private fun launchAuth(id: String, code: String) = requireActivity().lifecycleScope.launch {
+        viewModel.sendCode(id = id, code = code).collect {
+            it.collector()
         }
     }
+
+    private fun List<EditText>.getCodeFromList(): String =
+        this.map { it.text.toString() }.toString()
 
     private fun VoidUIResult.collector() {
         when (this) {
@@ -119,4 +130,6 @@ class EnterCodeFragment : BaseAuthFragment() {
         _binding = null
     }
 }
+
+
 
