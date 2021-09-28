@@ -1,9 +1,14 @@
 package st.slex.messenger.data.profile
 
 import android.net.Uri
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -17,7 +22,7 @@ import javax.inject.Inject
 interface UserRepository {
     suspend fun getUser(uid: String): Flow<UserDataResult>
     suspend fun saveUsername(username: String): Flow<VoidResult>
-    suspend fun saveImage(url: Uri): Flow<VoidResult>
+    suspend fun saveImage(uri: Uri): Flow<VoidResult>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -30,43 +35,60 @@ interface UserRepository {
             val reference = databaseReference
                 .child(NODE_USER)
                 .child(uid)
-            val listener = AppValueEventListener({ snapshot ->
-                trySendBlocking(
-                    UserDataResult.Success(snapshot.getValue(UserData.Base::class.java)!!)
-                )
-            }, {
-                trySendBlocking(UserDataResult.Failure(it))
-            })
+            val listener = getUserEventListener {
+                trySendBlocking(it)
+            }
             reference.addListenerForSingleValueEvent(listener)
             awaitClose { reference.removeEventListener(listener) }
         }
 
-        override suspend fun saveImage(url: Uri): Flow<VoidResult> = callbackFlow {
+        private inline fun getUserEventListener(
+            crossinline function: (UserDataResult) -> Unit
+        ) = object : ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) =
+                function(UserDataResult.Success(snapshot.getValue(UserData.Base::class.java)!!))
+
+            override fun onCancelled(error: DatabaseError) =
+                function(UserDataResult.Failure(error.toException()))
+        }
+
+        override suspend fun saveImage(uri: Uri): Flow<VoidResult> = callbackFlow {
             val referenceUser = databaseReference.child(NODE_USER).child(user.uid).child(CHILD_URL)
             val referenceStorage = storageReference.child(FOLDER_PROFILE_IMAGE).child(user.uid)
-            referenceStorage.putFile(url).addOnCompleteListener { putFileTask ->
-                if (putFileTask.isSuccessful) {
-                    referenceStorage.downloadUrl.addOnCompleteListener { downloadTask ->
-                        if (downloadTask.isSuccessful) {
-                            referenceUser.setValue(downloadTask.result.toString())
-                                .addOnCompleteListener {
-                                    if (it.isSuccessful) {
-                                        trySendBlocking(VoidResult.Success)
-                                    } else {
-                                        trySendBlocking(VoidResult.Failure(it.exception!!))
-                                    }
-                                }
-                        } else {
-                            trySendBlocking(VoidResult.Failure(downloadTask.exception!!))
-                        }
 
-                    }
-                } else {
-                    trySendBlocking(VoidResult.Failure(putFileTask.exception!!))
-                }
+            val userListener = listener<Void>({
+                trySendBlocking(it)
+            }, {
+                trySendBlocking(it)
+            })
 
-            }
+            val downloadListener = listener<Uri>({
+                referenceUser.setValue(it.toString()).addOnCompleteListener(userListener)
+            }, {
+                trySendBlocking(it)
+            })
+
+            val fileListener = listener<UploadTask.TaskSnapshot>({
+                referenceStorage.downloadUrl.addOnCompleteListener(downloadListener)
+            }, {
+                trySendBlocking(it)
+            })
+
+            referenceStorage.putFile(uri).addOnCompleteListener(fileListener)
+
             awaitClose { }
+        }
+
+        private inline fun <T> listener(
+            crossinline success: (T) -> Unit,
+            crossinline failure: (VoidResult) -> Unit
+        ) = OnCompleteListener<T> { p0 ->
+            if (p0.isSuccessful) {
+                success(p0.result!!)
+            } else {
+                failure(VoidResult.Failure(p0.exception!!))
+            }
         }
 
         override suspend fun saveUsername(username: String): Flow<VoidResult> = callbackFlow {
