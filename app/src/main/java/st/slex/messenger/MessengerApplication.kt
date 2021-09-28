@@ -11,7 +11,7 @@ class MessengerApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.builder().build()
+        appComponent = DaggerAppComponent.builder().applicationBind(this).build()
     }
 
 }
