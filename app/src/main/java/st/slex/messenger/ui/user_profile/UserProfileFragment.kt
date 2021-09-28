@@ -32,11 +32,13 @@ class UserProfileFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: UserViewModel by viewModels { viewModelFactory.get() }
-    lateinit var launcher: ActivityResultLauncher<Intent>
+
+    private var _imageLauncher: ActivityResultLauncher<Intent>? = null
+    private val imageLauncher: ActivityResultLauncher<Intent> get() = _imageLauncher!!
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        launcher = registerForActivityResult(
+        _imageLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) {
             it.imageCallback()
@@ -73,27 +75,27 @@ class UserProfileFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.changeImageFab.setOnClickListener {
-            launcher.launch(
+        binding.changeImageFab.setOnClickListener(changeImageClickListener)
+    }
+
+    private val changeImageClickListener: View.OnClickListener
+        get() = View.OnClickListener {
+            imageLauncher.launch(
                 Intent().apply {
                     type = "image/*"
                     action = Intent.ACTION_PICK
                 }
             )
         }
-    }
 
     private fun ActivityResult.imageCallback(): Unit? =
         this.data?.data?.let {
             if (it.getRealPath().isNotEmpty()) {
-                uploadImage(it)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.saveImage(it.toString()).collect()
+                }
             }
         }
-
-
-    private fun uploadImage(path: Uri) {
-
-    }
 
     private fun Uri.getRealPath(): String {
         val cursor = requireActivity().contentResolver.query(
@@ -117,7 +119,7 @@ class UserProfileFragment : BaseFragment() {
     private fun UserUiResult.collector() {
         when (this) {
             is UserUiResult.Success -> {
-                this.data.mapProfile(
+                data.mapProfile(
                     glide = glide,
                     phoneNumber = binding.container.phoneTextView,
                     userName = binding.container.usernameTextView,

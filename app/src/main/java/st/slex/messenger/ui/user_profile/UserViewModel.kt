@@ -36,6 +36,10 @@ class UserViewModel
             initialValue = VoidUIResult.Loading
         )
 
+    suspend fun saveImage(url: String): Flow<VoidUIResult> = callbackFlow {
+        //TODO
+    }
+
     private suspend fun Flow<UserDomainResult>.mapIt(): Flow<UserUiResult> = callbackFlow {
         this@mapIt.collect {
             trySendBlocking(it.map(mapper))
