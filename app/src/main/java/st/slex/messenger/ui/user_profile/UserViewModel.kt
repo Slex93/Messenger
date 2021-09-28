@@ -1,5 +1,6 @@
 package st.slex.messenger.ui.user_profile
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,9 +37,12 @@ class UserViewModel
             initialValue = VoidUIResult.Loading
         )
 
-    suspend fun saveImage(url: String): Flow<VoidUIResult> = callbackFlow {
-        //TODO
-    }
+    suspend fun saveImage(uri: Uri): StateFlow<VoidUIResult> =
+        response.create(repository.saveImage(uri)).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = VoidUIResult.Loading
+        )
 
     private suspend fun Flow<UserDomainResult>.mapIt(): Flow<UserUiResult> = callbackFlow {
         this@mapIt.collect {

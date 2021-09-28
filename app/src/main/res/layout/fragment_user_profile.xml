@@ -26,6 +26,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="?actionBarSize"
                 android:adjustViewBounds="true"
+                android:maxHeight="300dp"
+                android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.5"
                 tools:src="@drawable/test_image" />

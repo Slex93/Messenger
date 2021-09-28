@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentUserProfileBinding
 import st.slex.messenger.ui.core.BaseFragment
+import st.slex.messenger.ui.core.VoidUIResult
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
 @ExperimentalCoroutinesApi
@@ -66,10 +68,12 @@ class UserProfileFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setSupportActionBar(binding.userProfileToolbar)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.currentUser().collect {
-                it.collector()
-            }
+        scope().start()
+    }
+
+    private fun scope() = viewLifecycleOwner.lifecycleScope.launch {
+        viewModel.currentUser().collect {
+            it.collector()
         }
     }
 
@@ -89,10 +93,12 @@ class UserProfileFragment : BaseFragment() {
         }
 
     private fun ActivityResult.imageCallback(): Unit? =
-        this.data?.data?.let {
+        this.data?.data?.let { it ->
             if (it.getRealPath().isNotEmpty()) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.saveImage(it.toString()).collect()
+                    viewModel.saveImage(it).collect { result ->
+                        result.collector()
+                    }
                 }
             }
         }
@@ -114,6 +120,21 @@ class UserProfileFragment : BaseFragment() {
         }
         cursor?.close()
         return result
+    }
+
+    private fun VoidUIResult.collector() {
+        when (this) {
+            is VoidUIResult.Success -> {
+                scope().cancel()
+                scope().start()
+            }
+            is VoidUIResult.Failure -> {
+                Log.i("Failure::", exception.toString())
+            }
+            is VoidUIResult.Loading -> {
+
+            }
+        }
     }
 
     private fun UserUiResult.collector() {
@@ -152,3 +173,4 @@ class UserProfileFragment : BaseFragment() {
     }
 
 }
+

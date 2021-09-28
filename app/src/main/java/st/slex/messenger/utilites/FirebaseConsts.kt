@@ -8,6 +8,9 @@ const val NODE_CONTACT = "contact"
 const val NODE_CHAT = "chat"
 const val NODE_CHAT_LIST = "chat_list"
 
+/*Storage*/
+const val FOLDER_PROFILE_IMAGE = "profile_image"
+
 /*Children*/
 const val CHILD_ID = "id"
 const val CHILD_PHONE = "phone"
