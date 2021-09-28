@@ -1,12 +1,9 @@
 package st.slex.messenger.di.component
 
 import android.app.Application
-import dagger.BindsInstance
 import dagger.Component
-import dagger.android.support.AndroidSupportInjectionModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.di.module.*
-import st.slex.messenger.ui.core.BaseAuthFragment
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.main.MainActivity
 import javax.inject.Singleton
