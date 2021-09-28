@@ -29,23 +29,28 @@ interface ChatsRepository {
                     .child(user.uid)
                     .limitToLast(page)
 
-                val listener = object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val result = snapshot.children.mapNotNull {
-                            it.getValue(ChatsData.Base::class.java)!!
-                        }
-                        trySendBlocking(ChatsDataResult.Success(result))
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        trySendBlocking(ChatsDataResult.Failure(error.toException()))
-                    }
-
+                val listener = getChatsEventListener {
+                    trySendBlocking(it)
                 }
 
                 reference.addValueEventListener(listener)
                 awaitClose { reference.removeEventListener(listener) }
             }
+
+        private inline fun getChatsEventListener(
+            crossinline function: (ChatsDataResult) -> Unit
+        ) = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) =
+                function(
+                    ChatsDataResult.Success(
+                        snapshot.children.mapNotNull {
+                            it.getValue(ChatsData.Base::class.java)!!
+                        })
+                )
+
+            override fun onCancelled(error: DatabaseError) =
+                function(ChatsDataResult.Failure(error.toException()))
+        }
 
     }
 }
