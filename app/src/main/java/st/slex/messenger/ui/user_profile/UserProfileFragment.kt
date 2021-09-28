@@ -1,10 +1,17 @@
 package st.slex.messenger.ui.user_profile
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -25,6 +32,16 @@ class UserProfileFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: UserViewModel by viewModels { viewModelFactory.get() }
+    lateinit var launcher: ActivityResultLauncher<Intent>
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        launcher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            it.imageCallback()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +62,8 @@ class UserProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setToolbar()
+        setHasOptionsMenu(true)
+        setSupportActionBar(binding.userProfileToolbar)
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.currentUser().collect {
                 it.collector()
@@ -53,9 +71,47 @@ class UserProfileFragment : BaseFragment() {
         }
     }
 
-    private fun setToolbar() {
-        setHasOptionsMenu(true)
-        setSupportActionBar(binding.userProfileToolbar)
+    override fun onResume() {
+        super.onResume()
+        binding.changeImageFab.setOnClickListener {
+            launcher.launch(
+                Intent().apply {
+                    type = "image/*"
+                    action = Intent.ACTION_PICK
+                }
+            )
+        }
+    }
+
+    private fun ActivityResult.imageCallback(): Unit? =
+        this.data?.data?.let {
+            if (it.getRealPath().isNotEmpty()) {
+                uploadImage(it)
+            }
+        }
+
+
+    private fun uploadImage(path: Uri) {
+
+    }
+
+    private fun Uri.getRealPath(): String {
+        val cursor = requireActivity().contentResolver.query(
+            this,
+            null,
+            null,
+            null, null,
+            null
+        )
+        val result = if (cursor == null) {
+            this.path.toString()
+        } else with(cursor) {
+            moveToNext()
+            val id = getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            getString(id)
+        }
+        cursor?.close()
+        return result
     }
 
     private fun UserUiResult.collector() {
@@ -68,7 +124,8 @@ class UserProfileFragment : BaseFragment() {
                     avatar = binding.avatarImageView,
                     bioText = binding.container.bioTextView,
                     fullName = binding.container.fullNameTextView,
-                    usernameCard = binding.container.usernameCardView
+                    usernameCard = binding.container.usernameCardView,
+                    toolbar = binding.userProfileToolbar
                 )
 
                 binding.container.usernameCardView.setOnClickListener {

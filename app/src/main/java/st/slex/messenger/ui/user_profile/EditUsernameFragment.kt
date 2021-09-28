@@ -47,6 +47,7 @@ class EditUsernameFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args: EditUsernameFragmentArgs by navArgs()
+        binding.editUnCard.transitionName = args.username
         binding.editUnTextInput.editText?.setText(args.username)
         binding.editUnBtnSave.setOnClickListener {
             val username = binding.editUnTextInput.editText?.text.toString()

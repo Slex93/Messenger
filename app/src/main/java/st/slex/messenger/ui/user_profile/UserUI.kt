@@ -1,5 +1,6 @@
 package st.slex.messenger.ui.user_profile
 
+import com.google.android.material.appbar.MaterialToolbar
 import st.slex.messenger.ui.core.AbstractView
 import st.slex.messenger.ui.core.CustomCardView
 import st.slex.messenger.utilites.base.SetImageWithGlide
@@ -18,7 +19,8 @@ interface UserUI {
         avatar: AbstractView.Image,
         bioText: AbstractView.Text,
         fullName: AbstractView.Text,
-        usernameCard: AbstractView.Card
+        usernameCard: AbstractView.Card,
+        toolbar: MaterialToolbar
     )
 
     fun mapChat(
@@ -65,15 +67,17 @@ interface UserUI {
             avatar: AbstractView.Image,
             bioText: AbstractView.Text,
             fullName: AbstractView.Text,
-            usernameCard: AbstractView.Card
+            usernameCard: AbstractView.Card,
+            toolbar: MaterialToolbar
         ) {
             phoneNumber.map(phone)
             userName.map(username)
             glide.setImage(avatar.getImage(), url, needCrop = false)
             bioText.map(bio)
             fullName.map(full_name)
-            usernameCard.transit(id)
+            usernameCard.transit(username)
             _usernameCard = usernameCard.getCard()
+            toolbar.title = username
         }
 
         override fun mapChat(userName: AbstractView.Text, stateText: AbstractView.Text) {
