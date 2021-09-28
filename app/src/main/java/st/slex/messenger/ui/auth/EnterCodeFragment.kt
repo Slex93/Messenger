@@ -2,6 +2,7 @@ package st.slex.messenger.ui.auth
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -100,13 +101,14 @@ class EnterCodeFragment : BaseAuthFragment() {
     }
 
     private fun launchAuth(id: String, code: String) = requireActivity().lifecycleScope.launch {
+        Log.i("testCOde", code)
         viewModel.sendCode(id = id, code = code).collect {
             it.collector()
         }
     }
 
     private fun List<EditText>.getCodeFromList(): String =
-        this.map { it.text.toString() }.toString()
+        this.joinToString { it.text.toString() }.replace(", ", "")
 
     private fun VoidUIResult.collector() {
         when (this) {

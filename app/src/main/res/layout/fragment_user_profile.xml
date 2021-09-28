@@ -52,4 +52,5 @@
             android:id="@+id/container"
             layout="@layout/user_profile_content" />
     </androidx.core.widget.NestedScrollView>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

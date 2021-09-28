@@ -8,14 +8,6 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <TextView
-        style="@style/TextAppearance.MaterialComponents.Headline3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:text="@string/label_account" />
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/profile_phone_card"
         android:layout_width="match_parent"
@@ -149,7 +141,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="2"
                 tools:text="Poor app performance can ruin the user experience and destroy your app's reputation. If it ever responds slowly, shows choppy animations, freezes, crashes, or consumes a lot of power, your users will notice. To avoid these performance problems, use the Android Profiler to measure your app's memory, CPU, and network usage." />
 
             <TextView
