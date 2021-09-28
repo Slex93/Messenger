@@ -1,4 +1,4 @@
-package st.slex.messenger.di.module
+package st.slex.messenger.di.module.auth
 
 import dagger.Binds
 import dagger.Module

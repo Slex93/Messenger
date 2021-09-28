@@ -9,10 +9,10 @@ import st.slex.messenger.ui.auth.AuthActivity
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-open class BaseAuthFragment : Fragment() {
+abstract class BaseAuthFragment : Fragment() {
 
     @Inject
-    open lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+    lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
 
     override fun onAttach(context: Context) {
         (requireActivity() as AuthActivity).authComponent.inject(this)

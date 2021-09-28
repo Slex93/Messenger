@@ -1,6 +1,5 @@
 package st.slex.messenger.ui.auth
 
-import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,8 +15,8 @@ class AuthViewModel @Inject constructor(
     private val interactor: AuthInteractor
 ) : ViewModel() {
 
-    suspend fun login(phone: String, activity: Activity): StateFlow<LoginUIResult> =
-        interactor.login(phone, activity).mapLogin().stateIn(
+    suspend fun login(phone: String): StateFlow<LoginUIResult> =
+        interactor.login(phone).mapLogin().stateIn(
             viewModelScope,
             started = SharingStarted.WhileSubscribed(1000),
             initialValue = LoginUIResult.Loading

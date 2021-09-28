@@ -6,7 +6,6 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.di.key.ViewModelKey
-import st.slex.messenger.ui.auth.AuthViewModel
 import st.slex.messenger.ui.chat.SingleChatViewModel
 import st.slex.messenger.ui.chats.ChatsViewModel
 import st.slex.messenger.ui.contacts.ContactViewModel
@@ -22,11 +21,6 @@ interface ViewModelModule {
     @Binds
     @ViewModelKey(ActivityViewModel::class)
     fun bindsMainActivityViewModel(viewModel: ActivityViewModel): ViewModel
-
-    @IntoMap
-    @Binds
-    @ViewModelKey(AuthViewModel::class)
-    fun bindsLoginViewModel(viewModel: AuthViewModel): ViewModel
 
     @IntoMap
     @Binds

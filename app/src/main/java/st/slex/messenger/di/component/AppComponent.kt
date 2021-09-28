@@ -16,7 +16,6 @@ import javax.inject.Singleton
         ActivitiesModule::class,
         RepositoryModule::class,
         InteractorModule::class,
-        EngineModule::class,
         ViewModelModule::class,
         ViewModelFactoryModule::class,
         ReferencesModule::class,

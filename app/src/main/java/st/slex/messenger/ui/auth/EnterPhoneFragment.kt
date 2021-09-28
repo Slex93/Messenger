@@ -67,7 +67,7 @@ class EnterPhoneFragment : BaseAuthFragment() {
         binding.fragmentPhoneFab.setOnClickListener {
             val phone = binding.phoneEditText.text.toString()
             requireActivity().lifecycleScope.launch {
-                viewModel.login(phone, requireActivity()).collect {
+                viewModel.login(phone).collect {
                     it.collector()
                 }
             }
@@ -94,7 +94,7 @@ class EnterPhoneFragment : BaseAuthFragment() {
             binding.fragmentCodeProgressIndicator.visibility = View.GONE
             binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
             val direction =
-                EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(this.id)
+                EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(id)
             val extras =
                 FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
             findNavController().navigate(direction, extras)
