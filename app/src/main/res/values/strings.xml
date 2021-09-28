@@ -41,5 +41,7 @@
     <string name="description_write_message">write new message</string>
     <string name="description_user_avatar">user avatar</string>
     <string name="authTransitionName">auth_transition_name</string>
+    <string name="description_change_image">change image</string>
+    <string name="label_btn_change">change</string>
 
 </resources>
