@@ -5,6 +5,7 @@
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.30572916666666666" />
         <entry key="../../../../layout/custom_preview.xml" value="0.5135416666666667" />
+        <entry key="app/src/main/res/drawable/bg_receiving_message.xml" value="0.4875" />
         <entry key="app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.4947916666666667" />
         <entry key="app/src/main/res/drawable/ic_default_photo.xml" value="0.20989583333333334" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.41875" />

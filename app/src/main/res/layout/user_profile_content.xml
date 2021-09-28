@@ -35,6 +35,7 @@
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:labelFor="@+id/phoneTextView"
                 android:text="@string/label_phone_number" />
         </LinearLayout>
 
@@ -73,6 +74,7 @@
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:labelFor="@id/usernameTextView"
                 android:text="@string/label_username" />
         </LinearLayout>
 
@@ -109,6 +111,7 @@
                 style="@style/TextAppearance.MaterialComponents.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:labelFor="@id/fullNameTextView"
                 android:text="@string/label_fullname" />
         </LinearLayout>
 
@@ -148,6 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/small_padding"
+                android:labelFor="@id/bioTextView"
                 android:text="@string/label_bio" />
         </LinearLayout>
 
