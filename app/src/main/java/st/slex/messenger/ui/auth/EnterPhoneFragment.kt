@@ -67,7 +67,7 @@ class EnterPhoneFragment : BaseAuthFragment() {
         binding.fragmentPhoneFab.setOnClickListener {
             val phone = binding.phoneEditText.text.toString()
             requireActivity().lifecycleScope.launch {
-                viewModel.login(phone).collect {
+                viewModel.login(phone, requireActivity()).collect {
                     it.collector()
                 }
             }

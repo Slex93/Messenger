@@ -1,14 +1,15 @@
 package st.slex.messenger.di.module
 
+import android.app.Activity
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.ui.auth.AuthActivity
+import javax.inject.Singleton
 
+@ExperimentalCoroutinesApi
 @Module
-class ActivityModule {
-
-    @ExperimentalCoroutinesApi
+class ActivityModule(val activity: Activity) {
     @Provides
-    fun provideActivity(activity: AuthActivity): AuthActivity = activity
+    @Singleton
+    fun providesActivity(): Activity = activity
 }
