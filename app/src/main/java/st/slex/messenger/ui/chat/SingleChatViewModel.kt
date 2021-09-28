@@ -43,7 +43,6 @@ class SingleChatViewModel @Inject constructor(
 
     fun getMessages(uid: String, limitToLast: Int): LiveData<Response<MessageModel>> =
         liveData(Dispatchers.IO) {
-            emit(Response.Loading)
             try {
                 repository.getMessages(uid = uid, limitToLast = limitToLast).collect {
                     emit(it)

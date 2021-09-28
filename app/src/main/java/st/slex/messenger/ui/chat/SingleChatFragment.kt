@@ -119,9 +119,6 @@ class SingleChatFragment : BaseFragment() {
             is Response.Failure -> {
 
             }
-            is Response.Loading -> {
-
-            }
         }
     }
 
