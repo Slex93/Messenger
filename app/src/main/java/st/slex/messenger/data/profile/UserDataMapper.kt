@@ -1,27 +1,23 @@
 package st.slex.messenger.data.profile
 
 import st.slex.messenger.core.Abstract
-import st.slex.messenger.domain.user.UserDomain
-import st.slex.messenger.domain.user.UserDomainResult
+import st.slex.messenger.ui.core.UIResult
+import st.slex.messenger.ui.user_profile.UserUI
 
-interface UserDataMapper<T> : Abstract.Mapper.DataToDomain<UserData, T> {
+class UserDataMapper : Abstract.Mapper.DataToUi<UserData, UIResult<UserUI>> {
 
-    class Base : UserDataMapper<UserDomainResult> {
-        override fun map(data: UserData): UserDomainResult =
-            UserDomainResult.Success(with(data) {
-                UserDomain.Base(
-                    id = id(),
-                    phone = phone(),
-                    username = username(),
-                    url = url(),
-                    bio = bio(),
-                    full_name = fullName(),
-                    state = state(),
-                )
-            })
+    override fun map(data: UserData): UIResult<UserUI> =
+        UIResult.Success(with(data) {
+            UserUI.Base(
+                id = id(),
+                phone = phone(),
+                username = username(),
+                url = url(),
+                bio = bio(),
+                full_name = fullName(),
+                state = state(),
+            )
+        })
 
-        override fun map(exception: Exception): UserDomainResult =
-            UserDomainResult.Failure(exception)
-
-    }
+    override fun map(exception: Exception): UIResult<UserUI> = UIResult.Failure(exception)
 }

@@ -1,24 +1,22 @@
 package st.slex.messenger.data.contacts
 
 import st.slex.messenger.core.Abstract
-import st.slex.messenger.domain.contacts.ContactsDomain
-import st.slex.messenger.domain.contacts.ContactsDomainResult
+import st.slex.messenger.ui.contacts.ContactsUI
+import st.slex.messenger.ui.core.UIResult
 
-interface ContactsDataMapper<T> : Abstract.Mapper.DataToDomain<List<ContactsData>, T> {
+class ContactsDataMapper :
+    Abstract.Mapper.DataToUi<List<ContactsData>, UIResult<List<ContactsUI>>> {
 
-    class Base : ContactsDataMapper<ContactsDomainResult> {
-        override fun map(data: List<ContactsData>): ContactsDomainResult =
-            ContactsDomainResult.Success(data.map {
-                ContactsDomain.Base(
-                    id = it.id(),
-                    phone = it.phone(),
-                    full_name = it.fullName(),
-                    url = it.url(),
-                )
-            })
+    override fun map(data: List<ContactsData>): UIResult<List<ContactsUI>> =
+        UIResult.Success(data.map {
+            ContactsUI.Base(
+                id = it.id(),
+                phone = it.phone(),
+                full_name = it.fullName(),
+                url = it.url(),
+            )
+        })
 
-        override fun map(exception: Exception): ContactsDomainResult {
-            return ContactsDomainResult.Failure(exception)
-        }
-    }
+    override fun map(exception: Exception): UIResult<List<ContactsUI>> = UIResult.Failure(exception)
+
 }

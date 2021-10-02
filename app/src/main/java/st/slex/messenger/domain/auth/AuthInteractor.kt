@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import st.slex.messenger.data.auth.AuthData
-import st.slex.messenger.data.auth.AuthDataResult
 import st.slex.messenger.data.auth.AuthRepository
+import st.slex.messenger.data.core.VoidDataResult
 import st.slex.messenger.ui.auth.LoginEngine
 import st.slex.messenger.ui.auth.SendCodeEngine
 import javax.inject.Inject
@@ -57,13 +57,13 @@ interface AuthInteractor {
                 is LoginDomainResult.Success -> {
                     repository.saveUser(
                         AuthData.Base(
-                            Firebase.auth.uid.toString(),
-                            Firebase.auth.currentUser?.phoneNumber.toString()
+                            id = Firebase.auth.uid.toString(),
+                            phone = Firebase.auth.currentUser?.phoneNumber.toString()
                         )
                     ).collect {
                         when (it) {
-                            is AuthDataResult.Success -> success()
-                            is AuthDataResult.Failure -> failure(it.exception)
+                            is VoidDataResult.Success -> success()
+                            is VoidDataResult.Failure -> failure(it.exception)
                         }
                     }
                 }

@@ -17,12 +17,8 @@ abstract class Abstract {
             fun map(data: S): R
         }
 
-        interface DataToDomain<S, R> : Data<S, R> {
-            fun map(exception: Exception): R
-        }
-
-        interface DomainToUi<S, T> : Data<S, T> {
-            fun map(exception: Exception): T
+        interface DataToUi<D, U> : Data<D, U> {
+            fun map(exception: Exception): U
         }
 
         class Empty : Mapper

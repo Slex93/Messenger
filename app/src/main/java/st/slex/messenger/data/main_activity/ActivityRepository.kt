@@ -1,7 +1,10 @@
 package st.slex.messenger.data.main_activity
 
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -9,15 +12,14 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
-import st.slex.messenger.core.AppValueEventListener
-import st.slex.messenger.core.VoidResult
 import st.slex.messenger.data.contacts.ContactModel
+import st.slex.messenger.data.core.VoidDataResult
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
 
 interface ActivityRepository {
     suspend fun changeState(state: String)
-    suspend fun updateContacts(list: List<ContactModel>): Flow<VoidResult>
+    suspend fun updateContacts(list: List<ContactModel>): Flow<VoidDataResult>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -30,10 +32,11 @@ interface ActivityRepository {
                 .child(CHILD_STATE).setValue(state)
         }
 
-        override suspend fun updateContacts(list: List<ContactModel>): Flow<VoidResult> =
+        override suspend fun updateContacts(list: List<ContactModel>): Flow<VoidDataResult> =
             callbackFlow {
                 val phonesReference = reference.child(NODE_PHONE)
-                val listener = AppValueEventListener({ snapshotListPhone ->
+
+                val listener = listenerPhone({ snapshotListPhone ->
                     snapshotListPhone.children.forEach { snapshotPhone ->
                         if (list.isNullOrEmpty()) {
                             reference.child(NODE_CONTACT).child(auth.uid).setValue(list)
@@ -45,7 +48,7 @@ interface ActivityRepository {
                                         .child(snapshotPhone.key.toString())
                                         .child(CHILD_URL)
                                         .addValueEventListener(
-                                            AppValueEventListener({ snapshotUrl ->
+                                            listenerPhone({ snapshotUrl ->
                                                 val url = snapshotUrl.value
                                                 val map = mapOf(
                                                     CHILD_ID to snapshotPhone.key.toString(),
@@ -60,13 +63,13 @@ interface ActivityRepository {
                                                     .setValue(map)
                                                 contactTask.addOnCompleteListener {
                                                     if (it.isSuccessful) {
-                                                        trySendBlocking(VoidResult.Success)
+                                                        trySendBlocking(VoidDataResult.Success)
                                                     } else {
-                                                        trySendBlocking(VoidResult.Failure(it.exception!!))
+                                                        trySendBlocking(VoidDataResult.Failure(it.exception!!))
                                                     }
                                                 }
                                             }, {
-                                                trySendBlocking(VoidResult.Failure(it))
+                                                trySendBlocking(VoidDataResult.Failure(it))
                                             })
                                         )
                                 }
@@ -74,12 +77,21 @@ interface ActivityRepository {
                         }
                     }
                 }, {
-                    trySendBlocking(VoidResult.Failure(it))
+                    trySendBlocking(VoidDataResult.Failure(it))
                 })
 
                 phonesReference.addValueEventListener(listener)
                 awaitClose { phonesReference.removeEventListener(listener) }
             }
+
+        private inline fun listenerPhone(
+            crossinline success: (DataSnapshot) -> Unit,
+            crossinline error: (Exception) -> Unit
+        ) = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) = success(snapshot)
+            override fun onCancelled(error: DatabaseError) = error(error.toException())
+        }
+
 
     }
 }

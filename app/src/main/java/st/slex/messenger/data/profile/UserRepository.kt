@@ -14,15 +14,16 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.core.AppValueEventListener
-import st.slex.messenger.core.VoidResult
+import st.slex.messenger.data.core.DataResult
+import st.slex.messenger.data.core.VoidDataResult
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
 
 interface UserRepository {
-    suspend fun getUser(uid: String): Flow<UserDataResult>
-    suspend fun saveUsername(username: String): Flow<VoidResult>
-    suspend fun saveImage(uri: Uri): Flow<VoidResult>
+    suspend fun getUser(uid: String): Flow<DataResult<UserData>>
+    suspend fun saveUsername(username: String): Flow<VoidDataResult>
+    suspend fun saveImage(uri: Uri): Flow<VoidDataResult>
+    suspend fun getCurrentUser(): Flow<DataResult<UserData>>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -31,7 +32,9 @@ interface UserRepository {
         private val user: FirebaseUser
     ) : UserRepository {
 
-        override suspend fun getUser(uid: String): Flow<UserDataResult> = callbackFlow {
+        override suspend fun getCurrentUser(): Flow<DataResult<UserData>> = getUser(user.uid)
+
+        override suspend fun getUser(uid: String): Flow<DataResult<UserData>> = callbackFlow {
             val reference = databaseReference
                 .child(NODE_USER)
                 .child(uid)
@@ -43,17 +46,17 @@ interface UserRepository {
         }
 
         private inline fun getUserEventListener(
-            crossinline function: (UserDataResult) -> Unit
+            crossinline function: (DataResult<UserData>) -> Unit
         ) = object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) =
-                function(UserDataResult.Success(snapshot.getValue(UserData.Base::class.java)!!))
+                function(DataResult.Success(snapshot.getValue(UserData.Base::class.java)!!))
 
             override fun onCancelled(error: DatabaseError) =
-                function(UserDataResult.Failure(error.toException()))
+                function(DataResult.Failure(error.toException()))
         }
 
-        override suspend fun saveImage(uri: Uri): Flow<VoidResult> = callbackFlow {
+        override suspend fun saveImage(uri: Uri): Flow<VoidDataResult> = callbackFlow {
             val referenceUser = databaseReference.child(NODE_USER).child(user.uid).child(CHILD_URL)
             val referenceStorage = storageReference.child(FOLDER_PROFILE_IMAGE).child(user.uid)
 
@@ -82,55 +85,59 @@ interface UserRepository {
 
         private inline fun <T> listener(
             crossinline success: (T) -> Unit,
-            crossinline failure: (VoidResult) -> Unit
+            crossinline failure: (VoidDataResult) -> Unit
         ) = OnCompleteListener<T> { p0 ->
             if (p0.isSuccessful) {
                 success(p0.result!!)
             } else {
-                failure(VoidResult.Failure(p0.exception!!))
+                failure(VoidDataResult.Failure(p0.exception!!))
             }
         }
 
-        override suspend fun saveUsername(username: String): Flow<VoidResult> = callbackFlow {
+        override suspend fun saveUsername(username: String): Flow<VoidDataResult> = callbackFlow {
             val reference = databaseReference
                 .child(NODE_USERNAME)
-            val listener = AppValueEventListener({ snapshotUsernames ->
-                val listOfUsernames = snapshotUsernames.children.filter {
-                    it.key != user.uid
-                }.map {
-                    it.value
-                }
-                if (listOfUsernames.contains(username)) {
-                    trySendBlocking(VoidResult.Failure(Exception("Take another username")))
-                } else {
-                    val taskUser = databaseReference
-                        .child(NODE_USER)
-                        .child(user.uid)
-                        .child(CHILD_USERNAME)
-                        .setValue(username)
-                    val taskUsername = databaseReference
-                        .child(NODE_USERNAME)
-                        .child(user.uid)
-                        .setValue(username)
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val listOfUsernames = snapshot.children.filter {
+                        it.key != user.uid
+                    }.map {
+                        it.value
+                    }
+                    if (listOfUsernames.contains(username)) {
+                        trySendBlocking(VoidDataResult.Failure(Exception("Take another username")))
+                    } else {
+                        val taskUser = databaseReference
+                            .child(NODE_USER)
+                            .child(user.uid)
+                            .child(CHILD_USERNAME)
+                            .setValue(username)
+                        val taskUsername = databaseReference
+                            .child(NODE_USERNAME)
+                            .child(user.uid)
+                            .setValue(username)
 
-                    taskUser.addOnCompleteListener { responseUser ->
-                        if (responseUser.isSuccessful) {
-                            taskUsername.addOnCompleteListener { responseUsername ->
-                                if (responseUsername.isSuccessful) {
-                                    trySendBlocking(VoidResult.Success)
-                                } else {
-                                    trySendBlocking(VoidResult.Failure(responseUsername.exception!!))
+                        taskUser.addOnCompleteListener { responseUser ->
+                            if (responseUser.isSuccessful) {
+                                taskUsername.addOnCompleteListener { responseUsername ->
+                                    if (responseUsername.isSuccessful) {
+                                        trySendBlocking(VoidDataResult.Success)
+                                    } else {
+                                        trySendBlocking(VoidDataResult.Failure(responseUsername.exception!!))
+                                    }
                                 }
+                            } else {
+                                trySendBlocking(VoidDataResult.Failure(responseUser.exception!!))
                             }
-                        } else {
-                            trySendBlocking(VoidResult.Failure(responseUser.exception!!))
                         }
                     }
                 }
 
-            }, {
-                trySendBlocking(VoidResult.Failure(it))
-            })
+                override fun onCancelled(error: DatabaseError) {
+                    trySendBlocking(VoidDataResult.Failure(error.toException()))
+                }
+
+            }
 
             reference.addValueEventListener(listener)
 

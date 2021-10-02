@@ -1,25 +1,22 @@
 package st.slex.messenger.data.chats
 
 import st.slex.messenger.core.Abstract
-import st.slex.messenger.domain.chats.ChatsDomain
-import st.slex.messenger.domain.chats.ChatsDomainResult
+import st.slex.messenger.ui.chats.ChatsUI
+import st.slex.messenger.ui.core.UIResult
 
-interface ChatsDataMapper<T> : Abstract.Mapper.DataToDomain<List<ChatsData>, T> {
+class ChatsDataMapper : Abstract.Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>> {
 
-    class Base : ChatsDataMapper<ChatsDomainResult> {
-        override fun map(data: List<ChatsData>): ChatsDomainResult =
-            ChatsDomainResult.Success(data.map {
-                ChatsDomain.Base(
-                    id = it.chatId(),
-                    username = it.username(),
-                    text = it.text(),
-                    url = it.url(),
-                    timestamp = it.timestamp()
-                )
-            })
+    override fun map(data: List<ChatsData>): UIResult<List<ChatsUI>> =
+        UIResult.Success(data.map {
+            ChatsUI.Base(
+                id = it.chatId(),
+                username = it.username(),
+                text = it.text(),
+                url = it.url(),
+                timestamp = it.timestamp()
+            )
+        })
 
-        override fun map(exception: Exception): ChatsDomainResult {
-            return ChatsDomainResult.Failure(exception)
-        }
-    }
+    override fun map(exception: Exception): UIResult<List<ChatsUI>> = UIResult.Failure(exception)
+
 }

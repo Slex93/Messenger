@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentUserProfileBinding
 import st.slex.messenger.ui.core.BaseFragment
+import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.core.VoidUIResult
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
@@ -137,9 +138,9 @@ class UserProfileFragment : BaseFragment() {
         }
     }
 
-    private fun UserUiResult.collector() {
+    private fun UIResult<UserUI>.collector() {
         when (this) {
-            is UserUiResult.Success -> {
+            is UIResult.Success -> {
                 data.mapProfile(
                     glide = glide,
                     phoneNumber = binding.container.phoneTextView,
@@ -160,9 +161,9 @@ class UserProfileFragment : BaseFragment() {
                     }
                 }
             }
-            is UserUiResult.Loading -> {
+            is UIResult.Loading -> {
             }
-            is UserUiResult.Failure -> {
+            is UIResult.Failure -> {
             }
         }
     }

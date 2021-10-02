@@ -11,6 +11,6 @@ interface AuthData {
     ) : AuthData {
 
         override fun id(): String = id
-        override fun phone(): String = id
+        override fun phone(): String = phone
     }
 }

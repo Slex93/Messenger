@@ -26,7 +26,8 @@ import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.ui.chats.adapter.ChatsAdapter
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.ClickListener
-import st.slex.messenger.ui.user_profile.UserUiResult
+import st.slex.messenger.ui.core.UIResult
+import st.slex.messenger.ui.user_profile.UserUI
 
 @ExperimentalCoroutinesApi
 class ChatsFragment : BaseFragment() {
@@ -80,29 +81,29 @@ class ChatsFragment : BaseFragment() {
         }
     }
 
-    private fun ChatsUIResult.collect() {
+    private fun UIResult<List<ChatsUI>>.collect() {
         when (this) {
-            is ChatsUIResult.Success -> {
+            is UIResult.Success -> {
                 adapter.addChat(data)
             }
-            is ChatsUIResult.Failure -> {
+            is UIResult.Failure -> {
                 Log.e(
                     "Exception im MainList from the flow",
                     exception.message.toString(),
                     exception.cause
                 )
             }
-            is ChatsUIResult.Loading -> {
+            is UIResult.Loading -> {
                 /*Start progress bar*/
             }
         }
     }
 
-    private fun UserUiResult.collector() {
+    private fun UIResult<UserUI>.collector() {
         val headerView = binding.navView.getHeaderView(0)
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
         when (this) {
-            is UserUiResult.Success -> {
+            is UIResult.Success -> {
 
                 data.mapMainScreen(
                     phoneNumber = headerBinding.phoneTextView,
@@ -110,10 +111,10 @@ class ChatsFragment : BaseFragment() {
                     avatar = headerBinding.avatarImageView
                 )
             }
-            is UserUiResult.Failure -> {
+            is UIResult.Failure -> {
                 Log.i("Cancelled", exception.message.toString())
             }
-            is UserUiResult.Loading -> {
+            is UIResult.Loading -> {
                 /*Start progress bar*/
             }
         }

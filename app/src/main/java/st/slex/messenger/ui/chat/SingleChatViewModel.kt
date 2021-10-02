@@ -1,74 +1,62 @@
 package st.slex.messenger.ui.chat
 
-import androidx.lifecycle.LiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import st.slex.messenger.core.DataResult
-import st.slex.messenger.data.chat.MessageModel
+import st.slex.messenger.core.Abstract
 import st.slex.messenger.data.chat.SingleChatRepository
-import st.slex.messenger.domain.user.UserDomainMapper
-import st.slex.messenger.domain.user.UserDomainResult
-import st.slex.messenger.domain.user.UserInteractor
+import st.slex.messenger.data.core.DataResult
+import st.slex.messenger.data.profile.UserData
+import st.slex.messenger.data.profile.UserRepository
+import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.user_profile.UserUI
-import st.slex.messenger.ui.user_profile.UserUiResult
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class SingleChatViewModel @Inject constructor(
     private val repository: SingleChatRepository,
-    private val interactor: UserInteractor,
-    private val mapper: UserDomainMapper<UserUiResult>
+    private val userRepository: UserRepository,
+    private val mapper: Abstract.Mapper.DataToUi<UserData, UIResult<UserUI>>
 ) : ViewModel() {
 
-    suspend fun getUser(uid: String): StateFlow<UserUiResult> =
-        interactor.getUser(uid).mapIt().stateIn(
+    suspend fun getUser(uid: String): StateFlow<UIResult<UserUI>> =
+        userRepository.getUser(uid).mapIt().stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = UserUiResult.Loading
+            initialValue = UIResult.Loading
         )
 
-    private suspend fun currentUser(): StateFlow<UserUiResult> =
-        interactor.getCurrentUser().mapIt().stateIn(
+    private suspend fun currentUser(): StateFlow<UIResult<UserUI>> =
+        userRepository.getCurrentUser().mapIt().stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = UserUiResult.Loading
+            initialValue = UIResult.Loading
         )
-
-    fun getMessages(uid: String, limitToLast: Int): LiveData<DataResult<MessageModel>> =
-        liveData(Dispatchers.IO) {
-            try {
-                repository.getMessages(uid = uid, limitToLast = limitToLast).collect {
-                    emit(it)
-                }
-            } catch (exception: Exception) {
-                emit(DataResult.Failure(exception = exception))
-            }
-        }
 
     fun sendMessage(message: String, user: UserUI) = viewModelScope.launch {
+        Log.i("MessagesTest:User:", user.toString())
         currentUser().collect {
             when (it) {
-                is UserUiResult.Success -> {
-                    repository.sendMessage(message = message, user = user, it.data)
+                is UIResult.Success -> {
+                    Log.i("MessagesTest:CurrentUser:", it.data.toString())
+                    repository.sendMessage(message = message, user = user, it.data).collect()
                 }
-                is UserUiResult.Failure -> {
+                is UIResult.Failure -> {
 
                 }
-                is UserUiResult.Loading -> {
+                is UIResult.Loading -> {
 
                 }
             }
         }
     }
 
-    private suspend fun Flow<UserDomainResult>.mapIt(): Flow<UserUiResult> = callbackFlow {
+    private suspend fun Flow<DataResult<UserData>>.mapIt(): Flow<UIResult<UserUI>> = callbackFlow {
         this@mapIt.collect {
             trySendBlocking(it.map(mapper))
         }

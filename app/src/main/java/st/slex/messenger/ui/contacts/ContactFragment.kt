@@ -19,6 +19,7 @@ import st.slex.common.messenger.databinding.FragmentContactBinding
 import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.ClickListener
+import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
 @ExperimentalCoroutinesApi
@@ -57,19 +58,19 @@ class ContactFragment : BaseFragment() {
         }
     }
 
-    private fun ContactsUIResult.collect() {
+    private fun UIResult<List<ContactsUI>>.collect() {
         when (this) {
-            is ContactsUIResult.Success -> {
+            is UIResult.Success -> {
                 adapter.addItems(data)
             }
-            is ContactsUIResult.Failure -> {
+            is UIResult.Failure -> {
                 Log.e(
                     "Exception in ContactList from the flow",
                     exception.message.toString(),
                     exception.cause
                 )
             }
-            is ContactsUIResult.Loading -> {
+            is UIResult.Loading -> {
 
             }
         }

@@ -2,44 +2,31 @@ package st.slex.messenger.di.module
 
 import dagger.Module
 import dagger.Provides
+import st.slex.messenger.core.Abstract
+import st.slex.messenger.data.chats.ChatsData
 import st.slex.messenger.data.chats.ChatsDataMapper
+import st.slex.messenger.data.contacts.ContactsData
 import st.slex.messenger.data.contacts.ContactsDataMapper
+import st.slex.messenger.data.profile.UserData
 import st.slex.messenger.data.profile.UserDataMapper
-import st.slex.messenger.domain.chats.ChatsDomainMapper
-import st.slex.messenger.domain.chats.ChatsDomainResult
-import st.slex.messenger.domain.contacts.ContactsDomainMapper
-import st.slex.messenger.domain.contacts.ContactsDomainResult
-import st.slex.messenger.domain.user.UserDomainMapper
-import st.slex.messenger.domain.user.UserDomainResult
-import st.slex.messenger.ui.chats.ChatsUIResult
-import st.slex.messenger.ui.contacts.ContactsUIResult
-import st.slex.messenger.ui.user_profile.UserUiResult
+import st.slex.messenger.ui.chats.ChatsUI
+import st.slex.messenger.ui.contacts.ContactsUI
+import st.slex.messenger.ui.core.UIResult
+import st.slex.messenger.ui.user_profile.UserUI
 
 @Module
 class MapperModule {
 
     @Provides
-    fun providesChatsDataMapper(): ChatsDataMapper<ChatsDomainResult> =
-        ChatsDataMapper.Base()
+    fun providesChatsDataMapper(): Abstract.Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>> =
+        ChatsDataMapper()
 
     @Provides
-    fun providesChatsDomainMapper(): ChatsDomainMapper<ChatsUIResult> =
-        ChatsDomainMapper.Base()
+    fun providesContactsDataMapper(): Abstract.Mapper.DataToUi<List<ContactsData>, UIResult<List<ContactsUI>>> =
+        ContactsDataMapper()
 
     @Provides
-    fun providesContactsDataMapper(): ContactsDataMapper<ContactsDomainResult> =
-        ContactsDataMapper.Base()
-
-    @Provides
-    fun providesContactsDomainMapper(): ContactsDomainMapper<ContactsUIResult> =
-        ContactsDomainMapper.Base()
-
-    @Provides
-    fun providesUserDataMapper(): UserDataMapper<UserDomainResult> =
-        UserDataMapper.Base()
-
-    @Provides
-    fun providesUserDomainMapper(): UserDomainMapper<UserUiResult> =
-        UserDomainMapper.Base()
+    fun providesUserDataMapper(): Abstract.Mapper.DataToUi<UserData, UIResult<UserUI>> =
+        UserDataMapper()
 
 }

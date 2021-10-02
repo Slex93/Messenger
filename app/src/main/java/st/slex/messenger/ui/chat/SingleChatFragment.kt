@@ -12,7 +12,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.paging.LoadState
 import androidx.paging.PagingConfig
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.database.paging.DatabasePagingOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
@@ -27,8 +29,8 @@ import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
 import st.slex.messenger.data.chat.MessageModel
 import st.slex.messenger.ui.core.BaseFragment
+import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.user_profile.UserUI
-import st.slex.messenger.ui.user_profile.UserUiResult
 import st.slex.messenger.utilites.NODE_CHAT
 
 
@@ -38,13 +40,14 @@ class SingleChatFragment : BaseFragment() {
     private var _binding: FragmentSingleChatBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var uid: String
-
-    private lateinit var adapter: MessagesAdapter
-
     private val viewModel: SingleChatViewModel by viewModels {
         viewModelFactory.get()
     }
+
+    private var _uid: String? = null
+    private val uid: String get() = _uid ?: ""
+
+    private lateinit var adapter: MessagesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,31 +89,37 @@ class SingleChatFragment : BaseFragment() {
             .child(Firebase.auth.uid.toString())
             .child(uid)
 
-        val config = PagingConfig(20, 10, false)
+        val config = PagingConfig(10, 10, false)
+
         val options = DatabasePagingOptions.Builder<MessageModel>()
-            .setLifecycleOwner(this)
+            .setLifecycleOwner(viewLifecycleOwner)
             .setQuery(baseQuery, config, MessageModel::class.java)
             .build()
+
+        val layoutManager = LinearLayoutManager(requireContext())
+        layoutManager.stackFromEnd = true
+        binding.singleChatRecycler.layoutManager = layoutManager
+
         adapter = MessagesAdapter(options, Firebase.auth.uid.toString())
         binding.singleChatRecycler.adapter = adapter
 
-    }
+        binding.singleChatRefreshLayout.setOnRefreshListener {
+            adapter.refresh()
+        }
 
-    override fun onStart() {
-        super.onStart()
-        adapter.startListening()
-    }
-
-
-    override fun onStop() {
-        super.onStop()
-        adapter.stopListening()
+        adapter.addLoadStateListener {
+            binding.singleChatRefreshLayout.isRefreshing = when (it.refresh) {
+                is LoadState.Loading -> true
+                is LoadState.NotLoading -> false
+                is LoadState.Error -> false
+            }
+        }
     }
 
     private fun takeExtras() {
         val args: SingleChatFragmentArgs by navArgs()
         val id = args.id
-        uid = id
+        _uid = id
         binding.toolbarInfo.toolbarInfoCardView.transitionName = uid
         glide.setImage(
             binding.toolbarInfo.shapeableImageView,
@@ -120,19 +129,19 @@ class SingleChatFragment : BaseFragment() {
         )
     }
 
-    private fun UserUiResult.collect() {
+    private fun UIResult<UserUI>.collect() {
         when (this) {
-            is UserUiResult.Success -> {
+            is UIResult.Success -> {
                 data.mapChat(
                     userName = binding.toolbarInfo.usernameTextView,
                     stateText = binding.toolbarInfo.stateTextView
                 )
                 binding.singleChatRecyclerButton.setOnClickListener(data.sendClicker)
             }
-            is UserUiResult.Failure -> {
+            is UIResult.Failure -> {
                 Log.i("Failure User in Chat", exception.message, exception.cause)
             }
-            is UserUiResult.Loading -> {
+            is UIResult.Loading -> {
                 /*Start response*/
             }
         }
@@ -149,6 +158,8 @@ class SingleChatFragment : BaseFragment() {
                 snackBar.show()
             } else {
                 viewModel.sendMessage(message, this)
+                adapter.refresh()
+                binding.singleChatRecycler.scrollToPosition(adapter.itemCount - 1)
                 binding.singleChatRecyclerTextInput.editText?.setText("")
             }
         }
@@ -156,6 +167,11 @@ class SingleChatFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val PAGE_SIZE = 10
+        private var page: Int = 1
     }
 
 }

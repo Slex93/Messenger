@@ -11,19 +11,20 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import st.slex.messenger.data.core.VoidDataResult
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 interface AuthRepository {
 
-    suspend fun saveUser(user: AuthData): Flow<AuthDataResult>
+    suspend fun saveUser(user: AuthData): Flow<VoidDataResult>
 
     class Base @Inject constructor(
         private val reference: Lazy<DatabaseReference>
     ) : AuthRepository {
 
-        override suspend fun saveUser(user: AuthData): Flow<AuthDataResult> = callbackFlow {
+        override suspend fun saveUser(user: AuthData): Flow<VoidDataResult> = callbackFlow {
             val id = user.id()
             val phone = user.phone()
             val listenReference = userForNameReference(id)
@@ -37,7 +38,7 @@ interface AuthRepository {
         private inline fun userListener(
             id: String,
             phone: String,
-            crossinline function: (AuthDataResult) -> Unit
+            crossinline function: (VoidDataResult) -> Unit
         ) = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val username: String = (snapshot.value ?: id) as String
@@ -45,20 +46,20 @@ interface AuthRepository {
                 userReference(id, userMap).listen({
                     phonesReference(id, phone).listen({
                         usernameReference(id, username).listen({
-                            function(AuthDataResult.Success)
+                            function(VoidDataResult.Success)
                         }, {
                             AuthDataResult.Failure(it)
                         })
                     }, {
-                        function(AuthDataResult.Failure(it))
+                        function(VoidDataResult.Failure(it))
                     })
                 }, {
-                    function(AuthDataResult.Failure(it))
+                    function(VoidDataResult.Failure(it))
                 })
             }
 
             override fun onCancelled(error: DatabaseError) {
-                function(AuthDataResult.Failure(error.toException()))
+                function(VoidDataResult.Failure(error.toException()))
             }
         }
 
