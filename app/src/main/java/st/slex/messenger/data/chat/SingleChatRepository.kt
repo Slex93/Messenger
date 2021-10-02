@@ -8,7 +8,7 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.core.AppChildEventListener
-import st.slex.messenger.core.Response
+import st.slex.messenger.core.DataResult
 import st.slex.messenger.core.VoidResult
 import st.slex.messenger.ui.user_profile.UserUI
 import st.slex.messenger.utilites.*
@@ -16,7 +16,7 @@ import st.slex.messenger.utilites.funs.getThisValue
 import javax.inject.Inject
 
 interface SingleChatRepository {
-    suspend fun getMessages(uid: String, limitToLast: Int): Flow<Response<MessageModel>>
+    suspend fun getMessages(uid: String, limitToLast: Int): Flow<DataResult<MessageModel>>
     suspend fun sendMessage(message: String, user: UserUI, currentUser: UserUI): Flow<VoidResult>
 
     @ExperimentalCoroutinesApi
@@ -28,21 +28,20 @@ interface SingleChatRepository {
         override suspend fun getMessages(
             uid: String,
             limitToLast: Int
-        ): Flow<Response<MessageModel>> =
-            callbackFlow {
-                val reference = databaseReference
-                    .child(NODE_CHAT)
-                    .child(auth.uid)
-                    .child(uid)
-                    .limitToLast(limitToLast)
-                val listener = AppChildEventListener({ snapshot ->
-                    trySendBlocking(Response.Success(snapshot.getThisValue()))
-                }, { exception ->
-                    trySendBlocking(Response.Failure(exception))
-                })
-                reference.addChildEventListener(listener)
-                awaitClose { reference.removeEventListener(listener) }
-            }
+        ): Flow<DataResult<MessageModel>> = callbackFlow {
+            val reference = databaseReference
+                .child(NODE_CHAT)
+                .child(auth.uid)
+                .child(uid)
+                .limitToLast(limitToLast)
+            val listener = AppChildEventListener({ snapshot ->
+                trySendBlocking(DataResult.Success(snapshot.getThisValue()))
+            }, { exception ->
+                trySendBlocking(DataResult.Failure(exception))
+            })
+            reference.addChildEventListener(listener)
+            awaitClose { reference.removeEventListener(listener) }
+        }
 
         override suspend fun sendMessage(
             message: String,

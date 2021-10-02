@@ -10,7 +10,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import st.slex.messenger.core.Response
+import st.slex.messenger.core.DataResult
 import st.slex.messenger.data.chat.MessageModel
 import st.slex.messenger.data.chat.SingleChatRepository
 import st.slex.messenger.domain.user.UserDomainMapper
@@ -41,14 +41,14 @@ class SingleChatViewModel @Inject constructor(
             initialValue = UserUiResult.Loading
         )
 
-    fun getMessages(uid: String, limitToLast: Int): LiveData<Response<MessageModel>> =
+    fun getMessages(uid: String, limitToLast: Int): LiveData<DataResult<MessageModel>> =
         liveData(Dispatchers.IO) {
             try {
                 repository.getMessages(uid = uid, limitToLast = limitToLast).collect {
                     emit(it)
                 }
             } catch (exception: Exception) {
-                emit(Response.Failure(exception = exception))
+                emit(DataResult.Failure(exception = exception))
             }
         }
 

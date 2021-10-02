@@ -6,31 +6,30 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.paging.PagingConfig
+import com.firebase.ui.database.paging.DatabasePagingOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
-import st.slex.messenger.core.Response
 import st.slex.messenger.data.chat.MessageModel
-import st.slex.messenger.ui.chat.adapter.ChatAdapter
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.user_profile.UserUI
 import st.slex.messenger.ui.user_profile.UserUiResult
+import st.slex.messenger.utilites.NODE_CHAT
 
 
 @ExperimentalCoroutinesApi
@@ -41,14 +40,7 @@ class SingleChatFragment : BaseFragment() {
 
     private lateinit var uid: String
 
-    private lateinit var recycler: RecyclerView
-    private lateinit var adapter: ChatAdapter
-    private lateinit var layoutManager: LinearLayoutManager
-
-    private var countMessage = 10
-    private var isScrolling = false
-    private var isScrollToPosition = true
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var adapter: MessagesAdapter
 
     private val viewModel: SingleChatViewModel by viewModels {
         viewModelFactory.get()
@@ -80,71 +72,39 @@ class SingleChatFragment : BaseFragment() {
             findNavController(),
             AppBarConfiguration(setOf(R.id.nav_contact))
         )
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getUser(uid).collect {
-
+                it.collect()
             }
         }
-        initRecyclerView()
+
+        val baseQuery: Query = FirebaseDatabase
+            .getInstance()
+            .reference
+            .child(NODE_CHAT)
+            .child(Firebase.auth.uid.toString())
+            .child(uid)
+
+        val config = PagingConfig(20, 10, false)
+        val options = DatabasePagingOptions.Builder<MessageModel>()
+            .setLifecycleOwner(this)
+            .setQuery(baseQuery, config, MessageModel::class.java)
+            .build()
+        adapter = MessagesAdapter(options, Firebase.auth.uid.toString())
+        binding.singleChatRecycler.adapter = adapter
+
     }
 
-    private fun initRecyclerView() {
-        recycler = binding.singleChatRecycler
-        adapter = ChatAdapter(FirebaseAuth.getInstance().uid.toString())
-        layoutManager = LinearLayoutManager(requireContext())
-        recycler.layoutManager = layoutManager
-        recycler.adapter = adapter
-        recycler.isNestedScrollingEnabled = false
-        swipeRefreshLayout = binding.singleChatRefreshLayout
-        viewModel.getMessages(uid, countMessage).observe(viewLifecycleOwner, messageObserver)
-        recycler.addOnScrollListener(scrollListener)
-        swipeRefreshLayout.setOnRefreshListener {
-            updateData()
-        }
+    override fun onStart() {
+        super.onStart()
+        adapter.startListening()
     }
 
-    private val messageObserver: Observer<Response<MessageModel>> = Observer {
-        when (it) {
-            is Response.Success -> {
-                if (isScrollToPosition) {
-                    adapter.addItemToBottom(it.value) {
-                        recycler.smoothScrollToPosition(adapter.itemCount)
-                    }
-                } else {
-                    adapter.addItemToTop(it.value) {
-                        swipeRefreshLayout.isRefreshing = false
-                    }
-                }
-            }
-            is Response.Failure -> {
 
-            }
-        }
-    }
-
-    private val scrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
-            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                isScrolling = true
-            }
-        }
-
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-            if (isScrolling
-                && dy < 0
-                && layoutManager.findFirstVisibleItemPosition() <= 3
-            ) {
-                updateData()
-            }
-        }
-    }
-
-    private fun updateData() {
-        isScrollToPosition = false
-        isScrolling = false
-        countMessage += 10
+    override fun onStop() {
+        super.onStop()
+        adapter.stopListening()
     }
 
     private fun takeExtras() {
@@ -180,7 +140,6 @@ class SingleChatFragment : BaseFragment() {
 
     private val UserUI.sendClicker: View.OnClickListener
         get() = View.OnClickListener {
-            isScrollToPosition = true
             val message = binding.singleChatRecyclerTextInput.editText?.text.toString()
             if (message.isEmpty()) {
                 val snackBar =
