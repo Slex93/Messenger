@@ -10,7 +10,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.data.core.VoidDataResult
+import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.utilites.CHILD_ID
 import st.slex.messenger.utilites.CHILD_PHONE
 import st.slex.messenger.utilites.NODE_PHONE
@@ -24,14 +24,14 @@ import kotlin.coroutines.suspendCoroutine
 @InternalCoroutinesApi
 interface AuthRepository {
 
-    suspend fun saveUser(): Flow<VoidDataResult>
+    suspend fun saveUser(): Flow<DataResult<*>>
 
     class Base @Inject constructor(
         private val reference: Lazy<DatabaseReference>,
         private val user: Lazy<FirebaseUser>
     ) : AuthRepository {
 
-        override suspend fun saveUser(): Flow<VoidDataResult> = callbackFlow {
+        override suspend fun saveUser(): Flow<DataResult<*>> = callbackFlow {
             val result1 = userReference.updateChildren(mapUser)
             val result2 = phoneReference.setValue(user.get().uid)
             makeHandle(result1, result2) { trySendBlocking(it) }
@@ -41,18 +41,18 @@ interface AuthRepository {
         private suspend inline fun makeHandle(
             result1: Task<Void>,
             result2: Task<Void>,
-            crossinline function: (VoidDataResult) -> Unit
+            crossinline function: (DataResult<*>) -> Unit
         ) = try {
             val handleTask = handle(result1)
-            if (handleTask is VoidDataResult.Success) function(handle(result2))
+            if (handleTask is DataResult.Success) function(handle(result2))
             else function(handleTask)
         } catch (exception: Exception) {
-            function(VoidDataResult.Failure(exception))
+            function(DataResult.Failure<Nothing>(exception))
         }
 
-        private suspend fun handle(result: Task<Void>): VoidDataResult =
+        private suspend fun handle(result: Task<Void>): DataResult<*> =
             suspendCoroutine { continuation ->
-                result.addOnSuccessListener { continuation.resume(VoidDataResult.Success) }
+                result.addOnSuccessListener { continuation.resume(DataResult.Success(null)) }
                     .addOnFailureListener { continuation.resumeWithException(it) }
             }
 

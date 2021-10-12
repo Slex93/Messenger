@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.withContext
 import st.slex.messenger.data.contacts.ContactModel
-import st.slex.messenger.data.core.VoidDataResult
+import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
 
 interface ActivityRepository {
     suspend fun changeState(state: String)
-    suspend fun updateContacts(list: List<ContactModel>): Flow<VoidDataResult>
+    suspend fun updateContacts(list: List<ContactModel>): Flow<DataResult<*>>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -32,7 +32,7 @@ interface ActivityRepository {
                 .child(CHILD_STATE).setValue(state)
         }
 
-        override suspend fun updateContacts(list: List<ContactModel>): Flow<VoidDataResult> =
+        override suspend fun updateContacts(list: List<ContactModel>): Flow<DataResult<*>> =
             callbackFlow {
                 val phonesReference = reference.child(NODE_PHONE)
 
@@ -63,13 +63,17 @@ interface ActivityRepository {
                                                     .setValue(map)
                                                 contactTask.addOnCompleteListener {
                                                     if (it.isSuccessful) {
-                                                        trySendBlocking(VoidDataResult.Success)
+                                                        trySendBlocking(DataResult.Success(null))
                                                     } else {
-                                                        trySendBlocking(VoidDataResult.Failure(it.exception!!))
+                                                        trySendBlocking(
+                                                            DataResult.Failure<Nothing>(
+                                                                it.exception!!
+                                                            )
+                                                        )
                                                     }
                                                 }
                                             }, {
-                                                trySendBlocking(VoidDataResult.Failure(it))
+                                                trySendBlocking(DataResult.Failure<Nothing>(it))
                                             })
                                         )
                                 }
@@ -77,7 +81,7 @@ interface ActivityRepository {
                         }
                     }
                 }, {
-                    trySendBlocking(VoidDataResult.Failure(it))
+                    trySendBlocking(DataResult.Failure<Nothing>(it))
                 })
 
                 phonesReference.addValueEventListener(listener)

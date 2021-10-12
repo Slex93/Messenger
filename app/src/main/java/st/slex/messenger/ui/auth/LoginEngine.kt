@@ -28,7 +28,7 @@ interface LoginEngine {
                 val callback = makeCallback({ credential ->
                     Firebase.auth.signInWithCredential(credential).addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            trySendBlocking(LoginDomainResult.Success)
+                            trySendBlocking(LoginDomainResult.Success.LogIn)
                         } else {
                             trySendBlocking(LoginDomainResult.Failure(task.exception!!))
                         }
@@ -37,7 +37,7 @@ interface LoginEngine {
                 }, {
                     trySendBlocking(LoginDomainResult.Failure(it))
                 }, {
-                    trySendBlocking(LoginDomainResult.SendCode(it))
+                    trySendBlocking(LoginDomainResult.Success.SendCode(it))
                 })
 
                 val phoneOptions = PhoneAuthOptions

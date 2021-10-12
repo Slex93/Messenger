@@ -2,7 +2,6 @@ package st.slex.messenger.ui.auth
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +23,7 @@ import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.ui.core.BaseAuthFragment
-import st.slex.messenger.ui.core.VoidUIResult
+import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.main.MainActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.funs.start
@@ -101,7 +100,6 @@ class EnterCodeFragment : BaseAuthFragment() {
     }
 
     private fun launchAuth(id: String, code: String) = requireActivity().lifecycleScope.launch {
-        Log.i("testCOde", code)
         viewModel.sendCode(id = id, code = code).collect {
             it.collector
         }
@@ -110,18 +108,18 @@ class EnterCodeFragment : BaseAuthFragment() {
     private fun List<EditText>.getCodeFromList(): String =
         this.joinToString { it.text.toString() }.replace(", ", "")
 
-    private val VoidUIResult.collector: Unit
+    private val UIResult<*>.collector: Unit
         get() = when (this) {
-            is VoidUIResult.Success -> {
+            is UIResult.Success -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                 requireActivity().start(MainActivity())
             }
-            is VoidUIResult.Failure -> {
+            is UIResult.Failure -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 binding.root.showPrimarySnackBar(exception.toString())
             }
-            is VoidUIResult.Loading -> {
+            is UIResult.Loading -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             }
         }

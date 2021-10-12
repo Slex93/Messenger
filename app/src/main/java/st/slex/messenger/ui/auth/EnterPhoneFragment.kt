@@ -2,13 +2,14 @@ package st.slex.messenger.ui.auth
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputFilter
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -46,30 +47,36 @@ class EnterPhoneFragment : BaseAuthFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showKeyboard(binding.phoneEditText)
+        binding.phoneEditText.setRegionCode(Locale.getDefault().country)
+        binding.phoneEditText.addTextChangedListener(mutableListOf<InputFilter>().textListener)
+        binding.fragmentPhoneFab.setOnClickListener(phoneClickListener)
+    }
 
-        val country = Locale.getDefault().country
-        binding.phoneEditText.setRegionCode(country)
-
-        val filters = mutableListOf<InputFilter>()
-
-        binding.phoneEditText.addTextChangedListener {
-            if (binding.phoneEditText.isTextValidInternationalPhoneNumber()) {
-                binding.fragmentPhoneFab.isEnabled = true
-                val filter = InputFilter.LengthFilter(it.toString().length)
-                filters.add(filter)
-                binding.phoneEditText.filters = filters.toTypedArray()
-            } else {
-                binding.fragmentPhoneFab.isEnabled = false
-                filters.clear()
+    private val MutableList<InputFilter>.textListener: TextWatcher
+        get() = object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (binding.phoneEditText.isTextValidInternationalPhoneNumber()) {
+                    binding.fragmentPhoneFab.isEnabled = true
+                    val filter = InputFilter.LengthFilter(s.toString().length)
+                    add(filter)
+                    binding.phoneEditText.filters = toTypedArray()
+                } else {
+                    binding.fragmentPhoneFab.isEnabled = false
+                    clear()
+                }
             }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) =
+                Unit
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
         }
 
-        binding.fragmentPhoneFab.setOnClickListener {
-            val phone = binding.phoneEditText.text.toString()
-            requireActivity().lifecycleScope.launch {
-                viewModel.login(phone).collect {
-                    it.collector
-                }
+    private val phoneClickListener = View.OnClickListener {
+        val phone = binding.phoneEditText.text.toString()
+        requireActivity().lifecycleScope.launch {
+            viewModel.login(phone).collect {
+                it.collector
             }
         }
     }
@@ -88,10 +95,10 @@ class EnterPhoneFragment : BaseAuthFragment() {
 
     private val LoginUIResult.collector: Unit
         get() = when (this) {
-            is LoginUIResult.Success -> {
+            is LoginUIResult.Success.LogIn -> {
                 requireActivity().start(MainActivity())
             }
-            is LoginUIResult.SendCode -> {
+            is LoginUIResult.Success.SendCode -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
                 val direction =

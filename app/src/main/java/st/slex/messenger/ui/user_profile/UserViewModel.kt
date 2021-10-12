@@ -13,7 +13,6 @@ import st.slex.messenger.data.profile.UserData
 import st.slex.messenger.data.profile.UserRepository
 import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.core.VoidUIResponse
-import st.slex.messenger.ui.core.VoidUIResult
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -31,18 +30,18 @@ class UserViewModel
             initialValue = UIResult.Loading
         )
 
-    suspend fun saveUsername(username: String): StateFlow<VoidUIResult> =
+    suspend fun saveUsername(username: String): StateFlow<UIResult<*>> =
         response.create(repository.saveUsername(username)).stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = VoidUIResult.Loading
+            initialValue = UIResult.Loading
         )
 
-    suspend fun saveImage(uri: Uri): StateFlow<VoidUIResult> =
+    suspend fun saveImage(uri: Uri): StateFlow<UIResult<*>> =
         response.create(repository.saveImage(uri)).stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = VoidUIResult.Loading
+            initialValue = UIResult.Loading
         )
 
     private suspend fun Flow<DataResult<UserData>>.mapIt(): Flow<UIResult<UserUI>> = callbackFlow {

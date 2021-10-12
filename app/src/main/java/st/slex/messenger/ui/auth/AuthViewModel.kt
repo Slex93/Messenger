@@ -8,7 +8,7 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import st.slex.messenger.domain.AuthInteractor
 import st.slex.messenger.domain.LoginDomainResult
-import st.slex.messenger.ui.core.VoidUIResult
+import st.slex.messenger.ui.core.UIResult
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -23,11 +23,11 @@ class AuthViewModel @Inject constructor(
             initialValue = LoginUIResult.Loading
         )
 
-    suspend fun sendCode(id: String, code: String): StateFlow<VoidUIResult> =
+    suspend fun sendCode(id: String, code: String): StateFlow<UIResult<*>> =
         interactor.sendCode(id, code).mapSendCode().stateIn(
             viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = VoidUIResult.Loading
+            initialValue = UIResult.Loading
         )
 
     private fun Flow<LoginDomainResult>.mapLogin(): Flow<LoginUIResult> = callbackFlow {
@@ -37,7 +37,7 @@ class AuthViewModel @Inject constructor(
         awaitClose { }
     }
 
-    private fun Flow<LoginDomainResult>.mapSendCode(): Flow<VoidUIResult> = callbackFlow {
+    private fun Flow<LoginDomainResult>.mapSendCode(): Flow<UIResult<*>> = callbackFlow {
         this@mapSendCode.collect {
             it.mapSendCode { result -> trySendBlocking(result) }
         }
@@ -46,16 +46,14 @@ class AuthViewModel @Inject constructor(
 
     private inline fun LoginDomainResult.mapLogin(crossinline function: (LoginUIResult) -> Unit) =
         when (this) {
-            is LoginDomainResult.Success -> function(LoginUIResult.Success)
-            is LoginDomainResult.SendCode -> function(LoginUIResult.SendCode(id))
+            is LoginDomainResult.Success.LogIn -> function(LoginUIResult.Success.LogIn)
+            is LoginDomainResult.Success.SendCode -> function(LoginUIResult.Success.SendCode(id))
             is LoginDomainResult.Failure -> function(LoginUIResult.Failure(exception))
         }
 
-    private inline fun LoginDomainResult.mapSendCode(crossinline function: (VoidUIResult) -> Unit) =
+    private inline fun LoginDomainResult.mapSendCode(crossinline function: (UIResult<*>) -> Unit) =
         when (this) {
-            is LoginDomainResult.Success -> function(VoidUIResult.Success)
-            is LoginDomainResult.Failure -> function(VoidUIResult.Failure(exception))
-            is LoginDomainResult.SendCode -> {
-            }
+            is LoginDomainResult.Success -> function(UIResult.Success(null))
+            is LoginDomainResult.Failure -> function(UIResult.Failure(exception))
         }
 }

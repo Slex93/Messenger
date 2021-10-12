@@ -27,7 +27,6 @@ interface ContactsRepository {
             val reference = databaseReference
                 .child(NODE_CONTACT)
                 .child(user.uid)
-
             val listener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val result = snapshot.children.mapNotNull {

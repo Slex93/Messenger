@@ -21,7 +21,7 @@ interface SendCodeEngine {
             callbackFlow {
                 val credential = PhoneAuthProvider.getCredential(id, code)
                 signInWithCredential(credential,
-                    { trySendBlocking(LoginDomainResult.Success) },
+                    { trySendBlocking(LoginDomainResult.Success.LogIn) },
                     { trySendBlocking(LoginDomainResult.Failure(it)) })
                 awaitClose {}
             }

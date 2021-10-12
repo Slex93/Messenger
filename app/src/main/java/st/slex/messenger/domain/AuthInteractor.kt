@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
 import st.slex.messenger.data.auth.AuthRepository
-import st.slex.messenger.data.core.VoidDataResult
+import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.ui.auth.LoginEngine
 import st.slex.messenger.ui.auth.SendCodeEngine
 import javax.inject.Inject
@@ -36,9 +36,9 @@ interface AuthInteractor {
             callbackFlow {
                 this@collectThis.collect { response ->
                     response.collectionBase({
-                        trySendBlocking(LoginDomainResult.Success)
+                        trySendBlocking(LoginDomainResult.Success.LogIn)
                     }, {
-                        trySendBlocking(LoginDomainResult.SendCode(it))
+                        trySendBlocking(LoginDomainResult.Success.SendCode(it))
                     }, {
                         trySendBlocking(LoginDomainResult.Failure(it))
                     })
@@ -52,15 +52,15 @@ interface AuthInteractor {
             crossinline failure: (Exception) -> Unit
         ) {
             when (this) {
-                is LoginDomainResult.Success -> {
+                is LoginDomainResult.Success.LogIn -> {
                     repository.saveUser().collect {
                         when (it) {
-                            is VoidDataResult.Success -> success()
-                            is VoidDataResult.Failure -> failure(it.exception)
+                            is DataResult.Success -> success()
+                            is DataResult.Failure -> failure(it.exception)
                         }
                     }
                 }
-                is LoginDomainResult.SendCode -> {
+                is LoginDomainResult.Success.SendCode -> {
                     sendCode(id)
                 }
                 is LoginDomainResult.Failure -> {

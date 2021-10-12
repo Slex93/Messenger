@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,6 @@ import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentUserProfileBinding
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.UIResult
-import st.slex.messenger.ui.core.VoidUIResult
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
 @ExperimentalCoroutinesApi
@@ -98,7 +96,7 @@ class UserProfileFragment : BaseFragment() {
             if (it.getRealPath().isNotEmpty()) {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.saveImage(it).collect { result ->
-                        result.collector()
+                        result.collector
                     }
                 }
             }
@@ -123,20 +121,20 @@ class UserProfileFragment : BaseFragment() {
         return result
     }
 
-    private fun VoidUIResult.collector() {
-        when (this) {
-            is VoidUIResult.Success -> {
-                scope().cancel()
-                scope().start()
-            }
-            is VoidUIResult.Failure -> {
-                Log.i("Failure::", exception.toString())
-            }
-            is VoidUIResult.Loading -> {
-
+    private val UIResult<*>.collector: () -> Unit
+        get() = {
+            when (this) {
+                is UIResult.Success -> {
+                    scope().cancel()
+                    scope().start()
+                }
+                is UIResult.Failure -> {
+                }
+                is UIResult.Loading -> {
+                }
             }
         }
-    }
+
 
     private fun UIResult<UserUI>.collector() {
         when (this) {
@@ -172,6 +170,5 @@ class UserProfileFragment : BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }
 

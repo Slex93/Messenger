@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import st.slex.messenger.data.contacts.ContactModel
 import st.slex.messenger.data.main_activity.ActivityRepository
+import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.core.VoidUIResponse
-import st.slex.messenger.ui.core.VoidUIResult
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -20,11 +20,11 @@ class ActivityViewModel @Inject constructor(
     private val response: VoidUIResponse
 ) : ViewModel() {
 
-    suspend fun updateContacts(list: List<ContactModel>): StateFlow<VoidUIResult> =
+    suspend fun updateContacts(list: List<ContactModel>): StateFlow<UIResult<*>> =
         response.create(repository.updateContacts(list)).stateIn(
             viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = VoidUIResult.Loading
+            initialValue = UIResult.Loading
         )
 
     fun changeState(state: String) = viewModelScope.launch(Dispatchers.IO) {

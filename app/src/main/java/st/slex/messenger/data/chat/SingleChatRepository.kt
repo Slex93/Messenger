@@ -7,7 +7,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.data.core.VoidDataResult
+import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.ui.user_profile.UserUI
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
@@ -18,7 +18,7 @@ interface SingleChatRepository {
         message: String,
         user: UserUI,
         currentUser: UserUI
-    ): Flow<VoidDataResult>
+    ): Flow<DataResult<*>>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -30,7 +30,7 @@ interface SingleChatRepository {
             message: String,
             user: UserUI,
             currentUser: UserUI
-        ): Flow<VoidDataResult> = callbackFlow {
+        ): Flow<DataResult<*>> = callbackFlow {
             val refDialogUser = "$NODE_CHAT/${auth.uid}/${user.id()}"
             val refDialogReceivingUser = "$NODE_CHAT/${user.id()}/${auth.uid}"
             val messageKey = databaseReference.child(refDialogUser).push().key
@@ -70,17 +70,17 @@ interface SingleChatRepository {
                         if (it.isSuccessful) {
                             taskReceiver.addOnCompleteListener { rTask ->
                                 if (rTask.isSuccessful) {
-                                    trySendBlocking(VoidDataResult.Success)
+                                    trySendBlocking(DataResult.Success(null))
                                 } else {
-                                    trySendBlocking(VoidDataResult.Failure(rTask.exception!!))
+                                    trySendBlocking(DataResult.Failure<Nothing>(rTask.exception!!))
                                 }
                             }
                         } else {
-                            trySendBlocking(VoidDataResult.Failure(uTask.exception!!))
+                            trySendBlocking(DataResult.Failure<Nothing>(uTask.exception!!))
                         }
                     }
                 } else {
-                    trySendBlocking(VoidDataResult.Failure(it.exception!!))
+                    trySendBlocking(DataResult.Failure<Nothing>(it.exception!!))
                 }
             }
 
