@@ -17,7 +17,7 @@ Messenger
 - Dagger 2
 - Firebase
 - Coroutines
-- Room
+- FirebaseRecyclerAdapter + Jetpack Paging 3
 - Navigation component (Jetpack's navigation)
 - ViewPager2
 - Glide
