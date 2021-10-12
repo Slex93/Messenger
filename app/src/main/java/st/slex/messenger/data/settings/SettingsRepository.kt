@@ -1,6 +1,7 @@
 package st.slex.messenger.data.settings
 
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
@@ -30,8 +31,12 @@ interface SettingsRepository {
                 .setValue(state)
             val listener = OnCompleteListener<Void> {
                 if (it.isSuccessful) {
+                    FirebaseAuth.AuthStateListener { auth ->
+                        if (auth.currentUser?.uid == null) {
+                            trySendBlocking(VoidDataResult.Success)
+                        }
+                    }
                     Firebase.auth.signOut()
-                    trySendBlocking(VoidDataResult.Success)
                 } else trySendBlocking(VoidDataResult.Failure(it.exception!!))
             }
             reference.addOnCompleteListener(listener)

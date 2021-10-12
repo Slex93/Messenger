@@ -1,14 +1,12 @@
-package st.slex.messenger.domain.auth
+package st.slex.messenger.domain
 
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
-import st.slex.messenger.data.auth.AuthData
 import st.slex.messenger.data.auth.AuthRepository
 import st.slex.messenger.data.core.VoidDataResult
 import st.slex.messenger.ui.auth.LoginEngine
@@ -20,6 +18,7 @@ interface AuthInteractor {
     suspend fun login(phone: String): Flow<LoginDomainResult>
     suspend fun sendCode(id: String, code: String): Flow<LoginDomainResult>
 
+    @InternalCoroutinesApi
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
         private val repository: AuthRepository,
@@ -32,7 +31,6 @@ interface AuthInteractor {
 
         override suspend fun sendCode(id: String, code: String): Flow<LoginDomainResult> =
             sendCodeEngine.sendCode(id, code).collectThis()
-
 
         private suspend fun Flow<LoginDomainResult>.collectThis(): Flow<LoginDomainResult> =
             callbackFlow {
@@ -55,12 +53,7 @@ interface AuthInteractor {
         ) {
             when (this) {
                 is LoginDomainResult.Success -> {
-                    repository.saveUser(
-                        AuthData.Base(
-                            id = Firebase.auth.uid.toString(),
-                            phone = Firebase.auth.currentUser?.phoneNumber.toString()
-                        )
-                    ).collect {
+                    repository.saveUser().collect {
                         when (it) {
                             is VoidDataResult.Success -> success()
                             is VoidDataResult.Failure -> failure(it.exception)

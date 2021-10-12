@@ -1,9 +1,8 @@
-package st.slex.messenger.ui.contacts.adapter
+package st.slex.messenger.ui.contacts
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
-import st.slex.messenger.ui.contacts.ContactsUI
 import st.slex.messenger.ui.core.ClickListener
 
 abstract class ContactViewHolder(view: View) :

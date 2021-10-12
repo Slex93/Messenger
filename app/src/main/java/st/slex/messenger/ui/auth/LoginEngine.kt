@@ -11,7 +11,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.domain.auth.LoginDomainResult
+import st.slex.messenger.domain.LoginDomainResult
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 

@@ -103,15 +103,15 @@ class EnterCodeFragment : BaseAuthFragment() {
     private fun launchAuth(id: String, code: String) = requireActivity().lifecycleScope.launch {
         Log.i("testCOde", code)
         viewModel.sendCode(id = id, code = code).collect {
-            it.collector()
+            it.collector
         }
     }
 
     private fun List<EditText>.getCodeFromList(): String =
         this.joinToString { it.text.toString() }.replace(", ", "")
 
-    private fun VoidUIResult.collector() {
-        when (this) {
+    private val VoidUIResult.collector: Unit
+        get() = when (this) {
             is VoidUIResult.Success -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
@@ -125,7 +125,7 @@ class EnterCodeFragment : BaseAuthFragment() {
                 binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             }
         }
-    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

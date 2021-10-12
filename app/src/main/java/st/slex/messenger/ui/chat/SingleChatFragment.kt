@@ -47,7 +47,20 @@ class SingleChatFragment : BaseFragment() {
     private var _uid: String? = null
     private val uid: String get() = _uid ?: ""
 
-    private lateinit var adapter: MessagesAdapter
+    private val adapter: MessagesAdapter by lazy {
+        val baseQuery: Query = FirebaseDatabase
+            .getInstance()
+            .reference
+            .child(NODE_CHAT)
+            .child(Firebase.auth.uid.toString())
+            .child(uid)
+        val config = PagingConfig(10, 10, false)
+        val options = DatabasePagingOptions.Builder<MessageModel>()
+            .setLifecycleOwner(viewLifecycleOwner)
+            .setQuery(baseQuery, config, MessageModel::class.java)
+            .build()
+        MessagesAdapter(options, Firebase.auth.uid.toString())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,25 +95,10 @@ class SingleChatFragment : BaseFragment() {
             }
         }
 
-        val baseQuery: Query = FirebaseDatabase
-            .getInstance()
-            .reference
-            .child(NODE_CHAT)
-            .child(Firebase.auth.uid.toString())
-            .child(uid)
-
-        val config = PagingConfig(10, 10, false)
-
-        val options = DatabasePagingOptions.Builder<MessageModel>()
-            .setLifecycleOwner(viewLifecycleOwner)
-            .setQuery(baseQuery, config, MessageModel::class.java)
-            .build()
-
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.stackFromEnd = true
         binding.singleChatRecycler.layoutManager = layoutManager
 
-        adapter = MessagesAdapter(options, Firebase.auth.uid.toString())
         binding.singleChatRecycler.adapter = adapter
 
         binding.singleChatRefreshLayout.setOnRefreshListener {
@@ -167,11 +165,6 @@ class SingleChatFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val PAGE_SIZE = 10
-        private var page: Int = 1
     }
 
 }

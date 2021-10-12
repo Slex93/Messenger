@@ -6,10 +6,11 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
 import st.slex.messenger.core.ViewModelFactory
 import st.slex.messenger.data.auth.AuthRepository
 import st.slex.messenger.di.key.ViewModelKey
-import st.slex.messenger.domain.auth.AuthInteractor
+import st.slex.messenger.domain.AuthInteractor
 import st.slex.messenger.ui.auth.AuthViewModel
 import st.slex.messenger.ui.core.VoidUIResponse
 
@@ -22,9 +23,11 @@ interface AuthInterfaceModule {
     @ViewModelKey(AuthViewModel::class)
     fun bindsLoginViewModel(viewModel: AuthViewModel): ViewModel
 
+    @InternalCoroutinesApi
     @Binds
     fun bindsLoginInteractor(interactor: AuthInteractor.Base): AuthInteractor
 
+    @InternalCoroutinesApi
     @Binds
     fun bindsLoginRepository(repository: AuthRepository.Base): AuthRepository
 

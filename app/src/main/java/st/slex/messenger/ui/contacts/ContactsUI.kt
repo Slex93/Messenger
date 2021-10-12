@@ -21,6 +21,7 @@ interface ContactsUI {
         private val full_name: String = "",
         private val url: String = ""
     ) : ContactsUI {
+
         override fun map(
             userName: AbstractView.Text,
             userPhone: AbstractView.Text,

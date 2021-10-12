@@ -1,25 +1,21 @@
 package st.slex.messenger.ui.contacts
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import androidx.core.view.doOnPreDraw
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.paging.PagingConfig
+import com.firebase.ui.database.paging.DatabasePagingOptions
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
-import st.slex.messenger.ui.contacts.adapter.ContactAdapter
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.ClickListener
-import st.slex.messenger.ui.core.UIResult
+import st.slex.messenger.utilites.NODE_CONTACT
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
 @ExperimentalCoroutinesApi
@@ -28,13 +24,23 @@ class ContactFragment : BaseFragment() {
     private var _binding: FragmentContactBinding? = null
     private val binding get() = _binding!!
 
-    private val contactViewModel: ContactViewModel by viewModels {
-        viewModelFactory.get()
+    private val baseQuery: Query by lazy {
+        FirebaseDatabase.getInstance().reference.child(NODE_CONTACT)
+            .child(Firebase.auth.uid.toString())
     }
 
-    private lateinit var recycler: RecyclerView
-    private lateinit var adapter: ContactAdapter
-    private lateinit var layoutManager: StaggeredGridLayoutManager
+    private val config: PagingConfig by lazy { PagingConfig(10, 10, false) }
+
+    private val options: DatabasePagingOptions<ContactsUI.Base> by lazy {
+        DatabasePagingOptions.Builder<ContactsUI.Base>()
+            .setLifecycleOwner(viewLifecycleOwner)
+            .setQuery(baseQuery, config, ContactsUI.Base::class.java)
+            .build()
+    }
+
+    private val adapter: ContactAdapter by lazy {
+        ContactAdapter(options, OpenChat())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,52 +56,17 @@ class ContactFragment : BaseFragment() {
         setHasOptionsMenu(true)
         binding.fragmentContactToolbar.title = getString(R.string.title_contacts)
         setSupportActionBar(binding.fragmentContactToolbar)
-        initRecyclerView()
-        viewLifecycleOwner.lifecycleScope.launch {
-            contactViewModel.getContacts().collect {
-                it.collect()
-            }
-        }
+        binding.fragmentContactRecycler.adapter = adapter
     }
 
-    private fun UIResult<List<ContactsUI>>.collect() {
-        when (this) {
-            is UIResult.Success -> {
-                adapter.addItems(data)
-            }
-            is UIResult.Failure -> {
-                Log.e(
-                    "Exception in ContactList from the flow",
-                    exception.message.toString(),
-                    exception.cause
-                )
-            }
-            is UIResult.Loading -> {
-
-            }
-        }
-    }
-
-    private fun initRecyclerView() {
-        recycler = binding.fragmentContactRecycler
-        adapter = ContactAdapter(OpenChat())
-        layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        postponeEnterTransition()
-        recycler.doOnPreDraw {
-            startPostponedEnterTransition()
-        }
-        recycler.adapter = adapter
-        recycler.layoutManager = LinearLayoutManager(requireContext())
-    }
 
     private inner class OpenChat : ClickListener<ContactsUI> {
         override fun click(item: ContactsUI) {
             item.startChat { card, url ->
-                val directions =
-                    ContactFragmentDirections.actionNavContactToNavSingleChat(
-                        card.transitionName,
-                        url
-                    )
+                val directions = ContactFragmentDirections.actionNavContactToNavSingleChat(
+                    card.transitionName,
+                    url
+                )
                 val extras = FragmentNavigatorExtras(card to card.transitionName)
                 findNavController().navigate(directions, extras)
             }

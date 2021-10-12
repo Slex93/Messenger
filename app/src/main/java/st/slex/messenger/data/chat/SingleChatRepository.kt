@@ -48,14 +48,19 @@ interface SingleChatRepository {
             val taskUser = databaseReference.child(NODE_CHAT_LIST).child(auth.uid)
                 .child(user.id()).updateChildren(
                     getMapUser(
-                        user, currentUser, message, messageKey.toString()
+                        user,
+                        currentUser,
+                        message,
+                        messageKey.toString()
                     )
                 )
 
             val taskReceiver = databaseReference.child(NODE_CHAT_LIST).child(user.id())
                 .child(auth.uid).updateChildren(
                     getMapReceiver(
-                        currentUser, message, messageKey.toString()
+                        currentUser,
+                        message,
+                        messageKey.toString()
                     )
                 )
 

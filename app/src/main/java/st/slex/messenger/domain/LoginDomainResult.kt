@@ -1,4 +1,4 @@
-package st.slex.messenger.domain.auth
+package st.slex.messenger.domain
 
 sealed class LoginDomainResult {
     object Success : LoginDomainResult()

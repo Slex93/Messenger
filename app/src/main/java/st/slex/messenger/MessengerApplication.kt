@@ -13,5 +13,4 @@ class MessengerApplication : Application() {
         super.onCreate()
         appComponent = DaggerAppComponent.builder().applicationBind(this).build()
     }
-
 }
