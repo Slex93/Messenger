@@ -4,22 +4,18 @@ import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.di.module.*
-import st.slex.messenger.ui.core.BaseAuthFragment
-import st.slex.messenger.ui.core.BaseFragment
-import st.slex.messenger.ui.main.MainActivity
+import st.slex.messenger.di.module.AppModule
+import st.slex.messenger.di.module.ReferencesModule
+import st.slex.messenger.di.module.ViewModelFactoryModule
 import javax.inject.Singleton
 
 @ExperimentalCoroutinesApi
 @Singleton
 @Component(
     modules = [
-        RepositoryModule::class,
-        ViewModelModule::class,
+        AppModule::class,
         ViewModelFactoryModule::class,
-        ReferencesModule::class,
-        MapperModule::class,
-        ResponseModule::class
+        ReferencesModule::class
     ]
 )
 interface AppComponent {
@@ -27,14 +23,12 @@ interface AppComponent {
     @Component.Builder
     interface Builder {
 
-        fun build(): AppComponent
-
         @BindsInstance
-        fun applicationBind(application: Application): Builder
+        fun application(application: Application): Builder
+
+        fun create(): AppComponent
     }
 
-    fun inject(application: Application)
-    fun inject(activity: MainActivity)
-    fun inject(fragment: BaseFragment)
-    fun inject(fragment: BaseAuthFragment)
+    val authBuilder: AuthSubcomponent.Builder
+    val mainActivityBuilder: MainActivitySubcomponent.Builder
 }

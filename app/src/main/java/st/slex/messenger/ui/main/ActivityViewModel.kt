@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import st.slex.messenger.core.model.firebase.FirebaseContactModel
 import st.slex.messenger.data.contacts.ContactModel
 import st.slex.messenger.data.main_activity.ActivityRepository
 import st.slex.messenger.ui.core.UIResult
@@ -20,7 +21,7 @@ class ActivityViewModel @Inject constructor(
     private val response: VoidUIResponse
 ) : ViewModel() {
 
-    suspend fun updateContacts(list: List<ContactModel>): StateFlow<UIResult<*>> =
+    suspend fun updateContacts(list: List<FirebaseContactModel>): StateFlow<UIResult<*>> =
         response.create(repository.updateContacts(list)).stateIn(
             viewModelScope,
             started = SharingStarted.Lazily,

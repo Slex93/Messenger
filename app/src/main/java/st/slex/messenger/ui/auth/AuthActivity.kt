@@ -4,9 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.databinding.ActivityAuthBinding
-import st.slex.messenger.di.component.AuthComponent
-import st.slex.messenger.di.component.DaggerAuthComponent
-import st.slex.messenger.di.module.auth.AuthModule
+import st.slex.messenger.appComponent
+import st.slex.messenger.di.component.AuthSubcomponent
 
 @ExperimentalCoroutinesApi
 class AuthActivity : AppCompatActivity() {
@@ -14,14 +13,11 @@ class AuthActivity : AppCompatActivity() {
     private var _binding: ActivityAuthBinding? = null
     private val binding get() = _binding!!
 
-    private var _authComponent: AuthComponent? = null
-    val authComponent: AuthComponent get() = _authComponent!!
+    private var _authComponent: AuthSubcomponent? = null
+    val authComponent: AuthSubcomponent get() = _authComponent!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        _authComponent = DaggerAuthComponent
-            .builder()
-            .authModule(AuthModule(this))
-            .build()
+        _authComponent = appComponent.authBuilder.activity(this).create()
         super.onCreate(savedInstanceState)
         _binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)

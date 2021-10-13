@@ -1,12 +1,13 @@
 package st.slex.messenger.utilites
 
 /*Nodes*/
-const val NODE_USER = "user"
-const val NODE_USERNAME = "username"
-const val NODE_PHONE = "phone"
-const val NODE_CONTACT = "contact"
-const val NODE_CHAT = "chat"
+const val NODE_USER = "users"
+const val NODE_USERNAME = "usernames"
+const val NODE_PHONE = "phones"
+const val NODE_CONTACT = "contacts"
+const val NODE_CHAT = "chats"
 const val NODE_CHAT_LIST = "chat_list"
+const val NODE_MESSAGES = "messages"
 
 /*Storage*/
 const val FOLDER_PROFILE_IMAGE = "profile_image"

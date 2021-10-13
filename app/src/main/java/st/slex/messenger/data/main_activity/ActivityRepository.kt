@@ -1,5 +1,6 @@
 package st.slex.messenger.data.main_activity
 
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -11,15 +12,20 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import st.slex.messenger.core.model.firebase.FirebaseContactModel
 import st.slex.messenger.data.contacts.ContactModel
 import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 interface ActivityRepository {
     suspend fun changeState(state: String)
-    suspend fun updateContacts(list: List<ContactModel>): Flow<DataResult<*>>
+    suspend fun updateContacts(list: List<FirebaseContactModel>): Flow<DataResult<*>>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -28,73 +34,86 @@ interface ActivityRepository {
     ) : ActivityRepository {
 
         override suspend fun changeState(state: String): Unit = withContext(Dispatchers.IO) {
-            reference.child(NODE_USER).child(auth.uid)
-                .child(CHILD_STATE).setValue(state)
+            val task = stateReference.setValue(state)
+            handle(task)
         }
 
-        override suspend fun updateContacts(list: List<ContactModel>): Flow<DataResult<*>> =
+        override suspend fun updateContacts(list: List<FirebaseContactModel>): Flow<DataResult<*>> =
             callbackFlow {
-                val phonesReference = reference.child(NODE_PHONE)
+                val phoneListener = createListener(list) {
+                    trySendBlocking(it)
+                }
+                phonesNumberReference.addValueEventListener(phoneListener)
+                awaitClose { phonesNumberReference.removeEventListener(phoneListener) }
+            }
 
-                val listener = listenerPhone({ snapshotListPhone ->
-                    snapshotListPhone.children.forEach { snapshotPhone ->
+        private suspend inline fun createListener(
+            list: List<FirebaseContactModel>,
+            crossinline function: (DataResult<*>) -> Unit
+        ) = withContext(Dispatchers.IO) {
+            return@withContext object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.children.forEach { snapshotPhone ->
+                        val phone: String = snapshotPhone.key.toString()
+                        val id: String = snapshotPhone.value.toString()
                         if (list.isNullOrEmpty()) {
-                            reference.child(NODE_CONTACT).child(auth.uid).setValue(list)
+                            this@withContext.launch {
+                                function(handleWithResult(contactsReference.setValue(list)))
+                            }
                         } else {
                             list.forEach { contact ->
-                                if (auth.uid != snapshotPhone.key && contact.phone == snapshotPhone.value) {
-                                    reference
-                                        .child(NODE_USER)
-                                        .child(snapshotPhone.key.toString())
-                                        .child(CHILD_URL)
-                                        .addValueEventListener(
-                                            listenerPhone({ snapshotUrl ->
-                                                val url = snapshotUrl.value
-                                                val map = mapOf(
-                                                    CHILD_ID to snapshotPhone.key.toString(),
-                                                    CHILD_PHONE to contact.phone,
-                                                    CHILD_FULL_NAME to contact.full_name,
-                                                    CHILD_URL to url
-                                                )
-                                                val contactTask = reference
-                                                    .child(NODE_CONTACT)
-                                                    .child(auth.uid)
-                                                    .child(snapshotPhone.key.toString())
-                                                    .setValue(map)
-                                                contactTask.addOnCompleteListener {
-                                                    if (it.isSuccessful) {
-                                                        trySendBlocking(DataResult.Success(null))
-                                                    } else {
-                                                        trySendBlocking(
-                                                            DataResult.Failure<Nothing>(
-                                                                it.exception!!
-                                                            )
-                                                        )
-                                                    }
-                                                }
-                                            }, {
-                                                trySendBlocking(DataResult.Failure<Nothing>(it))
-                                            })
+                                if (auth.uid != id && contact.phone == phone) {
+                                    val task = contactsReference.child(phone).setValue(
+                                        mapContact(
+                                            id = id,
+                                            phone = phone,
+                                            username = contact.username ?: ""
                                         )
+                                    )
+                                    this@withContext.launch {
+                                        function(handleWithResult(task))
+                                    }
                                 }
                             }
                         }
                     }
-                }, {
-                    trySendBlocking(DataResult.Failure<Nothing>(it))
-                })
+                }
 
-                phonesReference.addValueEventListener(listener)
-                awaitClose { phonesReference.removeEventListener(listener) }
+                override fun onCancelled(error: DatabaseError) {
+                    function(DataResult.Failure<Nothing>(error.toException()))
+                }
+            }
+        }
+
+        private suspend fun handleWithResult(result: Task<Void>): DataResult<*> =
+            suspendCoroutine { continuation ->
+                result.addOnSuccessListener { continuation.resume(DataResult.Success(null)) }
+                    .addOnFailureListener { continuation.resumeWithException(it) }
             }
 
-        private inline fun listenerPhone(
-            crossinline success: (DataSnapshot) -> Unit,
-            crossinline error: (Exception) -> Unit
-        ) = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) = success(snapshot)
-            override fun onCancelled(error: DatabaseError) = error(error.toException())
+        private suspend fun handle(result: Task<Void>) = suspendCoroutine<Void> { continuation ->
+            result.addOnSuccessListener { continuation.resume(it) }
+                .addOnFailureListener { continuation.resumeWithException(it) }
         }
+
+        private val contactsReference: DatabaseReference by lazy {
+            reference.child(NODE_USER).child(auth.uid).child(NODE_CONTACT)
+        }
+
+        private val phonesNumberReference: DatabaseReference by lazy {
+            reference.child(NODE_PHONE)
+        }
+
+        private val stateReference: DatabaseReference by lazy {
+            reference.child(NODE_USER).child(auth.uid).child(CHILD_STATE)
+        }
+
+
+        private fun mapContact(id: String, phone: String, username: String) = mapOf<String, Any>(
+            CHILD_ID to id,
+            CHILD_PHONE to phone,
+            CHILD_FULL_NAME to username
+        )
 
 
     }

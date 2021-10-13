@@ -1,19 +1,42 @@
 package st.slex.messenger.di.module.auth
 
+import androidx.lifecycle.ViewModel
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
+import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.ui.auth.AuthActivity
+import kotlinx.coroutines.InternalCoroutinesApi
+import st.slex.messenger.data.auth.AuthRepository
+import st.slex.messenger.di.key.ViewModelKey
+import st.slex.messenger.domain.AuthInteractor
+import st.slex.messenger.ui.auth.AuthViewModel
+import st.slex.messenger.ui.auth.LoginEngine
+import st.slex.messenger.ui.auth.SendCodeEngine
+import st.slex.messenger.ui.core.VoidUIResponse
 
-@Module(
-    includes = [
-        EngineModule::class,
-        AuthInterfaceModule::class
-    ]
-)
 @ExperimentalCoroutinesApi
-class AuthModule(val activity: AuthActivity) {
+@Module
+interface AuthModule {
 
-    @Provides
-    fun provideActivity(): AuthActivity = activity
+    @IntoMap
+    @Binds
+    @ViewModelKey(AuthViewModel::class)
+    fun bindsLoginViewModel(viewModel: AuthViewModel): ViewModel
+
+    @InternalCoroutinesApi
+    @Binds
+    fun bindsLoginInteractor(interactor: AuthInteractor.Base): AuthInteractor
+
+    @InternalCoroutinesApi
+    @Binds
+    fun bindsLoginRepository(repository: AuthRepository.Base): AuthRepository
+
+    @Binds
+    fun bindsVoidUIResponse(response: VoidUIResponse.Base): VoidUIResponse
+
+    @Binds
+    fun bindsLoginEngine(engine: LoginEngine.Base): LoginEngine
+
+    @Binds
+    fun bindsSendCodeEngine(engine: SendCodeEngine.Base): SendCodeEngine
 }

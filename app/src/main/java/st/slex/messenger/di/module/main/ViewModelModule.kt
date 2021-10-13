@@ -1,4 +1,4 @@
-package st.slex.messenger.di.module
+package st.slex.messenger.di.module.main
 
 import androidx.lifecycle.ViewModel
 import dagger.Binds

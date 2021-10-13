@@ -8,36 +8,51 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.*
+import dagger.Lazy
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
-import st.slex.messenger.ui.core.UIResult
-import st.slex.messenger.utilites.funs.appComponent
-import st.slex.messenger.utilites.funs.setContacts
+import st.slex.messenger.appComponent
+import st.slex.messenger.di.component.MainActivitySubcomponent
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
+
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    @Inject
+    lateinit var manager: Lazy<ContactsManager>
+
+    private var _activityComponent: MainActivitySubcomponent? = null
+    val activityComponent: MainActivitySubcomponent
+        get() = checkNotNull(_activityComponent)
+
     private var _binding: ActivityMainBinding? = null
-    private val binding: ActivityMainBinding get() = _binding!!
+    private val binding: ActivityMainBinding
+        get() = checkNotNull(_binding)
+
     private val viewModel: ActivityViewModel by viewModels { viewModelFactory }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        _binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        applicationContext.appComponent.inject(this)
-        lifecycleScope.launch {
-            this@MainActivity.setContacts {
-                lifecycleScope.launch {
-                    viewModel.updateContacts(it).collect()
-                }
+    private val contactsJob: Job by lazy {
+        lifecycleScope.launchWhenCreated {
+            manager.get().setContacts().collect {
+                launch { viewModel.updateContacts(it).collect() }
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        _activityComponent = appComponent.mainActivityBuilder.activity(this).create()
+        activityComponent.inject(this)
+        super.onCreate(savedInstanceState)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
+        contactsJob.start()
+        setContentView(binding.root)
     }
 
     override fun onStart() {
@@ -53,6 +68,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        contactsJob.cancel()
     }
 
     override fun onRequestPermissionsResult(
@@ -66,31 +82,9 @@ class MainActivity : AppCompatActivity() {
                 READ_CONTACTS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            CoroutineScope(Dispatchers.IO).launch {
-                this@MainActivity.setContacts {
-                    lifecycleScope.launch {
-                        viewModel.updateContacts(it).collect {
-                            it.collector
-                        }
-                    }
-                }
-            }
+            contactsJob.start()
         }
     }
-
-    private val UIResult<*>.collector
-        get() = when (this) {
-            is UIResult.Success -> {
-
-            }
-            is UIResult.Failure -> {
-
-            }
-            is UIResult.Loading -> {
-
-            }
-        } //TODO
-
 }
 
 
