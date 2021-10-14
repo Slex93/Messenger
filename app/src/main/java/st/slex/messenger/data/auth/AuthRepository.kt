@@ -6,10 +6,8 @@ import com.google.firebase.database.DatabaseReference
 import dagger.Lazy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.utilites.CHILD_ID
 import st.slex.messenger.utilites.CHILD_PHONE
@@ -31,23 +29,12 @@ interface AuthRepository {
         private val user: Lazy<FirebaseUser>
     ) : AuthRepository {
 
-        override suspend fun saveUser(): Flow<DataResult<*>> = callbackFlow {
+        override suspend fun saveUser(): Flow<DataResult<*>> = flow {
             val result1 = userReference.updateChildren(mapUser)
             val result2 = phoneReference.setValue(user.get().uid)
-            makeHandle(result1, result2) { trySendBlocking(it) }
-            awaitClose { }
-        }
-
-        private suspend inline fun makeHandle(
-            result1: Task<Void>,
-            result2: Task<Void>,
-            crossinline function: (DataResult<*>) -> Unit
-        ) = try {
             val handleTask = handle(result1)
-            if (handleTask is DataResult.Success) function(handle(result2))
-            else function(handleTask)
-        } catch (exception: Exception) {
-            function(DataResult.Failure<Nothing>(exception))
+            if (handleTask is DataResult.Success) emit(handle(result2))
+            else emit(handleTask)
         }
 
         private suspend fun handle(result: Task<Void>): DataResult<*> =

@@ -2,19 +2,20 @@ package st.slex.messenger.ui.main
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
-import android.provider.ContactsContract
+import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.provider.ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+import android.provider.ContactsContract.CommonDataKinds.Phone.NUMBER
+import android.provider.ContactsContract.Contacts.DISPLAY_NAME
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.flow.*
 import st.slex.messenger.core.model.firebase.FirebaseContactModel
 import st.slex.messenger.utilites.PERMISSION_REQUEST
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @ExperimentalCoroutinesApi
 interface ContactsManager {
@@ -27,62 +28,39 @@ interface ContactsManager {
 
         @SuppressLint("Range")
         override suspend fun setContacts(): Flow<List<FirebaseContactModel>> =
-            callbackFlow {
+            flow {
+                val list = mutableListOf<FirebaseContactModel>()
                 checkPermission(Manifest.permission.READ_CONTACTS).collect { permission ->
-                    responseContacts(permission) {
-                        trySendBlocking(it)
-                    }
+                    if (permission) {
+                        val cursor =
+                            activity.contentResolver.query(CONTENT_URI, null, null, null, null)
+                        cursor?.let { item ->
+                            while (item.moveToNext()) {
+                                val username =
+                                    item.getString(item.getColumnIndexOrThrow(DISPLAY_NAME))
+                                val phone = item.getString(item.getColumnIndexOrThrow(NUMBER))
+                                val setPhone = phone.replace(Regex("[\\s,-]"), "")
+                                val contactModel =
+                                    FirebaseContactModel(phone = setPhone, username = username)
+                                list.add(contactModel)
+                            }
+                        }
+                        cursor?.close()
+                        emit(list)
+                    } else emit(list)
                 }
-                awaitClose {}
+            }.catch {
+                currentCoroutineContext().cancel(CancellationException(it))
             }
 
-        private suspend fun checkPermission(permission: String): Flow<Boolean> = callbackFlow {
-            responsePermission(permission) { trySendBlocking(it) }
-            awaitClose { }
-        }
-
-        @SuppressLint("Range")
-        private inline fun responseContacts(
-            permission: Boolean,
-            crossinline function: (List<FirebaseContactModel>) -> Unit
-        ): Unit = if (permission) {
-            val list = mutableListOf<FirebaseContactModel>()
-            val cursor = activity.contentResolver.query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                null,
-                null,
-                null,
-                null
-            )
-            cursor?.let { item ->
-                while (item.moveToNext()) {
-                    val username =
-                        item.getString(item.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
-                    val phone =
-                        item.getString(item.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                    val setPhone = phone.replace(Regex("[\\s,-]"), "")
-                    val contactModel =
-                        FirebaseContactModel(phone = setPhone, username = username)
-                    list.add(contactModel)
-                }
+        private suspend fun checkPermission(permission: String): Flow<Boolean> = flow {
+            if (ContextCompat.checkSelfPermission(activity, permission) == PERMISSION_GRANTED) {
+                emit(true)
+            } else {
+                ActivityCompat.requestPermissions(activity, arrayOf(permission), PERMISSION_REQUEST)
+                emit(false)
             }
-            cursor?.close()
-            function(list)
-        } else function(emptyList())
-
-        private inline fun responsePermission(
-            permission: String,
-            crossinline function: (Boolean) -> Unit
-        ) = if (ContextCompat.checkSelfPermission(
-                activity,
-                permission
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            function(true)
-
-        } else {
-            ActivityCompat.requestPermissions(activity, arrayOf(permission), PERMISSION_REQUEST)
-            function(false)
         }
+
     }
 }
