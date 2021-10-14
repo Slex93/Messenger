@@ -7,16 +7,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
 import st.slex.messenger.appComponent
 import st.slex.messenger.di.component.MainActivitySubcomponent
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
 @ExperimentalCoroutinesApi
 class MainActivity : AppCompatActivity() {
@@ -34,23 +30,13 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: ActivityViewModel by viewModels { viewModelFactory }
 
-    private val contactsJob: Job = lifecycleScope.launch(start = CoroutineStart.LAZY) {
-        viewModel.getContacts()
-            .onCompletion { completeGet -> cancel(CancellationException(completeGet)) }
-            .collect {
-                viewModel.updateContacts(it)
-                    .onCompletion { completeSend -> cancel(CancellationException(completeSend)) }
-                    .collect()
-            }
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         _activityComponent = appComponent.mainActivityBuilder.activity(this).create()
         activityComponent.inject(this)
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
-        contactsJob.start()
+        viewModel.contactsJob.start()
         setContentView(binding.root)
     }
 
@@ -67,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        contactsJob.cancel()
+        viewModel.contactsJob.cancel()
     }
 
     override fun onRequestPermissionsResult(
@@ -77,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (ContextCompat.checkSelfPermission(this, READ_CONTACTS) == PERMISSION_GRANTED) {
-            contactsJob.start()
+            viewModel.contactsJob.start()
         }
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.core.Abstract
+import st.slex.messenger.core.Mapper
 import st.slex.messenger.data.chats.ChatsData
 import st.slex.messenger.data.chats.ChatsRepository
 import st.slex.messenger.data.core.DataResult
@@ -20,8 +20,8 @@ import javax.inject.Inject
 class ChatsViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val chatsRepository: ChatsRepository,
-    private val mapper: Abstract.Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>>,
-    private val userMapper: Abstract.Mapper.DataToUi<UserData, UIResult<UserUI>>
+    private val mapper: Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>>,
+    private val userMapper: Mapper.DataToUi<UserData, UIResult<UserUI>>
 ) : ViewModel() {
 
     suspend fun currentUser(): StateFlow<UIResult<UserUI>> =

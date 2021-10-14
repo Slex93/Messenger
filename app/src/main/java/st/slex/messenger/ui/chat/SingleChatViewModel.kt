@@ -8,7 +8,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import st.slex.messenger.core.Abstract
+import st.slex.messenger.core.Mapper
 import st.slex.messenger.data.chat.SingleChatRepository
 import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.data.profile.UserData
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class SingleChatViewModel @Inject constructor(
     private val repository: SingleChatRepository,
     private val userRepository: UserRepository,
-    private val mapper: Abstract.Mapper.DataToUi<UserData, UIResult<UserUI>>
+    private val mapper: Mapper.DataToUi<UserData, UIResult<UserUI>>
 ) : ViewModel() {
 
     suspend fun getUser(uid: String): StateFlow<UIResult<UserUI>> =

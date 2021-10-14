@@ -7,39 +7,22 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.domain.LoginDomainResult
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.coroutines.suspendCoroutine
 
 interface LoginEngine {
-    suspend fun login(phone: String): Flow<LoginDomainResult>
+    suspend fun login(phone: String): LoginDomainResult
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
         private val activity: AuthActivity
     ) : LoginEngine {
 
-        override suspend fun login(phone: String): Flow<LoginDomainResult> =
-            callbackFlow {
-                val callback = makeCallback({ credential ->
-                    Firebase.auth.signInWithCredential(credential).addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            trySendBlocking(LoginDomainResult.Success.LogIn)
-                        } else {
-                            trySendBlocking(LoginDomainResult.Failure(task.exception!!))
-                        }
-                    }
-
-                }, {
-                    trySendBlocking(LoginDomainResult.Failure(it))
-                }, {
-                    trySendBlocking(LoginDomainResult.Success.SendCode(it))
-                })
-
+        override suspend fun login(phone: String): LoginDomainResult =
+            suspendCoroutine { continuation ->
+                val callback = callback { continuation.resumeWith(Result.success(it)) }
                 val phoneOptions = PhoneAuthOptions
                     .newBuilder(Firebase.auth)
                     .setActivity(activity)
@@ -48,23 +31,29 @@ interface LoginEngine {
                     .setCallbacks(callback)
                     .build()
                 PhoneAuthProvider.verifyPhoneNumber(phoneOptions)
-                awaitClose {}
             }
 
-        private inline fun makeCallback(
-            crossinline verificationCompleted: (PhoneAuthCredential) -> Unit,
-            crossinline verificationFailed: (FirebaseException) -> Unit,
-            crossinline codeSend: (String) -> Unit
+        private inline fun callback(
+            crossinline function: (LoginDomainResult) -> Unit
         ) = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            override fun onVerificationCompleted(credential: PhoneAuthCredential): Unit =
-                verificationCompleted(credential)
 
-            override fun onVerificationFailed(e: FirebaseException): Unit = verificationFailed(e)
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                Firebase.auth.signInWithCredential(credential).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        function(LoginDomainResult.Success.LogIn)
+                    } else {
+                        function(LoginDomainResult.Failure(task.exception!!))
+                    }
+                }
+            }
+
+            override fun onVerificationFailed(e: FirebaseException): Unit =
+                function(LoginDomainResult.Failure(e))
+
             override fun onCodeSent(
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken
-            ): Unit = codeSend(verificationId)
+            ): Unit = function(LoginDomainResult.Success.SendCode(verificationId))
         }
-
     }
 }

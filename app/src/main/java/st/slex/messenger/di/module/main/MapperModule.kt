@@ -2,7 +2,7 @@ package st.slex.messenger.di.module.main
 
 import dagger.Module
 import dagger.Provides
-import st.slex.messenger.core.Abstract
+import st.slex.messenger.core.Mapper
 import st.slex.messenger.data.chats.ChatsData
 import st.slex.messenger.data.chats.ChatsDataMapper
 import st.slex.messenger.data.contacts.ContactsData
@@ -18,15 +18,13 @@ import st.slex.messenger.ui.user_profile.UserUI
 class MapperModule {
 
     @Provides
-    fun providesChatsDataMapper(): Abstract.Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>> =
+    fun providesChatsDataMapper(): Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>> =
         ChatsDataMapper()
 
     @Provides
-    fun providesContactsDataMapper(): Abstract.Mapper.DataToUi<List<ContactsData>, UIResult<List<ContactsUI>>> =
+    fun providesContactsDataMapper(): Mapper.DataToUi<List<ContactsData>, UIResult<List<ContactsUI>>> =
         ContactsDataMapper()
 
     @Provides
-    fun providesUserDataMapper(): Abstract.Mapper.DataToUi<UserData, UIResult<UserUI>> =
-        UserDataMapper()
-
+    fun providesUserDataMapper(): Mapper.DataToUi<UserData, UIResult<UserUI>> = UserDataMapper()
 }

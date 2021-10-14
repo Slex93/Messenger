@@ -7,7 +7,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.core.Abstract
+import st.slex.messenger.core.Mapper
 import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.data.profile.UserData
 import st.slex.messenger.data.profile.UserRepository
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class UserViewModel
 @Inject constructor(
     private val repository: UserRepository,
-    private val mapper: Abstract.Mapper.DataToUi<UserData, UIResult<UserUI>>,
+    private val mapper: Mapper.DataToUi<UserData, UIResult<UserUI>>,
     private val response: VoidUIResponse
 ) : ViewModel() {
 

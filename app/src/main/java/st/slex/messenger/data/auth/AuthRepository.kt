@@ -30,16 +30,17 @@ interface AuthRepository {
     ) : AuthRepository {
 
         override suspend fun saveUser(): Flow<DataResult<*>> = flow {
-            val result1 = userReference.updateChildren(mapUser)
-            val result2 = phoneReference.setValue(user.get().uid)
-            val handleTask = handle(result1)
-            if (handleTask is DataResult.Success) emit(handle(result2))
-            else emit(handleTask)
+            val task1 = userReference.updateChildren(mapUser)
+            val task2 = phoneReference.setValue(user.get().uid)
+            handle(task1).also {
+                if (it is DataResult.Success) emit(handle(task2))
+                else emit(it)
+            }
         }
 
-        private suspend fun handle(result: Task<Void>): DataResult<*> =
+        private suspend fun handle(task: Task<Void>): DataResult<*> =
             suspendCoroutine { continuation ->
-                result.addOnSuccessListener { continuation.resume(DataResult.Success(null)) }
+                task.addOnSuccessListener { continuation.resume(DataResult.Success(null)) }
                     .addOnFailureListener { continuation.resumeWithException(it) }
             }
 

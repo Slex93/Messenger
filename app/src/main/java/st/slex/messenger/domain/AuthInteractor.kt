@@ -2,11 +2,9 @@ package st.slex.messenger.domain
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import st.slex.messenger.data.auth.AuthRepository
 import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.ui.auth.LoginEngine
@@ -26,49 +24,27 @@ interface AuthInteractor {
         private val sendCodeEngine: SendCodeEngine,
     ) : AuthInteractor {
 
-        override suspend fun login(phone: String): Flow<LoginDomainResult> =
-            loginEngine.login(phone).collectThis()
+        override suspend fun login(phone: String): Flow<LoginDomainResult> = flow {
+            emit(loginEngine.login(phone))
+        }.checkAuth()
 
-        override suspend fun sendCode(id: String, code: String): Flow<LoginDomainResult> =
-            sendCodeEngine.sendCode(id, code).collectThis()
+        override suspend fun sendCode(id: String, code: String): Flow<LoginDomainResult> = flow {
+            emit(sendCodeEngine.sendCode(id, code))
+        }.checkAuth()
 
-        private suspend fun Flow<LoginDomainResult>.collectThis(): Flow<LoginDomainResult> =
-            callbackFlow {
-                this@collectThis.collect { response ->
-                    response.collectionBase({
-                        trySendBlocking(LoginDomainResult.Success.LogIn)
-                    }, {
-                        trySendBlocking(LoginDomainResult.Success.SendCode(it))
-                    }, {
-                        trySendBlocking(LoginDomainResult.Failure(it))
-                    })
-                }
-                awaitClose { }
-            }
-
-        private suspend inline fun LoginDomainResult.collectionBase(
-            crossinline success: () -> Unit,
-            crossinline sendCode: (String) -> Unit,
-            crossinline failure: (Exception) -> Unit
-        ) {
-            when (this) {
-                is LoginDomainResult.Success.LogIn -> {
-                    repository.saveUser().collect {
-                        when (it) {
-                            is DataResult.Success -> success()
-                            is DataResult.Failure -> failure(it.exception)
+        private suspend fun Flow<LoginDomainResult>.checkAuth(): Flow<LoginDomainResult> = flow {
+            this@checkAuth.collect {
+                if (it is LoginDomainResult.Success.LogIn) {
+                    repository.saveUser().collect { saveResult ->
+                        when (saveResult) {
+                            is DataResult.Success -> emit(LoginDomainResult.Success.LogIn)
+                            is DataResult.Failure -> emit(LoginDomainResult.Failure(saveResult.exception))
                         }
                     }
-                }
-                is LoginDomainResult.Success.SendCode -> {
-                    sendCode(id)
-                }
-                is LoginDomainResult.Failure -> {
-                    failure(exception)
+                } else {
+                    emit(it)
                 }
             }
         }
-
-
     }
 }

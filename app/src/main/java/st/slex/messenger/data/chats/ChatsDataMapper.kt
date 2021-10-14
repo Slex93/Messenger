@@ -1,10 +1,10 @@
 package st.slex.messenger.data.chats
 
-import st.slex.messenger.core.Abstract
+import st.slex.messenger.core.Mapper
 import st.slex.messenger.ui.chats.ChatsUI
 import st.slex.messenger.ui.core.UIResult
 
-class ChatsDataMapper : Abstract.Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>> {
+class ChatsDataMapper : Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>> {
 
     override fun map(data: List<ChatsData>): UIResult<List<ChatsUI>> =
         UIResult.Success(data.map {

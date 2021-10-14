@@ -11,10 +11,12 @@ import st.slex.messenger.di.component.AuthSubcomponent
 class AuthActivity : AppCompatActivity() {
 
     private var _binding: ActivityAuthBinding? = null
-    private val binding get() = _binding!!
+    private val binding: ActivityAuthBinding
+        get() = checkNotNull(_binding)
 
     private var _authComponent: AuthSubcomponent? = null
-    val authComponent: AuthSubcomponent get() = _authComponent!!
+    val authComponent: AuthSubcomponent
+        get() = checkNotNull(_authComponent)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         _authComponent = appComponent.authBuilder.activity(this).create()

@@ -76,7 +76,7 @@ class EnterPhoneFragment : BaseAuthFragment() {
         val phone = binding.phoneEditText.text.toString()
         requireActivity().lifecycleScope.launch {
             viewModel.login(phone).collect {
-                it.collector
+                it.collector()
             }
         }
     }
@@ -93,27 +93,26 @@ class EnterPhoneFragment : BaseAuthFragment() {
         _binding = null
     }
 
-    private val LoginUIResult.collector: Unit
-        get() = when (this) {
-            is LoginUIResult.Success.LogIn -> {
-                requireActivity().start(MainActivity())
-            }
-            is LoginUIResult.Success.SendCode -> {
-                binding.fragmentCodeProgressIndicator.visibility = View.GONE
-                binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
-                val direction =
-                    EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(id)
-                val extras =
-                    FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
-                findNavController().navigate(direction, extras)
-            }
-            is LoginUIResult.Failure -> {
-                binding.fragmentCodeProgressIndicator.visibility = View.GONE
-                binding.root.showPrimarySnackBar(exception.toString())
-            }
-            is LoginUIResult.Loading -> {
-                binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
-            }
+    private fun LoginUIResult.collector() = when (this) {
+        is LoginUIResult.Success.LogIn -> {
+            requireActivity().start(MainActivity())
         }
+        is LoginUIResult.Success.SendCode -> {
+            binding.fragmentCodeProgressIndicator.visibility = View.GONE
+            binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
+            val direction =
+                EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(id)
+            val extras =
+                FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
+            findNavController().navigate(direction, extras)
+        }
+        is LoginUIResult.Failure -> {
+            binding.fragmentCodeProgressIndicator.visibility = View.GONE
+            binding.root.showPrimarySnackBar(exception.toString())
+        }
+        is LoginUIResult.Loading -> {
+            binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
+        }
+    }
 
 }

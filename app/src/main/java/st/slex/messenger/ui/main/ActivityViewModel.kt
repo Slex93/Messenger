@@ -2,10 +2,8 @@ package st.slex.messenger.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import st.slex.messenger.core.model.firebase.FirebaseContactModel
 import st.slex.messenger.data.main_activity.ActivityRepository
 import st.slex.messenger.ui.core.UIResult
@@ -19,15 +17,21 @@ class ActivityViewModel @Inject constructor(
     private val contactsManager: ContactsManager
 ) : ViewModel() {
 
-    suspend fun getContacts(): SharedFlow<List<FirebaseContactModel>> =
-        contactsManager.setContacts().shareIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            replay = 0
-        )
+    val contactsJob: Job = viewModelScope.launch(
+        context = Dispatchers.IO,
+        start = CoroutineStart.LAZY
+    ) {
+        getContacts().collect { updateContacts(it).collect() }
+    }
 
-    suspend fun updateContacts(list: List<FirebaseContactModel>): StateFlow<UIResult<*>> =
-        response.create(repository.updateContacts(list)).stateIn(
+    private suspend fun getContacts(): Flow<List<FirebaseContactModel>> =
+        contactsManager.setContacts()
+
+    private suspend fun updateContacts(list: List<FirebaseContactModel>): StateFlow<UIResult<*>> =
+        response.create(repository.updateContacts(list)).onCompletion {
+            contactsJob.cancelChildren()
+            contactsJob.cancel()
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
             initialValue = UIResult.Loading

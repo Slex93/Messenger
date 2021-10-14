@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import st.slex.messenger.core.model.firebase.FirebaseContactModel
-import st.slex.messenger.data.contacts.ContactModel
 import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
@@ -33,21 +32,23 @@ interface ActivityRepository {
         private val auth: FirebaseUser,
     ) : ActivityRepository {
 
-        override suspend fun changeState(state: String): Unit = withContext(Dispatchers.IO) {
+        override suspend fun changeState(state: String): Unit = suspendCoroutine { continuation ->
             val task = stateReference.setValue(state)
-            handle(task)
+            task.addOnSuccessListener { continuation.resume(Unit) }
+                .addOnFailureListener { continuation.resumeWithException(it) }
         }
 
-        override suspend fun updateContacts(list: List<FirebaseContactModel>): Flow<DataResult<*>> =
-            callbackFlow {
-                val phoneListener = createListener(list) {
-                    trySendBlocking(it)
-                }
-                phonesNumberReference.addValueEventListener(phoneListener)
-                awaitClose { phonesNumberReference.removeEventListener(phoneListener) }
+        override suspend fun updateContacts(
+            list: List<FirebaseContactModel>
+        ): Flow<DataResult<*>> = callbackFlow {
+            val phoneListener = listener(list) {
+                trySendBlocking(it)
             }
+            phonesNumberReference.addValueEventListener(phoneListener)
+            awaitClose { phonesNumberReference.removeEventListener(phoneListener) }
+        }
 
-        private suspend inline fun createListener(
+        private suspend inline fun listener(
             list: List<FirebaseContactModel>,
             crossinline function: (DataResult<*>) -> Unit
         ) = withContext(Dispatchers.IO) {
@@ -58,7 +59,7 @@ interface ActivityRepository {
                         val id: String = snapshotPhone.value.toString()
                         if (list.isNullOrEmpty()) {
                             this@withContext.launch {
-                                function(handleWithResult(contactsReference.setValue(list)))
+                                function(handle(contactsReference.setValue(list)))
                             }
                         } else {
                             list.forEach { contact ->
@@ -71,7 +72,7 @@ interface ActivityRepository {
                                         )
                                     )
                                     this@withContext.launch {
-                                        function(handleWithResult(task))
+                                        function(handle(task))
                                     }
                                 }
                             }
@@ -85,16 +86,11 @@ interface ActivityRepository {
             }
         }
 
-        private suspend fun handleWithResult(result: Task<Void>): DataResult<*> =
+        private suspend fun handle(result: Task<Void>): DataResult<*> =
             suspendCoroutine { continuation ->
                 result.addOnSuccessListener { continuation.resume(DataResult.Success(null)) }
                     .addOnFailureListener { continuation.resumeWithException(it) }
             }
-
-        private suspend fun handle(result: Task<Void>) = suspendCoroutine<Void> { continuation ->
-            result.addOnSuccessListener { continuation.resume(it) }
-                .addOnFailureListener { continuation.resumeWithException(it) }
-        }
 
         private val contactsReference: DatabaseReference by lazy {
             reference.child(NODE_USER).child(auth.uid).child(NODE_CONTACT)
@@ -108,13 +104,10 @@ interface ActivityRepository {
             reference.child(NODE_USER).child(auth.uid).child(CHILD_STATE)
         }
 
-
         private fun mapContact(id: String, phone: String, username: String) = mapOf<String, Any>(
             CHILD_ID to id,
             CHILD_PHONE to phone,
             CHILD_FULL_NAME to username
         )
-
-
     }
 }

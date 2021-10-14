@@ -12,27 +12,24 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialContainerTransform
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEnterCodeBinding
 import st.slex.messenger.ui.core.BaseAuthFragment
-import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.main.MainActivity
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 import st.slex.messenger.utilites.funs.start
+import kotlin.coroutines.suspendCoroutine
 
 @ExperimentalCoroutinesApi
 class EnterCodeFragment : BaseAuthFragment() {
 
     private var _binding: FragmentEnterCodeBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = checkNotNull(_binding)
+
+    private var _id: String? = null
+    private val id: String get() = checkNotNull(_id)
 
     private val viewModel: AuthViewModel by viewModels {
         viewModelFactory.get()
@@ -60,70 +57,67 @@ class EnterCodeFragment : BaseAuthFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args: EnterCodeFragmentArgs by navArgs()
-        val id = args.id
-        val editTextList = getEditTextList()
+        _id = args.id
         editTextList[0].requestFocus()
-        editTextList.foreachCodeList {
-            launchAuth(id, editTextList.getCodeFromList())
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            foreachCodeList(editTextList) { sendCode.start() }
         }
     }
 
-    private fun getEditTextList() = listOf(
-        binding.codeEditText1,
-        binding.codeEditText2,
-        binding.codeEditText3,
-        binding.codeEditText4,
-        binding.codeEditText5,
-        binding.codeEditText6
-    )
-
-    private inline fun List<EditText>.foreachCodeList(crossinline function: () -> Unit) {
-        for (number in this.indices) {
-            lifecycleScope.launch {
-                listenCode(this@foreachCodeList[number]).collect {
-                    if (number == this@foreachCodeList.size - 1) {
-                        function()
-                    } else {
-                        this@foreachCodeList[number + 1].requestFocus()
-                    }
-                    this.cancel()
-                }
-            }
+    private val sendCode by lazy {
+        viewLifecycleOwner.lifecycleScope.launch(
+            context = Dispatchers.IO,
+            start = CoroutineStart.LAZY
+        ) {
+            viewModel.sendCode(
+                id = id,
+                code = editTextList.getCodeFromList()
+            ).collect { collector(it) }
         }
     }
 
-    private suspend fun listenCode(editText: EditText): Flow<Nothing?> = callbackFlow {
+    private val editTextList: List<EditText> by lazy {
+        listOf(
+            binding.codeEditText1, binding.codeEditText2, binding.codeEditText3,
+            binding.codeEditText4, binding.codeEditText5, binding.codeEditText6
+        )
+    }
+
+    private suspend inline fun foreachCodeList(
+        list: List<EditText>,
+        crossinline function: () -> Unit
+    ) = list.indices.forEach {
+        listenCode(list[it]).also { _ ->
+            if (it == list.size - 1) function()
+            else list[it + 1].requestFocus()
+        }
+    }
+
+    private suspend fun listenCode(editText: EditText): Unit = suspendCoroutine { continuation ->
         editText.addTextChangedListener {
-            if (it?.length == 1) trySendBlocking(null)
-        }
-        awaitClose { }
-    }
-
-    private fun launchAuth(id: String, code: String) = requireActivity().lifecycleScope.launch {
-        viewModel.sendCode(id = id, code = code).collect {
-            it.collector
+            if (it?.length == 1) continuation.resumeWith(Result.success(Unit))
         }
     }
 
     private fun List<EditText>.getCodeFromList(): String =
         this.joinToString { it.text.toString() }.replace(", ", "")
 
-    private val UIResult<*>.collector: Unit
-        get() = when (this) {
-            is UIResult.Success -> {
+    private suspend fun collector(result: LoginUIResult) = withContext(Dispatchers.Main) {
+        when (result) {
+            is LoginUIResult.Success -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                 requireActivity().start(MainActivity())
             }
-            is UIResult.Failure -> {
+            is LoginUIResult.Failure -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
-                binding.root.showPrimarySnackBar(exception.toString())
+                binding.root.showPrimarySnackBar(result.exception.toString())
             }
-            is UIResult.Loading -> {
+            is LoginUIResult.Loading -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
             }
         }
-
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
