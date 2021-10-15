@@ -1,16 +1,16 @@
-package st.slex.messenger.data.contacts
+package st.slex.messenger.ui.contacts
 
-interface ContactsData {
+interface ContactsUI {
 
     fun id(): String
     fun phone(): String
     fun fullName(): String
 
     data class Base(
-        val id: String = "",
-        val phone: String = "",
-        val full_name: String = "",
-    ) : ContactsData {
+        private val id: String = "",
+        private val phone: String = "",
+        private val full_name: String = "",
+    ) : ContactsUI {
 
         override fun id(): String = id
         override fun phone(): String = phone

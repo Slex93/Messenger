@@ -16,6 +16,16 @@ interface ContactUIModel {
         card: MaterialCardView
     )
 
+    val getId: String
+
+    //fun copy(newUrl: String): ContactUIModel
+    fun copy(
+        id: String? = null,
+        phone: String? = null,
+        full_name: String? = null,
+        url: String? = null
+    ): ContactUIModel
+
     fun openChat(function: (CardView, String) -> Unit)
 
     data class Base(
@@ -24,6 +34,21 @@ interface ContactUIModel {
         val full_name: String = "",
         val url: String = ""
     ) : ContactUIModel {
+
+        override fun copy(
+            id: String?,
+            phone: String?,
+            full_name: String?,
+            url: String?
+        ): ContactUIModel = copy(
+            id = id ?: this.id,
+            phone = phone ?: this.phone,
+            full_name = full_name ?: this.full_name,
+            url = url ?: this.url
+        )
+
+        override val getId: String
+            get() = id
 
         private var _cardView: MaterialCardView? = null
         private val cardView: MaterialCardView get() = checkNotNull(_cardView)
@@ -39,7 +64,7 @@ interface ContactUIModel {
             val urlSet = if (url.isEmpty()) {
                 R.drawable.test_image
             } else url
-            card.transitionName = full_name
+            card.transitionName = id
             _cardView = card
             Glide.with(imageView).load(urlSet).into(imageView)
         }

@@ -12,11 +12,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.utilites.NODE_CONTACT
+import st.slex.messenger.utilites.NODE_USER
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 interface ContactsRepository {
-    suspend fun getContacts(): Flow<DataResult<List<FirebaseContactModel>>>
+
+    suspend fun getContacts(): Flow<DataResult<List<ContactsData>>>
 
     class Base @Inject constructor(
         private val reference: DatabaseReference,
@@ -24,22 +26,22 @@ interface ContactsRepository {
     ) : ContactsRepository {
 
         private val contactsReference: DatabaseReference by lazy {
-            reference.child(NODE_CONTACT).child(user.uid)
+            reference.child(NODE_USER).child(user.uid).child(NODE_CONTACT)
         }
 
-        override suspend fun getContacts(): Flow<DataResult<List<FirebaseContactModel>>> =
+        override suspend fun getContacts(): Flow<DataResult<List<ContactsData>>> =
             callbackFlow {
-                val listener = listener<FirebaseContactModel> { trySendBlocking(it) }
-                contactsReference.addValueEventListener(listener)
+                val listener = listener { trySendBlocking(it) }
+                contactsReference.addListenerForSingleValueEvent(listener)
                 awaitClose { contactsReference.removeEventListener(listener) }
             }
 
-        private inline fun <reified D> listener(
-            crossinline function: (DataResult<List<D>>) -> Unit
+        private inline fun listener(
+            crossinline function: (DataResult<List<ContactsData>>) -> Unit
         ): ValueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val result = snapshot.children.mapNotNull {
-                    it.getValue(D::class.java)
+                    it.getValue(ContactsData.Base::class.java)!!
                 }
                 function(DataResult.Success(result))
             }

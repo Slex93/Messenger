@@ -58,6 +58,7 @@ interface UserRepository {
         override suspend fun saveImage(uri: Uri): Flow<DataResult<*>> = callbackFlow {
             val referenceUser = databaseReference.child(NODE_USER).child(user.uid).child(CHILD_URL)
             val referenceStorage = storageReference.child(FOLDER_PROFILE_IMAGE).child(user.uid)
+            val task = referenceStorage.putFile(uri)
 
             val userListener = listener<Void>({
                 trySendBlocking(it)
@@ -77,9 +78,8 @@ interface UserRepository {
                 trySendBlocking(it)
             })
 
-            referenceStorage.putFile(uri).addOnCompleteListener(fileListener)
-
-            awaitClose { }
+            task.addOnCompleteListener(fileListener)
+            awaitClose { task.removeOnCompleteListener(fileListener) }
         }
 
         private inline fun <T> listener(

@@ -2,14 +2,14 @@ package st.slex.messenger.ui.contacts
 
 import android.os.Bundle
 import android.view.*
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.paging.PagingConfig
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.firebase.ui.database.SnapshotParser
-import com.firebase.ui.database.paging.DatabasePagingOptions
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
+import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
@@ -27,20 +27,24 @@ class ContactFragment : BaseFragment() {
     private var _binding: FragmentContactBinding? = null
     private val binding get() = checkNotNull(_binding)
 
+    private val parser: SnapshotParser<ContactUIModel> = SnapshotParser {
+        return@SnapshotParser it.getValue(ContactUIModel.Base::class.java)!!
+    }
+
+    private val viewModel: ContactViewModel by viewModels { viewModelFactory.get() }
+
     private val adapter: ContactAdapter by lazy {
         val query: Query = FirebaseDatabase
             .getInstance().reference
             .child(NODE_USER)
             .child(Firebase.auth.uid.toString())
             .child(NODE_CONTACT)
-        val config = PagingConfig(10, 10, false)
-        val options = DatabasePagingOptions.Builder<ContactUIModel>()
+
+        val options = FirebaseRecyclerOptions.Builder<ContactUIModel>()
             .setLifecycleOwner(viewLifecycleOwner)
-            .setQuery(query, config, SnapshotParser {
-                return@SnapshotParser it.getValue(ContactUIModel.Base::class.java)!!
-            })
+            .setQuery(query, parser)
             .build()
-        ContactAdapter(options, ItemClick())
+        ContactAdapter(options, ItemClick(), viewModel::getUser, viewLifecycleOwner.lifecycleScope)
     }
 
     override fun onCreateView(

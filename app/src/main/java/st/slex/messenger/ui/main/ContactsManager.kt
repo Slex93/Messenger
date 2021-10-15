@@ -11,7 +11,10 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import st.slex.messenger.data.contacts.FirebaseContactModel
 import st.slex.messenger.utilites.PERMISSION_REQUEST
 import javax.inject.Inject
@@ -41,7 +44,7 @@ interface ContactsManager {
                                 val phone = item.getString(item.getColumnIndexOrThrow(NUMBER))
                                 val setPhone = phone.replace(Regex("[\\s,-]"), "")
                                 val contactModel =
-                                    FirebaseContactModel(phone = setPhone, username = username)
+                                    FirebaseContactModel(phone = setPhone, full_name = username)
                                 list.add(contactModel)
                             }
                         }

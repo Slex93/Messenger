@@ -68,7 +68,7 @@ interface ActivityRepository {
                                         mapContact(
                                             id = id,
                                             phone = phone,
-                                            username = contact.username ?: ""
+                                            username = contact.full_name ?: ""
                                         )
                                     )
                                     this@withContext.launch {

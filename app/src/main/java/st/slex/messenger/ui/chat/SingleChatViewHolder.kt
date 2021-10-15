@@ -6,7 +6,7 @@ import st.slex.common.messenger.databinding.ItemRecyclerSingleChatBinding
 import st.slex.messenger.data.chat.MessageModel
 import st.slex.messenger.utilites.funs.convertToTime
 
-class MessagesViewHolder(
+class SingleChatViewHolder(
     private val binding: ItemRecyclerSingleChatBinding
 ) : RecyclerView.ViewHolder(binding.root) {
 

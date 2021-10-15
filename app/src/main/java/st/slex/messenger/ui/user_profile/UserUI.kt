@@ -30,6 +30,8 @@ interface UserUI {
 
     fun changeUsername(function: (CustomCardView, String) -> Unit)
 
+    val getUrl: String
+
     fun id(): String
     fun phone(): String
     fun username(): String
@@ -48,6 +50,7 @@ interface UserUI {
         private val state: String = "",
     ) : UserUI {
 
+        override val getUrl = url
         private var _usernameCard: CustomCardView? = null
         private val usernameCard get() = _usernameCard!!
         override fun mapMainScreen(

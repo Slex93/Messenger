@@ -12,10 +12,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.paging.LoadState
-import androidx.paging.PagingConfig
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.firebase.ui.database.paging.DatabasePagingOptions
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import com.google.firebase.auth.ktx.auth
@@ -47,19 +45,18 @@ class SingleChatFragment : BaseFragment() {
     private var _uid: String? = null
     private val uid: String get() = _uid ?: ""
 
-    private val adapter: MessagesAdapter by lazy {
+    private val adapter: SingleChatAdapter by lazy {
         val baseQuery: Query = FirebaseDatabase
             .getInstance()
             .reference
             .child(NODE_CHAT)
             .child(Firebase.auth.uid.toString())
             .child(uid)
-        val config = PagingConfig(10, 10, false)
-        val options = DatabasePagingOptions.Builder<MessageModel>()
+        val options = FirebaseRecyclerOptions.Builder<MessageModel>()
             .setLifecycleOwner(viewLifecycleOwner)
-            .setQuery(baseQuery, config, MessageModel::class.java)
+            .setQuery(baseQuery, MessageModel::class.java)
             .build()
-        MessagesAdapter(options, Firebase.auth.uid.toString())
+        SingleChatAdapter(options)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,20 +95,7 @@ class SingleChatFragment : BaseFragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.stackFromEnd = true
         binding.singleChatRecycler.layoutManager = layoutManager
-
         binding.singleChatRecycler.adapter = adapter
-
-        binding.singleChatRefreshLayout.setOnRefreshListener {
-            adapter.refresh()
-        }
-
-        adapter.addLoadStateListener {
-            binding.singleChatRefreshLayout.isRefreshing = when (it.refresh) {
-                is LoadState.Loading -> true
-                is LoadState.NotLoading -> false
-                is LoadState.Error -> false
-            }
-        }
     }
 
     private fun takeExtras() {
@@ -156,8 +140,7 @@ class SingleChatFragment : BaseFragment() {
                 snackBar.show()
             } else {
                 viewModel.sendMessage(message, this)
-                adapter.refresh()
-                binding.singleChatRecycler.scrollToPosition(adapter.itemCount - 1)
+                binding.singleChatRecycler.scrollToPosition(adapter.itemCount)
                 binding.singleChatRecyclerTextInput.editText?.setText("")
             }
         }
