@@ -1,7 +1,6 @@
 package st.slex.messenger.utilites.funs
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -11,10 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
-import st.slex.messenger.MessengerApplication
-import st.slex.messenger.di.component.AppComponent
 import java.text.SimpleDateFormat
 import java.util.*
 

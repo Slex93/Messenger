@@ -1,5 +1,6 @@
 package st.slex.messenger.ui.contacts
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,10 +20,18 @@ class ContactViewModel
 
     suspend fun getUser(uid: String): StateFlow<Resource<UserUI>> =
         userRepository.getUser(uid)
-            .flatMapLatest { flowOf(it.map(userMapper)) }
+            .flatMapLatest {
+                if (it is Resource.Success) Log.i("TAGNew", it.data.toString())
+                flow {
+                    val res = it.map(userMapper)
+                    if (res is Resource.Success) Log.i("TAG_UI", res.data.toString())
+                    emit(res)
+                }
+                //flowOf(it.map(userMapper))
+            }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.Lazily,
-                initialValue = Resource.Loading()
+                initialValue = Resource.Loading
             )
 }

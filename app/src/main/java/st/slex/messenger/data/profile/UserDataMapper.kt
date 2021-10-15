@@ -7,22 +7,20 @@ import javax.inject.Inject
 
 class UserDataMapper @Inject constructor() : Mapper.ToUI<UserData, Resource<UserUI>> {
 
-    override fun map(data: UserData?): Resource<UserUI> =
-        Resource.Success(data?.let {
-            with(it) {
-                UserUI.Base(
-                    id = getId,
-                    phone = getPhone,
-                    username = getUsername,
-                    url = getUrl,
-                    bio = getBio,
-                    full_name = getFullName,
-                    state = getState,
-                )
-            }
+    override fun map(data: UserData): Resource<UserUI> =
+        Resource.Success(with(data) {
+            UserUI.Base(
+                id = id(),
+                phone = phone(),
+                username = username(),
+                url = url(),
+                bio = bio(),
+                full_name = fullName(),
+                state = state(),
+            )
         })
 
     override fun map(exception: Exception): Resource<UserUI> = Resource.Failure(exception)
 
-    override fun map(data: Nothing?): Resource<UserUI> = Resource.Loading()
+    override fun map(): Resource<UserUI> = Resource.Loading
 }

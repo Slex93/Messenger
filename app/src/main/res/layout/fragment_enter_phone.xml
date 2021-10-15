@@ -16,7 +16,7 @@
         android:hint="@string/hint_phone_number"
         app:startIconDrawable="@drawable/ic_baseline_call_24">
 
-        <st.slex.library.PhoneTextInputEditText
+        <st.slex.phoneedittext.PhoneTextInputEditText
             android:id="@+id/phoneEditText"
             style="@style/TextAppearance.MaterialComponents.Headline5"
             android:layout_width="match_parent"

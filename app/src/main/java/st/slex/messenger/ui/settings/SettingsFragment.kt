@@ -46,7 +46,7 @@ class SettingsFragment : BaseFragment() {
         }
     }
 
-    private val Resource<Nothing>.collector
+    private val Resource<Nothing?>.collector
         get() = when (this) {
             is Resource.Success -> {
                 requireActivity().startActivity(Intent(requireContext(), AuthActivity::class.java))

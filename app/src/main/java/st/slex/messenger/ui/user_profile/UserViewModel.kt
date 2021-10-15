@@ -23,20 +23,20 @@ class UserViewModel
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.Lazily,
-                initialValue = Resource.Loading()
+                initialValue = Resource.Loading
             )
 
-    suspend fun saveUsername(username: String): StateFlow<Resource<Nothing>> =
+    suspend fun saveUsername(username: String): StateFlow<Resource<Nothing?>> =
         repository.saveUsername(username).stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = Resource.Loading()
+            initialValue = Resource.Loading
         )
 
-    suspend fun saveImage(uri: Uri): StateFlow<Resource<Nothing>> =
+    suspend fun saveImage(uri: Uri): StateFlow<Resource<Nothing?>> =
         repository.saveImage(uri).stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = Resource.Loading()
+            initialValue = Resource.Loading
         )
 }

@@ -26,7 +26,7 @@ class ChatsViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.Lazily,
-                initialValue = Resource.Loading()
+                initialValue = Resource.Loading
             )
 
     suspend fun getChats(page: Int): StateFlow<Resource<List<ChatsUI>>> =
@@ -35,7 +35,7 @@ class ChatsViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.Lazily,
-                initialValue = Resource.Loading()
+                initialValue = Resource.Loading
             )
 }
 

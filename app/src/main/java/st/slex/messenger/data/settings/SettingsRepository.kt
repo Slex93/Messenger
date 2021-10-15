@@ -15,14 +15,14 @@ import st.slex.messenger.utilites.NODE_USER
 import javax.inject.Inject
 
 interface SettingsRepository {
-    suspend fun signOut(state: String): Flow<Resource<Nothing>>
+    suspend fun signOut(state: String): Flow<Resource<Nothing?>>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
         private val databaseReference: DatabaseReference
     ) : SettingsRepository {
 
-        override suspend fun signOut(state: String): Flow<Resource<Nothing>> = callbackFlow {
+        override suspend fun signOut(state: String): Flow<Resource<Nothing?>> = callbackFlow {
             val reference = databaseReference
                 .child(NODE_USER)
                 .child(Firebase.auth.uid.toString())
@@ -31,7 +31,7 @@ interface SettingsRepository {
             val listener = OnCompleteListener<Void> {
                 if (it.isSuccessful) {
                     Firebase.auth.signOut()
-                    trySendBlocking(Resource.Success())
+                    trySendBlocking(Resource.Success(null))
                 } else trySendBlocking(Resource.Failure(it.exception!!))
             }
             reference.addOnCompleteListener(listener)

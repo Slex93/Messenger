@@ -121,7 +121,7 @@ class UserProfileFragment : BaseFragment() {
         return result
     }
 
-    private val Resource<Nothing>.collector: () -> Unit
+    private val Resource<Nothing?>.collector: () -> Unit
         get() = {
             when (this) {
                 is Resource.Success -> {
@@ -139,7 +139,7 @@ class UserProfileFragment : BaseFragment() {
     private fun Resource<UserUI>.collector() {
         when (this) {
             is Resource.Success -> {
-                data?.mapProfile(
+                data.mapProfile(
                     glide = glide,
                     phoneNumber = binding.container.phoneTextView,
                     userName = binding.container.usernameTextView,
@@ -151,7 +151,7 @@ class UserProfileFragment : BaseFragment() {
                 )
 
                 binding.container.usernameCardView.setOnClickListener {
-                    data?.changeUsername { card, username ->
+                    data.changeUsername { card, username ->
                         val directions = UserProfileFragmentDirections
                             .actionNavUserProfileToEditUsernameFragment(username)
                         val extras = FragmentNavigatorExtras(card to card.transitionName)

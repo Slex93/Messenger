@@ -26,7 +26,7 @@ class SingleChatViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.Lazily,
-                initialValue = Resource.Loading()
+                initialValue = Resource.Loading
             )
 
     private suspend fun currentUser(): StateFlow<Resource<UserUI>> =
@@ -35,16 +35,13 @@ class SingleChatViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.Lazily,
-                initialValue = Resource.Loading()
+                initialValue = Resource.Loading
             )
 
     fun sendMessage(message: String, user: UserUI) = viewModelScope.launch(Dispatchers.IO) {
         currentUser().collect {
             if (it is Resource.Success)
-                it.data?.let { current ->
-                    repository.sendMessage(message = message, user = user, current).collect()
-                }
+                repository.sendMessage(message = message, user = user, it.data).collect()
         }
     }
-
 }

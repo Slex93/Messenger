@@ -24,7 +24,7 @@ import kotlin.coroutines.suspendCoroutine
 
 interface ActivityRepository {
     suspend fun changeState(state: String)
-    suspend fun updateContacts(list: List<ContactsData>): Flow<Resource<Nothing>>
+    suspend fun updateContacts(list: List<ContactsData>): Flow<Resource<Nothing?>>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -38,19 +38,18 @@ interface ActivityRepository {
                 .addOnFailureListener { continuation.resumeWithException(it) }
         }
 
-        override suspend fun updateContacts(
-            list: List<ContactsData>
-        ): Flow<Resource<Nothing>> = callbackFlow {
-            val phoneListener = listener(list) {
-                trySendBlocking(it)
+        override suspend fun updateContacts(list: List<ContactsData>): Flow<Resource<Nothing?>> =
+            callbackFlow {
+                val phoneListener = listener(list) {
+                    trySendBlocking(it)
+                }
+                phonesNumberReference.addValueEventListener(phoneListener)
+                awaitClose { phonesNumberReference.removeEventListener(phoneListener) }
             }
-            phonesNumberReference.addValueEventListener(phoneListener)
-            awaitClose { phonesNumberReference.removeEventListener(phoneListener) }
-        }
 
         private suspend inline fun listener(
             list: List<ContactsData>,
-            crossinline function: (Resource<Nothing>) -> Unit
+            crossinline function: (Resource<Nothing?>) -> Unit
         ) = withContext(Dispatchers.IO) {
             return@withContext object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -88,9 +87,9 @@ interface ActivityRepository {
             }
         }
 
-        private suspend fun handle(result: Task<Void>): Resource<Nothing> =
+        private suspend fun handle(result: Task<Void>): Resource<Nothing?> =
             suspendCoroutine { continuation ->
-                result.addOnSuccessListener { continuation.resume(Resource.Success()) }
+                result.addOnSuccessListener { continuation.resume(Resource.Success(null)) }
                     .addOnFailureListener { continuation.resumeWithException(it) }
             }
 

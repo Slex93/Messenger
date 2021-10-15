@@ -15,10 +15,10 @@ class SettingsViewModel @Inject constructor(
     private val repository: SettingsRepository
 ) : ViewModel() {
 
-    suspend fun signOut(state: String): StateFlow<Resource<Nothing>> =
+    suspend fun signOut(state: String): StateFlow<Resource<Nothing?>> =
         repository.signOut(state).stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = Resource.Loading()
+            initialValue = Resource.Loading
         )
 }

@@ -84,7 +84,7 @@ class ChatsFragment : BaseFragment() {
     private fun Resource<List<ChatsUI>>.collect() {
         when (this) {
             is Resource.Success -> {
-                adapter.addChat(checkNotNull(data))
+                adapter.addChat(data)
             }
             is Resource.Failure -> {
                 Log.e(
@@ -104,8 +104,7 @@ class ChatsFragment : BaseFragment() {
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
         when (this) {
             is Resource.Success -> {
-
-                data?.mapMainScreen(
+                data.mapMainScreen(
                     phoneNumber = headerBinding.phoneTextView,
                     userName = headerBinding.usernameTextView,
                     avatar = headerBinding.avatarImageView

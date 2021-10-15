@@ -30,13 +30,13 @@ interface UserUI {
 
     fun changeUsername(function: (CustomCardView, String) -> Unit)
 
-    val getId: String
-    val getPhone: String
-    val getUsername: String
-    val getUrl: String
-    val getBio: String
-    val getFullName: String
-    val getState: String
+    fun id(): String
+    fun phone(): String
+    fun username(): String
+    fun url(): String
+    fun bio(): String
+    fun fullName(): String
+    fun state(): String
 
     data class Base(
         private val id: String = "",
@@ -88,12 +88,12 @@ interface UserUI {
         override fun changeUsername(function: (CustomCardView, String) -> Unit) =
             function(usernameCard, username)
 
-        override val getId: String = id
-        override val getPhone: String = phone
-        override val getUsername: String = username
-        override val getUrl: String = url
-        override val getBio: String = bio
-        override val getFullName: String = full_name
-        override val getState: String = state
+        override fun id(): String = id
+        override fun phone(): String = phone
+        override fun username(): String = username
+        override fun url(): String = url
+        override fun bio(): String = bio
+        override fun fullName(): String = full_name
+        override fun state(): String = state
     }
 }

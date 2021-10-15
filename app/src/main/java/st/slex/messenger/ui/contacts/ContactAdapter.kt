@@ -31,16 +31,7 @@ class ContactAdapter(
         lifecycleScope.launch(Dispatchers.IO) {
             kSuspendFunction.invoke(model.getId).collectLatest { result ->
                 launch(Dispatchers.Main) {
-                    when (result) {
-                        is Resource.Success -> holder.bind(model.copy(url = result.data?.getUrl))
-
-                        is Resource.Failure -> {
-
-                        }
-                        is Resource.Loading -> {
-
-                        }
-                    }
+                    if (result is Resource.Success) holder.bind(model.copy(url = result.data.url()))
                 }
             }
         }

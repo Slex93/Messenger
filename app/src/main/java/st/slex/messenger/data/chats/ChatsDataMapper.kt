@@ -8,8 +8,8 @@ import javax.inject.Inject
 class ChatsDataMapper @Inject constructor() :
     Mapper.ToUI<List<ChatsData>, Resource<List<ChatsUI>>> {
 
-    override fun map(data: List<ChatsData>?): Resource<List<ChatsUI>> =
-        Resource.Success(data?.map {
+    override fun map(data: List<ChatsData>): Resource<List<ChatsUI>> =
+        Resource.Success(data.map {
             ChatsUI.Base(
                 id = it.chatId(),
                 username = it.username(),
@@ -21,5 +21,5 @@ class ChatsDataMapper @Inject constructor() :
 
     override fun map(exception: Exception): Resource<List<ChatsUI>> = Resource.Failure(exception)
 
-    override fun map(data: Nothing?): Resource<List<ChatsUI>> = Resource.Loading()
+    override fun map(): Resource<List<ChatsUI>> = Resource.Loading
 }

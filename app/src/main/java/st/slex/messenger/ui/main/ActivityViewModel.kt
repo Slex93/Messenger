@@ -29,7 +29,7 @@ class ActivityViewModel @Inject constructor(
     private suspend fun getContacts(): Flow<List<ContactsUI>> =
         contactsManager.getContacts()
 
-    private suspend fun updateContacts(list: List<ContactsUI>): StateFlow<Resource<Nothing>> =
+    private suspend fun updateContacts(list: List<ContactsUI>): StateFlow<Resource<Nothing?>> =
         repository.updateContacts(mapper.map(list))
             .onCompletion {
                 contactsJob.cancelChildren()
@@ -38,7 +38,7 @@ class ActivityViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.Lazily,
-                initialValue = Resource.Loading()
+                initialValue = Resource.Loading
             )
 
     fun changeState(state: String) = viewModelScope.launch(Dispatchers.IO) {

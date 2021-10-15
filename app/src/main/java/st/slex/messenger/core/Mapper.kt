@@ -7,10 +7,8 @@ interface Mapper {
     }
 
     interface ToUI<D, U> : Mapper {
-        fun map(data: D?): U
+        fun map(data: D): U
         fun map(exception: Exception): U
-        fun map(data: Nothing? = null): U
+        fun map(): U
     }
-
-    class Empty : Mapper
 }

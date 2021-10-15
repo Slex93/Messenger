@@ -1,13 +1,10 @@
-package st.slex.library
+package st.slex.phoneedittext
 
 import android.content.Context
 import android.telephony.TelephonyManager
 import android.text.InputType
 import android.util.AttributeSet
 import com.google.android.material.textfield.TextInputEditText
-import st.slex.phoneedittext.InternationalPhoneNumberFormattingTextWatcher
-import st.slex.phoneedittext.PhoneNumberUtilInstanceProvider
-import st.slex.phoneedittext.R
 import java.util.*
 
 open class PhoneTextInputEditText : TextInputEditText {

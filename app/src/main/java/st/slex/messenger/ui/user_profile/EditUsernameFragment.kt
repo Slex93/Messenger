@@ -59,7 +59,7 @@ class EditUsernameFragment : BaseFragment() {
         }
     }
 
-    private fun Resource<Nothing>.collector() {
+    private fun Resource<Nothing?>.collector() {
         when (this) {
             is Resource.Success -> {
                 binding.editUnProgress.visibility = View.GONE
@@ -80,5 +80,4 @@ class EditUsernameFragment : BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

@@ -2,7 +2,6 @@ package st.slex.phoneedittext
 
 import android.text.Editable
 import android.text.TextWatcher
-import st.slex.library.PhoneTextInputEditText
 
 object PhoneHelper {
     const val EMOJI_COLOR = 0xff000000.toInt()

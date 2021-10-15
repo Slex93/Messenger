@@ -1,6 +1,7 @@
 package st.slex.messenger.data.profile
 
 import android.net.Uri
+import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -20,8 +21,8 @@ import javax.inject.Inject
 
 interface UserRepository {
     suspend fun getUser(uid: String): Flow<Resource<UserData>>
-    suspend fun saveUsername(username: String): Flow<Resource<Nothing>>
-    suspend fun saveImage(uri: Uri): Flow<Resource<Nothing>>
+    suspend fun saveUsername(username: String): Flow<Resource<Nothing?>>
+    suspend fun saveImage(uri: Uri): Flow<Resource<Nothing?>>
     suspend fun getCurrentUser(): Flow<Resource<UserData>>
 
     @ExperimentalCoroutinesApi
@@ -38,11 +39,21 @@ interface UserRepository {
                 .child(NODE_USER)
                 .child(uid)
             val listener = getUserEventListener {
+                if (it is Resource.Success) Log.i("TAG", it.data.toString())
                 trySendBlocking(it)
             }
             reference.addListenerForSingleValueEvent(listener)
             awaitClose { reference.removeEventListener(listener) }
         }
+
+        override suspend fun saveUsername(username: String): Flow<Resource<Nothing?>> =
+            callbackFlow {
+                val listener = saveUserListener(username) {
+                    trySendBlocking(it)
+                }
+                userReference.addValueEventListener(listener)
+                awaitClose { userReference.removeEventListener(listener) }
+            }
 
         private inline fun getUserEventListener(
             crossinline function: (Resource<UserData>) -> Unit
@@ -55,7 +66,7 @@ interface UserRepository {
                 function(Resource.Failure(error.toException()))
         }
 
-        override suspend fun saveImage(uri: Uri): Flow<Resource<Nothing>> = callbackFlow {
+        override suspend fun saveImage(uri: Uri): Flow<Resource<Nothing?>> = callbackFlow {
             val referenceUser = databaseReference.child(NODE_USER).child(user.uid).child(CHILD_URL)
             val referenceStorage = storageReference.child(FOLDER_PROFILE_IMAGE).child(user.uid)
             val task = referenceStorage.putFile(uri)
@@ -84,7 +95,7 @@ interface UserRepository {
 
         private inline fun <T> listener(
             crossinline success: (T) -> Unit,
-            crossinline failure: (Resource<Nothing>) -> Unit
+            crossinline failure: (Resource<Nothing?>) -> Unit
         ) = OnCompleteListener<T> { p0 ->
             if (p0.isSuccessful) {
                 success(p0.result!!)
@@ -93,57 +104,51 @@ interface UserRepository {
             }
         }
 
-        override suspend fun saveUsername(username: String): Flow<Resource<Nothing>> =
-            callbackFlow {
-                val reference = databaseReference
-                    .child(NODE_USERNAME)
-                val listener = object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val listOfUsernames = snapshot.children.filter {
-                            it.key != user.uid
-                        }.map {
-                            it.value
-                        }
-                        if (listOfUsernames.contains(username)) {
-                            trySendBlocking(Resource.Failure(Exception("Take another username")))
-                        } else {
-                            val taskUser = databaseReference
-                                .child(NODE_USER)
-                                .child(user.uid)
-                                .child(CHILD_USERNAME)
-                                .setValue(username)
-                            val taskUsername = databaseReference
-                                .child(NODE_USERNAME)
-                                .child(user.uid)
-                                .setValue(username)
+        private val userReference by lazy { databaseReference.child(NODE_USERNAME) }
 
-                            taskUser.addOnCompleteListener { responseUser ->
-                                if (responseUser.isSuccessful) {
-                                    taskUsername.addOnCompleteListener { responseUsername ->
-                                        if (responseUsername.isSuccessful) {
-                                            trySendBlocking(Resource.Success())
-                                        } else {
-                                            trySendBlocking(Resource.Failure(responseUsername.exception!!))
-                                        }
-                                    }
+        private inline fun saveUserListener(
+            username: String,
+            crossinline function: (Resource<Nothing?>) -> Unit
+        ) = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val listOfUsernames = snapshot.children.filter {
+                    it.key != user.uid
+                }.map {
+                    it.value
+                }
+                if (listOfUsernames.contains(username)) {
+                    function(Resource.Failure(Exception("Take another username")))
+                } else {
+                    val taskUser = databaseReference
+                        .child(NODE_USER)
+                        .child(user.uid)
+                        .child(CHILD_USERNAME)
+                        .setValue(username)
+                    val taskUsername = databaseReference
+                        .child(NODE_USERNAME)
+                        .child(user.uid)
+                        .setValue(username)
+
+                    taskUser.addOnCompleteListener { responseUser ->
+                        if (responseUser.isSuccessful) {
+                            taskUsername.addOnCompleteListener { responseUsername ->
+                                if (responseUsername.isSuccessful) {
+                                    function(Resource.Success(null))
                                 } else {
-                                    trySendBlocking(Resource.Failure(responseUser.exception!!))
+                                    function(Resource.Failure(responseUsername.exception!!))
                                 }
                             }
+                        } else {
+                            function(Resource.Failure(responseUser.exception!!))
                         }
                     }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        trySendBlocking(Resource.Failure(error.toException()))
-                    }
-
                 }
-
-                reference.addValueEventListener(listener)
-
-                awaitClose { reference.removeEventListener(listener) }
             }
 
+            override fun onCancelled(error: DatabaseError) {
+                function(Resource.Failure(error.toException()))
+            }
+        }
 
     }
 }

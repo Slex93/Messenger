@@ -114,11 +114,11 @@ class SingleChatFragment : BaseFragment() {
     private fun Resource<UserUI>.collect() {
         when (this) {
             is Resource.Success -> {
-                data?.mapChat(
+                data.mapChat(
                     userName = binding.toolbarInfo.usernameTextView,
                     stateText = binding.toolbarInfo.stateTextView
                 )
-                binding.singleChatRecyclerButton.setOnClickListener(data?.sendClicker)
+                binding.singleChatRecyclerButton.setOnClickListener(data.sendClicker)
             }
             is Resource.Failure -> {
                 Log.e("TAG", exception.message, exception.cause)

@@ -18,7 +18,7 @@ interface SingleChatRepository {
         message: String,
         user: UserUI,
         currentUser: UserUI
-    ): Flow<Resource<Nothing>>
+    ): Flow<Resource<Nothing?>>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -30,9 +30,9 @@ interface SingleChatRepository {
             message: String,
             user: UserUI,
             currentUser: UserUI
-        ): Flow<Resource<Nothing>> = callbackFlow {
-            val refDialogUser = "$NODE_CHAT/${auth.uid}/${user.getId}"
-            val refDialogReceivingUser = "$NODE_CHAT/${user.getId}/${auth.uid}"
+        ): Flow<Resource<Nothing?>> = callbackFlow {
+            val refDialogUser = "$NODE_CHAT/${auth.uid}/${user.id()}"
+            val refDialogReceivingUser = "$NODE_CHAT/${user.id()}/${auth.uid}"
             val messageKey = databaseReference.child(refDialogUser).push().key
             val mapMessage = hashMapOf<String, Any>()
             mapMessage[CHILD_FROM] = auth.uid
@@ -46,7 +46,7 @@ interface SingleChatRepository {
                 .updateChildren(mapDialog)
 
             val taskUser = databaseReference.child(NODE_CHAT_LIST).child(auth.uid)
-                .child(user.getId).updateChildren(
+                .child(user.id()).updateChildren(
                     getMapUser(
                         user,
                         currentUser,
@@ -55,7 +55,7 @@ interface SingleChatRepository {
                     )
                 )
 
-            val taskReceiver = databaseReference.child(NODE_CHAT_LIST).child(user.getId)
+            val taskReceiver = databaseReference.child(NODE_CHAT_LIST).child(user.id())
                 .child(auth.uid).updateChildren(
                     getMapReceiver(
                         currentUser,
@@ -70,7 +70,7 @@ interface SingleChatRepository {
                         if (it.isSuccessful) {
                             taskReceiver.addOnCompleteListener { rTask ->
                                 if (rTask.isSuccessful) {
-                                    trySendBlocking(Resource.Success())
+                                    trySendBlocking(Resource.Success(null))
                                 } else {
                                     trySendBlocking(Resource.Failure(rTask.exception!!))
                                 }
@@ -94,13 +94,13 @@ interface SingleChatRepository {
             messageKey: String
         ): Map<String, Any> = mapOf(
             CHILD_MESSAGE_KEY to messageKey,
-            CHILD_FROM to currentUser.getId,
+            CHILD_FROM to currentUser.id(),
             CHILD_TEXT to message,
             CHILD_TIMESTAMP to System.currentTimeMillis(),
-            CHILD_FULL_NAME to user.getFullName,
-            CHILD_USERNAME to user.getUsername,
-            CHILD_URL to user.getUrl,
-            CHILD_ID to user.getId
+            CHILD_FULL_NAME to user.fullName(),
+            CHILD_USERNAME to user.username(),
+            CHILD_URL to user.url(),
+            CHILD_ID to user.id()
         )
 
         private fun getMapReceiver(
@@ -109,13 +109,12 @@ interface SingleChatRepository {
             messageKey: String
         ): Map<String, Any> = mapOf(
             CHILD_MESSAGE_KEY to messageKey,
-            CHILD_FROM to currentUser.getId,
+            CHILD_FROM to currentUser.id(),
             CHILD_TEXT to message,
             CHILD_TIMESTAMP to System.currentTimeMillis(),
-            CHILD_FULL_NAME to currentUser.getFullName,
-            CHILD_USERNAME to currentUser.getUsername,
-            CHILD_URL to currentUser.getUrl
+            CHILD_FULL_NAME to currentUser.fullName(),
+            CHILD_USERNAME to currentUser.username(),
+            CHILD_URL to currentUser.url()
         )
-
     }
 }
