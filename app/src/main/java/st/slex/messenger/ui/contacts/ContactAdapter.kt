@@ -8,10 +8,9 @@ import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
 import st.slex.messenger.ui.core.ClickListener
 
 class ContactAdapter(
-    options: DatabasePagingOptions<ContactsUI.Base>,
-    private val clickListener: ClickListener<ContactsUI>
-) : FirebaseRecyclerPagingAdapter<ContactsUI.Base, ContactViewHolder>(options) {
-
+    options: DatabasePagingOptions<ContactUIModel>,
+    private val clickListener: ClickListener<ContactUIModel>
+) : FirebaseRecyclerPagingAdapter<ContactUIModel, ContactViewHolder>(options) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemRecyclerContactBinding.inflate(inflater, parent, false)
@@ -19,10 +18,10 @@ class ContactAdapter(
     }
 
     override fun onBindViewHolder(
-        viewHolder: ContactViewHolder,
+        holder: ContactViewHolder,
         position: Int,
-        model: ContactsUI.Base
+        model: ContactUIModel
     ) {
-        viewHolder.bind(model)
+        holder.bind(model)
     }
 }

@@ -16,40 +16,31 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 interface ContactsRepository {
-    suspend fun getContacts(): Flow<DataResult<List<ContactsData>>>
+    suspend fun getContacts(): Flow<DataResult<List<FirebaseContactModel>>>
 
     class Base @Inject constructor(
-        private val databaseReference: DatabaseReference,
+        private val reference: DatabaseReference,
         private val user: FirebaseUser
     ) : ContactsRepository {
 
-        override suspend fun getContacts(): Flow<DataResult<List<ContactsData>>> = callbackFlow {
-            val reference = databaseReference
-                .child(NODE_CONTACT)
-                .child(user.uid)
-            val listener = object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val result = snapshot.children.mapNotNull {
-                        it.getValue(ContactsData.Base::class.java)
-                    }
-                    trySendBlocking(DataResult.Success(result))
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    trySendBlocking(DataResult.Failure(error.toException()))
-                }
-
-            }
-            reference.addValueEventListener(listener)
-            awaitClose { reference.removeEventListener(listener) }
+        private val contactsReference: DatabaseReference by lazy {
+            reference.child(NODE_CONTACT).child(user.uid)
         }
 
-        //TODO
-        inline fun <reified D> listener(
-            crossinline function: (DataResult<D>) -> Unit
+        override suspend fun getContacts(): Flow<DataResult<List<FirebaseContactModel>>> =
+            callbackFlow {
+                val listener = listener<FirebaseContactModel> { trySendBlocking(it) }
+                contactsReference.addValueEventListener(listener)
+                awaitClose { contactsReference.removeEventListener(listener) }
+            }
+
+        private inline fun <reified D> listener(
+            crossinline function: (DataResult<List<D>>) -> Unit
         ): ValueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val result = snapshot.getValue(D::class.java)!!
+                val result = snapshot.children.mapNotNull {
+                    it.getValue(D::class.java)
+                }
                 function(DataResult.Success(result))
             }
 

@@ -10,7 +10,7 @@ import st.slex.messenger.data.contacts.ContactsDataMapper
 import st.slex.messenger.data.profile.UserData
 import st.slex.messenger.data.profile.UserDataMapper
 import st.slex.messenger.ui.chats.ChatsUI
-import st.slex.messenger.ui.contacts.ContactsUI
+import st.slex.messenger.ui.contacts.ContactUIModel
 import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.user_profile.UserUI
 
@@ -22,7 +22,7 @@ class MapperModule {
         ChatsDataMapper()
 
     @Provides
-    fun providesContactsDataMapper(): Mapper.DataToUi<List<ContactsData>, UIResult<List<ContactsUI>>> =
+    fun providesContactsDataMapper(): Mapper.DataToUi<List<ContactsData>, UIResult<List<ContactUIModel>>> =
         ContactsDataMapper()
 
     @Provides

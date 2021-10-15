@@ -12,7 +12,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.core.model.firebase.FirebaseContactModel
+import st.slex.messenger.data.contacts.FirebaseContactModel
 import st.slex.messenger.utilites.PERMISSION_REQUEST
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException

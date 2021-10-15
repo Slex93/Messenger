@@ -1,4 +1,4 @@
-package st.slex.messenger.core.model.firebase
+package st.slex.messenger.data.contacts
 
 data class FirebaseContactModel(
     val id: String? = "",

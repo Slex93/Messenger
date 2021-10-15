@@ -5,6 +5,7 @@ import android.view.*
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagingConfig
+import com.firebase.ui.database.SnapshotParser
 import com.firebase.ui.database.paging.DatabasePagingOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
@@ -16,30 +17,30 @@ import st.slex.common.messenger.databinding.FragmentContactBinding
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.ClickListener
 import st.slex.messenger.utilites.NODE_CONTACT
+import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.funs.setSupportActionBar
+
 
 @ExperimentalCoroutinesApi
 class ContactFragment : BaseFragment() {
 
     private var _binding: FragmentContactBinding? = null
-    private val binding get() = _binding!!
-
-    private val baseQuery: Query by lazy {
-        FirebaseDatabase.getInstance().reference.child(NODE_CONTACT)
-            .child(Firebase.auth.uid.toString())
-    }
-
-    private val config: PagingConfig by lazy { PagingConfig(10, 10, false) }
-
-    private val options: DatabasePagingOptions<ContactsUI.Base> by lazy {
-        DatabasePagingOptions.Builder<ContactsUI.Base>()
-            .setLifecycleOwner(viewLifecycleOwner)
-            .setQuery(baseQuery, config, ContactsUI.Base::class.java)
-            .build()
-    }
+    private val binding get() = checkNotNull(_binding)
 
     private val adapter: ContactAdapter by lazy {
-        ContactAdapter(options, OpenChat())
+        val query: Query = FirebaseDatabase
+            .getInstance().reference
+            .child(NODE_USER)
+            .child(Firebase.auth.uid.toString())
+            .child(NODE_CONTACT)
+        val config = PagingConfig(10, 10, false)
+        val options = DatabasePagingOptions.Builder<ContactUIModel>()
+            .setLifecycleOwner(viewLifecycleOwner)
+            .setQuery(query, config, SnapshotParser {
+                return@SnapshotParser it.getValue(ContactUIModel.Base::class.java)!!
+            })
+            .build()
+        ContactAdapter(options, ItemClick())
     }
 
     override fun onCreateView(
@@ -56,13 +57,12 @@ class ContactFragment : BaseFragment() {
         setHasOptionsMenu(true)
         binding.fragmentContactToolbar.title = getString(R.string.title_contacts)
         setSupportActionBar(binding.fragmentContactToolbar)
-        binding.fragmentContactRecycler.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
-
-    private inner class OpenChat : ClickListener<ContactsUI> {
-        override fun click(item: ContactsUI) {
-            item.startChat { card, url ->
+    private inner class ItemClick : ClickListener<ContactUIModel> {
+        override fun click(item: ContactUIModel) {
+            item.openChat { card, url ->
                 val directions = ContactFragmentDirections.actionNavContactToNavSingleChat(
                     card.transitionName,
                     url

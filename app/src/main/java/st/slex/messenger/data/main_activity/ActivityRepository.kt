@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import st.slex.messenger.core.model.firebase.FirebaseContactModel
+import st.slex.messenger.data.contacts.FirebaseContactModel
 import st.slex.messenger.data.core.DataResult
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
