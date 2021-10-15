@@ -12,9 +12,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSettingsBinding
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.auth.AuthActivity
 import st.slex.messenger.ui.core.BaseFragment
-import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
 @ExperimentalCoroutinesApi
@@ -46,15 +46,15 @@ class SettingsFragment : BaseFragment() {
         }
     }
 
-    private val UIResult<*>.collector
+    private val Resource<Nothing>.collector
         get() = when (this) {
-            is UIResult.Success -> {
+            is Resource.Success -> {
                 requireActivity().startActivity(Intent(requireContext(), AuthActivity::class.java))
                 requireActivity().finish()
             }
-            is UIResult.Failure -> {
+            is Resource.Failure -> {
             } //TODO
-            is UIResult.Loading -> {
+            is Resource.Loading -> {
             } //TODO
         }
 

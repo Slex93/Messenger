@@ -9,7 +9,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
         ManagersModule::class,
         MapperModule::class,
         RepositoryModule::class,
-        ResponseModule::class,
         ViewModelModule::class
     ]
 )

@@ -4,50 +4,39 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.core.Mapper
-import st.slex.messenger.data.core.DataResult
-import st.slex.messenger.data.profile.UserData
+import st.slex.messenger.core.Resource
+import st.slex.messenger.data.profile.UserDataMapper
 import st.slex.messenger.data.profile.UserRepository
-import st.slex.messenger.ui.core.UIResult
-import st.slex.messenger.ui.core.VoidUIResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class UserViewModel
 @Inject constructor(
     private val repository: UserRepository,
-    private val mapper: Mapper.DataToUi<UserData, UIResult<UserUI>>,
-    private val response: VoidUIResponse
+    private val mapper: UserDataMapper,
 ) : ViewModel() {
 
-    suspend fun currentUser(): StateFlow<UIResult<UserUI>> =
-        repository.getCurrentUser().mapIt().stateIn(
+    suspend fun currentUser(): StateFlow<Resource<UserUI>> =
+        repository.getCurrentUser()
+            .flatMapLatest { flowOf(it.map(mapper)) }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Lazily,
+                initialValue = Resource.Loading()
+            )
+
+    suspend fun saveUsername(username: String): StateFlow<Resource<Nothing>> =
+        repository.saveUsername(username).stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = UIResult.Loading
+            initialValue = Resource.Loading()
         )
 
-    suspend fun saveUsername(username: String): StateFlow<UIResult<*>> =
-        response.create(repository.saveUsername(username)).stateIn(
+    suspend fun saveImage(uri: Uri): StateFlow<Resource<Nothing>> =
+        repository.saveImage(uri).stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = UIResult.Loading
+            initialValue = Resource.Loading()
         )
-
-    suspend fun saveImage(uri: Uri): StateFlow<UIResult<*>> =
-        response.create(repository.saveImage(uri)).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Lazily,
-            initialValue = UIResult.Loading
-        )
-
-    private suspend fun Flow<DataResult<UserData>>.mapIt(): Flow<UIResult<UserUI>> = callbackFlow {
-        this@mapIt.collect {
-            trySendBlocking(it.map(mapper))
-        }
-        awaitClose { }
-    }
 }

@@ -1,21 +1,24 @@
 package st.slex.messenger.data.contacts
 
 import st.slex.messenger.core.Mapper
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.contacts.ContactsUI
-import st.slex.messenger.ui.core.UIResult
 
-class ContactsDataMapper : Mapper.DataToUi<List<ContactsData>, UIResult<List<ContactsUI>>> {
+class ContactsDataMapper : Mapper.ToUI<List<ContactsData>, Resource<List<ContactsUI>>> {
 
-    override fun map(data: List<ContactsData>): UIResult<List<ContactsUI>> =
-        UIResult.Success(data.map {
+    override fun map(data: List<ContactsData>?): Resource<List<ContactsUI>> =
+        Resource.Success(data?.map {
             ContactsUI.Base(
-                id = it.id(),
-                full_name = it.fullName(),
-                phone = it.phone()
+                id = it.getId,
+                full_name = it.getFullName,
+                phone = it.getPhone
             )
         })
 
-    override fun map(exception: Exception): UIResult<List<ContactsUI>> =
-        UIResult.Failure(exception = exception)
+    override fun map(exception: Exception): Resource<List<ContactsUI>> =
+        Resource.Failure(exception = exception)
+
+    override fun map(data: Nothing?): Resource<List<ContactsUI>> =
+        Resource.Loading(null)
 
 }

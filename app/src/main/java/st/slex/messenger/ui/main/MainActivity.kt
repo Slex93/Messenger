@@ -36,12 +36,12 @@ class MainActivity : AppCompatActivity() {
         activityComponent.inject(this)
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
-        viewModel.contactsJob.start()
         setContentView(binding.root)
     }
 
     override fun onStart() {
         super.onStart()
+        viewModel.contactsJob.start()
         viewModel.changeState(getString(R.string.state_online))
     }
 

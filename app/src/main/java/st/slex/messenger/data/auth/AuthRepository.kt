@@ -8,7 +8,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import st.slex.messenger.data.core.DataResult
+import st.slex.messenger.core.Resource
 import st.slex.messenger.utilites.CHILD_ID
 import st.slex.messenger.utilites.CHILD_PHONE
 import st.slex.messenger.utilites.NODE_PHONE
@@ -22,25 +22,25 @@ import kotlin.coroutines.suspendCoroutine
 @InternalCoroutinesApi
 interface AuthRepository {
 
-    suspend fun saveUser(): Flow<DataResult<*>>
+    suspend fun saveUser(): Flow<Resource<Nothing>>
 
     class Base @Inject constructor(
         private val reference: Lazy<DatabaseReference>,
         private val user: Lazy<FirebaseUser>
     ) : AuthRepository {
 
-        override suspend fun saveUser(): Flow<DataResult<*>> = flow {
+        override suspend fun saveUser(): Flow<Resource<Nothing>> = flow {
             val task1 = userReference.updateChildren(mapUser)
             val task2 = phoneReference.setValue(user.get().uid)
             handle(task1).also {
-                if (it is DataResult.Success) emit(handle(task2))
+                if (it is Resource.Success) emit(handle(task2))
                 else emit(it)
             }
         }
 
-        private suspend fun handle(task: Task<Void>): DataResult<*> =
+        private suspend fun handle(task: Task<Void>): Resource<Nothing> =
             suspendCoroutine { continuation ->
-                task.addOnSuccessListener { continuation.resume(DataResult.Success(null)) }
+                task.addOnSuccessListener { continuation.resume(Resource.Success(null)) }
                     .addOnFailureListener { continuation.resumeWithException(it) }
             }
 
@@ -58,6 +58,5 @@ interface AuthRepository {
                 CHILD_PHONE to user.get().phoneNumber.toString()
             )
         }
-
     }
 }

@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import st.slex.messenger.data.contacts.FirebaseContactModel
-import st.slex.messenger.data.core.DataResult
+import st.slex.messenger.core.Resource
+import st.slex.messenger.data.contacts.ContactsData
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -24,7 +24,7 @@ import kotlin.coroutines.suspendCoroutine
 
 interface ActivityRepository {
     suspend fun changeState(state: String)
-    suspend fun updateContacts(list: List<FirebaseContactModel>): Flow<DataResult<*>>
+    suspend fun updateContacts(list: List<ContactsData>): Flow<Resource<Nothing>>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -39,8 +39,8 @@ interface ActivityRepository {
         }
 
         override suspend fun updateContacts(
-            list: List<FirebaseContactModel>
-        ): Flow<DataResult<*>> = callbackFlow {
+            list: List<ContactsData>
+        ): Flow<Resource<Nothing>> = callbackFlow {
             val phoneListener = listener(list) {
                 trySendBlocking(it)
             }
@@ -49,8 +49,8 @@ interface ActivityRepository {
         }
 
         private suspend inline fun listener(
-            list: List<FirebaseContactModel>,
-            crossinline function: (DataResult<*>) -> Unit
+            list: List<ContactsData>,
+            crossinline function: (Resource<Nothing>) -> Unit
         ) = withContext(Dispatchers.IO) {
             return@withContext object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -59,18 +59,20 @@ interface ActivityRepository {
                         val id: String = snapshotPhone.value.toString()
                         if (list.isNullOrEmpty()) {
                             this@withContext.launch {
-                                function(handle(contactsReference.setValue(list)))
+                                val task = contactsReference.setValue(list)
+                                function(handle(task))
                             }
                         } else {
                             list.forEach { contact ->
-                                if (auth.uid != id && contact.phone == phone) {
-                                    val task = contactsReference.child(phone).setValue(
-                                        mapContact(
-                                            id = id,
-                                            phone = phone,
-                                            username = contact.full_name ?: ""
+                                if (auth.uid != id && contact.getPhone == phone) {
+                                    val task = contactsReference.child(phone)
+                                        .setValue(
+                                            mapContact(
+                                                id = id,
+                                                phone = phone,
+                                                username = contact.getFullName
+                                            )
                                         )
-                                    )
                                     this@withContext.launch {
                                         function(handle(task))
                                     }
@@ -81,14 +83,14 @@ interface ActivityRepository {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    function(DataResult.Failure<Nothing>(error.toException()))
+                    function(Resource.Failure(error.toException()))
                 }
             }
         }
 
-        private suspend fun handle(result: Task<Void>): DataResult<*> =
+        private suspend fun handle(result: Task<Void>): Resource<Nothing> =
             suspendCoroutine { continuation ->
-                result.addOnSuccessListener { continuation.resume(DataResult.Success(null)) }
+                result.addOnSuccessListener { continuation.resume(Resource.Success()) }
                     .addOnFailureListener { continuation.resumeWithException(it) }
             }
 

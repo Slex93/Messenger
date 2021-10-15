@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEditUsernameBinding
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.core.BaseFragment
-import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 
 @ExperimentalCoroutinesApi
@@ -59,18 +59,18 @@ class EditUsernameFragment : BaseFragment() {
         }
     }
 
-    private fun UIResult<*>.collector() {
+    private fun Resource<Nothing>.collector() {
         when (this) {
-            is UIResult.Success -> {
+            is Resource.Success -> {
                 binding.editUnProgress.visibility = View.GONE
                 binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                 findNavController().popBackStack()
             }
-            is UIResult.Failure -> {
+            is Resource.Failure -> {
                 binding.editUnProgress.visibility = View.GONE
                 binding.root.showPrimarySnackBar(exception.message.toString())
             }
-            is UIResult.Loading -> {
+            is Resource.Loading -> {
                 binding.editUnProgress.visibility = View.VISIBLE
             }
         }

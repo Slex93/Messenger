@@ -23,10 +23,10 @@ import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentChatsBinding
 import st.slex.common.messenger.databinding.NavigationDrawerHeaderBinding
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.chats.adapter.ChatsAdapter
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.ClickListener
-import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.user_profile.UserUI
 
 @ExperimentalCoroutinesApi
@@ -81,40 +81,40 @@ class ChatsFragment : BaseFragment() {
         }
     }
 
-    private fun UIResult<List<ChatsUI>>.collect() {
+    private fun Resource<List<ChatsUI>>.collect() {
         when (this) {
-            is UIResult.Success -> {
-                adapter.addChat(data)
+            is Resource.Success -> {
+                adapter.addChat(checkNotNull(data))
             }
-            is UIResult.Failure -> {
+            is Resource.Failure -> {
                 Log.e(
                     "Exception im MainList from the flow",
                     exception.message.toString(),
                     exception.cause
                 )
             }
-            is UIResult.Loading -> {
+            is Resource.Loading -> {
                 /*Start progress bar*/
             }
         }
     }
 
-    private fun UIResult<UserUI>.collector() {
+    private fun Resource<UserUI>.collector() {
         val headerView = binding.navView.getHeaderView(0)
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
         when (this) {
-            is UIResult.Success -> {
+            is Resource.Success -> {
 
-                data.mapMainScreen(
+                data?.mapMainScreen(
                     phoneNumber = headerBinding.phoneTextView,
                     userName = headerBinding.usernameTextView,
                     avatar = headerBinding.avatarImageView
                 )
             }
-            is UIResult.Failure -> {
+            is Resource.Failure -> {
                 Log.i("Cancelled", exception.message.toString())
             }
-            is UIResult.Loading -> {
+            is Resource.Loading -> {
                 /*Start progress bar*/
             }
         }

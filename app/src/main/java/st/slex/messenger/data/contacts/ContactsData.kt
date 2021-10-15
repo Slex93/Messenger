@@ -2,9 +2,9 @@ package st.slex.messenger.data.contacts
 
 interface ContactsData {
 
-    fun id(): String
-    fun phone(): String
-    fun fullName(): String
+    val getId: String
+    val getPhone: String
+    val getFullName: String
 
     data class Base(
         val id: String = "",
@@ -12,8 +12,11 @@ interface ContactsData {
         val full_name: String = "",
     ) : ContactsData {
 
-        override fun id(): String = id
-        override fun phone(): String = phone
-        override fun fullName(): String = full_name
+        override val getId: String
+            get() = id
+        override val getPhone: String
+            get() = phone
+        override val getFullName: String
+            get() = full_name
     }
 }

@@ -1,13 +1,15 @@
 package st.slex.messenger.data.chats
 
 import st.slex.messenger.core.Mapper
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.chats.ChatsUI
-import st.slex.messenger.ui.core.UIResult
+import javax.inject.Inject
 
-class ChatsDataMapper : Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>> {
+class ChatsDataMapper @Inject constructor() :
+    Mapper.ToUI<List<ChatsData>, Resource<List<ChatsUI>>> {
 
-    override fun map(data: List<ChatsData>): UIResult<List<ChatsUI>> =
-        UIResult.Success(data.map {
+    override fun map(data: List<ChatsData>?): Resource<List<ChatsUI>> =
+        Resource.Success(data?.map {
             ChatsUI.Base(
                 id = it.chatId(),
                 username = it.username(),
@@ -17,6 +19,7 @@ class ChatsDataMapper : Mapper.DataToUi<List<ChatsData>, UIResult<List<ChatsUI>>
             )
         })
 
-    override fun map(exception: Exception): UIResult<List<ChatsUI>> = UIResult.Failure(exception)
+    override fun map(exception: Exception): Resource<List<ChatsUI>> = Resource.Failure(exception)
 
+    override fun map(data: Nothing?): Resource<List<ChatsUI>> = Resource.Loading()
 }

@@ -10,20 +10,21 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.data.core.DataResult
+import st.slex.messenger.core.Resource
 import st.slex.messenger.utilites.NODE_CHAT_LIST
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 interface ChatsRepository {
 
-    suspend fun getChats(page: Int): Flow<DataResult<List<ChatsData>>>
+    suspend fun getChats(page: Int): Flow<Resource<List<ChatsData>>>
 
     class Base @Inject constructor(
         private val databaseReference: DatabaseReference,
         private val user: FirebaseUser
     ) : ChatsRepository {
-        override suspend fun getChats(page: Int): Flow<DataResult<List<ChatsData>>> =
+
+        override suspend fun getChats(page: Int): Flow<Resource<List<ChatsData>>> =
             callbackFlow {
                 val reference = databaseReference
                     .child(NODE_CHAT_LIST)
@@ -39,18 +40,18 @@ interface ChatsRepository {
             }
 
         private inline fun getChatsEventListener(
-            crossinline function: (DataResult<List<ChatsData>>) -> Unit
+            crossinline function: (Resource<List<ChatsData>>) -> Unit
         ) = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) =
                 function(
-                    DataResult.Success(
+                    Resource.Success(
                         snapshot.children.mapNotNull {
                             it.getValue(ChatsData.Base::class.java)!!
                         })
                 )
 
             override fun onCancelled(error: DatabaseError) =
-                function(DataResult.Failure(error.toException()))
+                function(Resource.Failure(error.toException()))
         }
 
     }

@@ -13,7 +13,6 @@ import st.slex.messenger.domain.LoginDomainMapper
 import st.slex.messenger.ui.auth.AuthViewModel
 import st.slex.messenger.ui.auth.LoginEngine
 import st.slex.messenger.ui.auth.SendCodeEngine
-import st.slex.messenger.ui.core.VoidUIResponse
 
 @ExperimentalCoroutinesApi
 @Module
@@ -31,9 +30,6 @@ interface AuthModule {
     @InternalCoroutinesApi
     @Binds
     fun bindsLoginRepository(repository: AuthRepository.Base): AuthRepository
-
-    @Binds
-    fun bindsVoidUIResponse(response: VoidUIResponse.Base): VoidUIResponse
 
     @Binds
     fun bindsLoginEngine(engine: LoginEngine.Base): LoginEngine

@@ -27,8 +27,8 @@ class ContactFragment : BaseFragment() {
     private var _binding: FragmentContactBinding? = null
     private val binding get() = checkNotNull(_binding)
 
-    private val parser: SnapshotParser<ContactUIModel> = SnapshotParser {
-        return@SnapshotParser it.getValue(ContactUIModel.Base::class.java)!!
+    private val parser: SnapshotParser<ContactsUI> = SnapshotParser {
+        return@SnapshotParser it.getValue(ContactsUI.Base::class.java)!!
     }
 
     private val viewModel: ContactViewModel by viewModels { viewModelFactory.get() }
@@ -40,7 +40,7 @@ class ContactFragment : BaseFragment() {
             .child(Firebase.auth.uid.toString())
             .child(NODE_CONTACT)
 
-        val options = FirebaseRecyclerOptions.Builder<ContactUIModel>()
+        val options = FirebaseRecyclerOptions.Builder<ContactsUI>()
             .setLifecycleOwner(viewLifecycleOwner)
             .setQuery(query, parser)
             .build()
@@ -64,8 +64,8 @@ class ContactFragment : BaseFragment() {
         binding.recyclerView.adapter = adapter
     }
 
-    private inner class ItemClick : ClickListener<ContactUIModel> {
-        override fun click(item: ContactUIModel) {
+    private inner class ItemClick : ClickListener<ContactsUI> {
+        override fun click(item: ContactsUI) {
             item.openChat { card, url ->
                 val directions = ContactFragmentDirections.actionNavContactToNavSingleChat(
                     card.transitionName,

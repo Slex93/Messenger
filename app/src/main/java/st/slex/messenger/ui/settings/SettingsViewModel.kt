@@ -6,21 +6,19 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import st.slex.messenger.core.Resource
 import st.slex.messenger.data.settings.SettingsRepository
-import st.slex.messenger.ui.core.UIResult
-import st.slex.messenger.ui.core.VoidUIResponse
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class SettingsViewModel @Inject constructor(
-    private val repository: SettingsRepository,
-    private val response: VoidUIResponse
+    private val repository: SettingsRepository
 ) : ViewModel() {
 
-    suspend fun signOut(state: String): StateFlow<UIResult<*>> =
-        response.create(repository.signOut(state)).stateIn(
-            viewModelScope,
+    suspend fun signOut(state: String): StateFlow<Resource<Nothing>> =
+        repository.signOut(state).stateIn(
+            scope = viewModelScope,
             started = SharingStarted.Lazily,
-            initialValue = UIResult.Loading
+            initialValue = Resource.Loading()
         )
 }

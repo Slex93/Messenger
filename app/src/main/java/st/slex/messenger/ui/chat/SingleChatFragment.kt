@@ -25,9 +25,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
+import st.slex.messenger.core.Resource
 import st.slex.messenger.data.chat.MessageModel
 import st.slex.messenger.ui.core.BaseFragment
-import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.ui.user_profile.UserUI
 import st.slex.messenger.utilites.NODE_CHAT
 
@@ -111,19 +111,19 @@ class SingleChatFragment : BaseFragment() {
         )
     }
 
-    private fun UIResult<UserUI>.collect() {
+    private fun Resource<UserUI>.collect() {
         when (this) {
-            is UIResult.Success -> {
-                data.mapChat(
+            is Resource.Success -> {
+                data?.mapChat(
                     userName = binding.toolbarInfo.usernameTextView,
                     stateText = binding.toolbarInfo.stateTextView
                 )
-                binding.singleChatRecyclerButton.setOnClickListener(data.sendClicker)
+                binding.singleChatRecyclerButton.setOnClickListener(data?.sendClicker)
             }
-            is UIResult.Failure -> {
-                Log.i("Failure User in Chat", exception.message, exception.cause)
+            is Resource.Failure -> {
+                Log.e("TAG", exception.message, exception.cause)
             }
-            is UIResult.Loading -> {
+            is Resource.Loading -> {
                 /*Start response*/
             }
         }

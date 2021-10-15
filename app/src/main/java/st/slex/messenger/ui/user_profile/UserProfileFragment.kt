@@ -22,8 +22,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentUserProfileBinding
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.core.BaseFragment
-import st.slex.messenger.ui.core.UIResult
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
 @ExperimentalCoroutinesApi
@@ -121,25 +121,25 @@ class UserProfileFragment : BaseFragment() {
         return result
     }
 
-    private val UIResult<*>.collector: () -> Unit
+    private val Resource<Nothing>.collector: () -> Unit
         get() = {
             when (this) {
-                is UIResult.Success -> {
+                is Resource.Success -> {
                     scope().cancel()
                     scope().start()
                 }
-                is UIResult.Failure -> {
+                is Resource.Failure -> {
                 }
-                is UIResult.Loading -> {
+                is Resource.Loading -> {
                 }
             }
         }
 
 
-    private fun UIResult<UserUI>.collector() {
+    private fun Resource<UserUI>.collector() {
         when (this) {
-            is UIResult.Success -> {
-                data.mapProfile(
+            is Resource.Success -> {
+                data?.mapProfile(
                     glide = glide,
                     phoneNumber = binding.container.phoneTextView,
                     userName = binding.container.usernameTextView,
@@ -151,7 +151,7 @@ class UserProfileFragment : BaseFragment() {
                 )
 
                 binding.container.usernameCardView.setOnClickListener {
-                    data.changeUsername { card, username ->
+                    data?.changeUsername { card, username ->
                         val directions = UserProfileFragmentDirections
                             .actionNavUserProfileToEditUsernameFragment(username)
                         val extras = FragmentNavigatorExtras(card to card.transitionName)
@@ -159,9 +159,9 @@ class UserProfileFragment : BaseFragment() {
                     }
                 }
             }
-            is UIResult.Loading -> {
+            is Resource.Loading -> {
             }
-            is UIResult.Failure -> {
+            is Resource.Failure -> {
             }
         }
     }

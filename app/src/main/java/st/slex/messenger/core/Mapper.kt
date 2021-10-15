@@ -6,8 +6,10 @@ interface Mapper {
         fun map(data: S): R
     }
 
-    interface DataToUi<D, U> : Data<D, U> {
+    interface ToUI<D, U> : Mapper {
+        fun map(data: D?): U
         fun map(exception: Exception): U
+        fun map(data: Nothing? = null): U
     }
 
     class Empty : Mapper
