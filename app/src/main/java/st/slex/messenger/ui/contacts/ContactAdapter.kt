@@ -15,11 +15,11 @@ import st.slex.messenger.ui.core.ClickListener
 import st.slex.messenger.ui.user_profile.UserUI
 
 class ContactAdapter(
-    options: FirebaseRecyclerOptions<ContactsUI>,
-    private val clickListener: ClickListener<ContactsUI>,
+    options: FirebaseRecyclerOptions<ContactUI>,
+    private val clickListener: ClickListener<ContactUI>,
     private val kSuspendFunction: suspend (String) -> StateFlow<Resource<UserUI>>,
     private val lifecycleScope: LifecycleCoroutineScope,
-) : FirebaseRecyclerAdapter<ContactsUI, ContactViewHolder>(options) {
+) : FirebaseRecyclerAdapter<ContactUI, ContactViewHolder>(options) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -27,7 +27,7 @@ class ContactAdapter(
         return ContactViewHolder.Base(binding, clickListener)
     }
 
-    override fun onBindViewHolder(holder: ContactViewHolder, position: Int, model: ContactsUI) {
+    override fun onBindViewHolder(holder: ContactViewHolder, position: Int, model: ContactUI) {
         lifecycleScope.launch(Dispatchers.IO) {
             kSuspendFunction.invoke(model.getId).collectLatest { result ->
                 launch(Dispatchers.Main) {

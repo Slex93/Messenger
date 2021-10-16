@@ -1,6 +1,6 @@
 package st.slex.messenger.data.contacts
 
-interface ContactsData {
+interface ContactData {
 
     val getId: String
     val getPhone: String
@@ -10,7 +10,7 @@ interface ContactsData {
         val id: String = "",
         val phone: String = "",
         val full_name: String = "",
-    ) : ContactsData {
+    ) : ContactData {
 
         override val getId: String
             get() = id

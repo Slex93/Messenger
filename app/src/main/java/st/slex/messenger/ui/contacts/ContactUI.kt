@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import st.slex.common.messenger.R
 
-interface ContactsUI {
+interface ContactUI {
 
     fun bind(
         phoneTextView: TextView,
@@ -25,7 +25,7 @@ interface ContactsUI {
         phone: String? = null,
         full_name: String? = null,
         url: String? = null
-    ): ContactsUI
+    ): ContactUI
 
     fun openChat(function: (CardView, String) -> Unit)
 
@@ -34,7 +34,7 @@ interface ContactsUI {
         val phone: String = "",
         val full_name: String = "",
         val url: String = ""
-    ) : ContactsUI {
+    ) : ContactUI {
 
         private var _cardView: MaterialCardView? = null
         private val cardView: MaterialCardView get() = checkNotNull(_cardView)
@@ -62,7 +62,7 @@ interface ContactsUI {
             phone: String?,
             full_name: String?,
             url: String?
-        ): ContactsUI = copy(
+        ): ContactUI = copy(
             id = id ?: this.id,
             phone = phone ?: this.phone,
             full_name = full_name ?: this.full_name,

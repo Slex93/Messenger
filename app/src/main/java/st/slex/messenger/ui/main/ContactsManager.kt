@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import st.slex.messenger.ui.contacts.ContactsUI
+import st.slex.messenger.ui.contacts.ContactUI
 import st.slex.messenger.utilites.PERMISSION_REQUEST
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -23,16 +23,16 @@ import kotlin.coroutines.cancellation.CancellationException
 @ExperimentalCoroutinesApi
 interface ContactsManager {
 
-    suspend fun getContacts(): Flow<List<ContactsUI>>
+    suspend fun getContacts(): Flow<List<ContactUI>>
 
     class Base @Inject constructor(
         private val activity: MainActivity
     ) : ContactsManager {
 
         @SuppressLint("Range")
-        override suspend fun getContacts(): Flow<List<ContactsUI>> =
+        override suspend fun getContacts(): Flow<List<ContactUI>> =
             flow {
-                val list = mutableListOf<ContactsUI>()
+                val list = mutableListOf<ContactUI>()
                 checkPermission(Manifest.permission.READ_CONTACTS).collect { permission ->
                     if (permission) {
                         val cursor =
@@ -44,7 +44,7 @@ interface ContactsManager {
                                 val phone = item.getString(item.getColumnIndexOrThrow(NUMBER))
                                 val setPhone = phone.replace(Regex("[\\s,-]"), "")
                                 val contactModel =
-                                    ContactsUI.Base(phone = setPhone, full_name = username)
+                                    ContactUI.Base(phone = setPhone, full_name = username)
                                 list.add(contactModel)
                             }
                         }

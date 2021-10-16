@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import st.slex.messenger.core.Resource
-import st.slex.messenger.data.contacts.ContactsData
+import st.slex.messenger.data.contacts.ContactData
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -25,7 +25,7 @@ import kotlin.coroutines.suspendCoroutine
 interface ActivityRepository {
 
     suspend fun changeState(state: String)
-    suspend fun updateContacts(list: List<ContactsData>): Flow<Resource<Nothing?>>
+    suspend fun updateContacts(list: List<ContactData>): Flow<Resource<Nothing?>>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
@@ -39,7 +39,7 @@ interface ActivityRepository {
                 .addOnFailureListener { continuation.resumeWithException(it) }
         }
 
-        override suspend fun updateContacts(list: List<ContactsData>): Flow<Resource<Nothing?>> =
+        override suspend fun updateContacts(list: List<ContactData>): Flow<Resource<Nothing?>> =
             callbackFlow {
                 val phoneListener = listener(list) {
                     trySendBlocking(it)
@@ -49,7 +49,7 @@ interface ActivityRepository {
             }
 
         private suspend inline fun listener(
-            list: List<ContactsData>,
+            list: List<ContactData>,
             crossinline function: (Resource<Nothing?>) -> Unit
         ) = withContext(Dispatchers.IO) {
             return@withContext object : ValueEventListener {
@@ -65,7 +65,7 @@ interface ActivityRepository {
                         } else {
                             list.forEach { contact ->
                                 if (auth.uid != id && contact.getPhone == phone) {
-                                    val task = contactsReference.child(phone)
+                                    val task = contactsReference.child(id)
                                         .setValue(
                                             mapContact(
                                                 id = id,

@@ -7,14 +7,14 @@ import st.slex.messenger.ui.core.ClickListener
 
 abstract class ContactViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    abstract fun bind(item: ContactsUI)
+    abstract fun bind(item: ContactUI)
 
     class Base(
         private val binding: ItemRecyclerContactBinding,
-        private val clickListener: ClickListener<ContactsUI>
+        private val clickListener: ClickListener<ContactUI>
     ) : ContactViewHolder(binding.root) {
 
-        override fun bind(item: ContactsUI) {
+        override fun bind(item: ContactUI) {
             with(binding) {
                 item.bind(
                     phoneTextView = phoneTextView,
@@ -26,7 +26,7 @@ abstract class ContactViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             }
         }
 
-        private val ContactsUI.onClickListener: View.OnClickListener
+        private val ContactUI.onClickListener: View.OnClickListener
             get() = View.OnClickListener {
                 clickListener.click(this)
             }

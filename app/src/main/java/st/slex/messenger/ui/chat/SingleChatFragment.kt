@@ -2,7 +2,6 @@ package st.slex.messenger.ui.chat
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,16 +19,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
 import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.core.BaseFragment
-import st.slex.messenger.ui.user_profile.UserUI
 import st.slex.messenger.utilites.NODE_MESSAGES
 
 
@@ -38,13 +33,8 @@ class SingleChatFragment : BaseFragment() {
 
     private var _binding: FragmentSingleChatBinding? = null
     private val binding get() = _binding!!
-
-    private val viewModel: SingleChatViewModel by viewModels {
-        viewModelFactory.get()
-    }
-
-    private var _uid: String? = null
-    private val uid: String get() = checkNotNull(_uid)
+    private val args: SingleChatFragmentArgs by navArgs()
+    private val viewModel: SingleChatViewModel by viewModels { viewModelFactory.get() }
 
     private val adapter: SingleChatAdapter by lazy {
         val baseQuery: Query = FirebaseDatabase
@@ -52,7 +42,7 @@ class SingleChatFragment : BaseFragment() {
             .reference
             .child(NODE_MESSAGES)
             .child(Firebase.auth.uid.toString())
-            .child(uid)
+            .child(args.id)
         val options = FirebaseRecyclerOptions.Builder<MessageUI>()
             .setLifecycleOwner(viewLifecycleOwner)
             .setQuery(baseQuery) {
@@ -71,66 +61,54 @@ class SingleChatFragment : BaseFragment() {
         }
     }
 
+    private val bindHeadToolbar by lazy {
+        viewLifecycleOwner.lifecycleScope.launch(
+            context = Dispatchers.IO,
+            start = CoroutineStart.LAZY
+        ) {
+            viewModel.getChatUIHead(args.id).collect {
+                if (it is Resource.Success) {
+                    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                        with(binding.toolbarInfo) { it.data.bind(stateTextView, usernameTextView) }
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSingleChatBinding.inflate(inflater, container, false)
+        binding.toolbarInfo.toolbarInfoCardView.transitionName = args.id
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted { setImage() }
+        bindHeadToolbar.start()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        takeExtras()
         NavigationUI.setupWithNavController(
             binding.chatToolbar,
             findNavController(),
             AppBarConfiguration(setOf(R.id.nav_contact))
         )
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getUser(uid).collect {
-                it.collect()
-            }
-        }
-
+        binding.singleChatRecyclerButton.setOnClickListener(sendClicker)
         val layoutManager = LinearLayoutManager(requireContext())
         layoutManager.stackFromEnd = true
         binding.singleChatRecycler.layoutManager = layoutManager
         binding.singleChatRecycler.adapter = adapter
     }
 
-    private fun takeExtras() {
-        val args: SingleChatFragmentArgs by navArgs()
-        val id = args.id
-        _uid = id
-        binding.toolbarInfo.toolbarInfoCardView.transitionName = uid
-        glide.setImage(
-            binding.toolbarInfo.shapeableImageView,
-            args.url,
-            needCircleCrop = true,
-            needCrop = true
-        )
-    }
-
-    private fun Resource<UserUI>.collect() {
-        when (this) {
-            is Resource.Success -> {
-                data.mapChat(
-                    userName = binding.toolbarInfo.usernameTextView,
-                    stateText = binding.toolbarInfo.stateTextView
-                )
-                binding.singleChatRecyclerButton.setOnClickListener(sendClicker)
-            }
-            is Resource.Failure -> {
-                Log.e("TAG", exception.message, exception.cause)
-            }
-            is Resource.Loading -> {
-                /*Start response*/
-            }
-        }
-    }
+    private fun setImage() = glide.setImage(
+        imageView = binding.toolbarInfo.shapeableImageView,
+        url = args.url,
+        needCircleCrop = true,
+        needCrop = true,
+        needOriginal = false
+    )
 
     private val sendClicker: View.OnClickListener
         get() = View.OnClickListener {
@@ -143,7 +121,7 @@ class SingleChatFragment : BaseFragment() {
                 snackBar.show()
             } else {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                    viewModel.sendMessage(receiverId = uid, message = message).collect {
+                    viewModel.sendMessage(receiverId = args.id, message = message).collect {
                         collect(it)
                     }
                 }
@@ -151,17 +129,9 @@ class SingleChatFragment : BaseFragment() {
         }
 
     private suspend fun collect(result: Resource<Nothing?>) = withContext(Dispatchers.Main) {
-        when (result) {
-            is Resource.Success -> {
-                binding.singleChatRecycler.scrollToPosition(adapter.itemCount)
-                binding.singleChatRecyclerTextInput.editText?.setText("")
-            }
-            is Resource.Failure -> {
-
-            }
-            is Resource.Loading -> {
-
-            }
+        if (result is Resource.Success) {
+            binding.singleChatRecycler.scrollToPosition(adapter.itemCount)
+            binding.singleChatRecyclerTextInput.editText?.setText("")
         }
     }
 

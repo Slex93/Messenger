@@ -6,6 +6,7 @@ import st.slex.messenger.ui.core.CustomCardView
 import st.slex.messenger.utilites.base.SetImageWithGlide
 
 interface UserUI {
+
     fun mapMainScreen(
         phoneNumber: AbstractView.Text,
         userName: AbstractView.Text,
@@ -23,11 +24,6 @@ interface UserUI {
         toolbar: MaterialToolbar
     )
 
-    fun mapChat(
-        userName: AbstractView.Text,
-        stateText: AbstractView.Text
-    )
-
     fun changeUsername(function: (CustomCardView, String) -> Unit)
 
     fun id(): String
@@ -37,6 +33,16 @@ interface UserUI {
     fun bio(): String
     fun fullName(): String
     fun state(): String
+
+    fun copy(
+        id: String? = null,
+        phone: String? = null,
+        username: String? = null,
+        url: String? = null,
+        bio: String? = null,
+        full_name: String? = null,
+        state: String? = null
+    ): UserUI
 
     data class Base(
         private val id: String = "",
@@ -50,6 +56,7 @@ interface UserUI {
 
         private var _usernameCard: CustomCardView? = null
         private val usernameCard get() = _usernameCard!!
+
         override fun mapMainScreen(
             phoneNumber: AbstractView.Text,
             userName: AbstractView.Text,
@@ -80,11 +87,6 @@ interface UserUI {
             toolbar.title = username
         }
 
-        override fun mapChat(userName: AbstractView.Text, stateText: AbstractView.Text) {
-            userName.map(username)
-            stateText.map(state)
-        }
-
         override fun changeUsername(function: (CustomCardView, String) -> Unit) =
             function(usernameCard, username)
 
@@ -95,5 +97,23 @@ interface UserUI {
         override fun bio(): String = bio
         override fun fullName(): String = full_name
         override fun state(): String = state
+
+        override fun copy(
+            id: String?,
+            phone: String?,
+            username: String?,
+            url: String?,
+            bio: String?,
+            full_name: String?,
+            state: String?
+        ): UserUI = Base(
+            id = id ?: this.id,
+            phone = phone ?: this.phone,
+            username = username ?: this.username,
+            url = url ?: this.url,
+            bio = bio ?: this.bio,
+            full_name = full_name ?: this.full_name,
+            state = state ?: this.state
+        )
     }
 }

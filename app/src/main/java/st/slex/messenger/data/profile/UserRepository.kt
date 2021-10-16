@@ -1,7 +1,6 @@
 package st.slex.messenger.data.profile
 
 import android.net.Uri
-import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -20,6 +19,8 @@ import st.slex.messenger.utilites.*
 import javax.inject.Inject
 
 interface UserRepository {
+
+    suspend fun getUserState(uid: String): Flow<Resource<String>>
     suspend fun getUser(uid: String): Flow<Resource<UserData>>
     suspend fun saveUsername(username: String): Flow<Resource<Nothing?>>
     suspend fun saveImage(uri: Uri): Flow<Resource<Nothing?>>
@@ -32,18 +33,41 @@ interface UserRepository {
         private val user: FirebaseUser
     ) : UserRepository {
 
+        override suspend fun getUserState(uid: String): Flow<Resource<String>> = callbackFlow {
+            val reference = databaseReference
+                .child(NODE_USER)
+                .child(uid)
+                .child(CHILD_STATE)
+            val listener = listener<String> {
+                trySendBlocking(it)
+            }
+            reference.addValueEventListener(listener)
+            awaitClose { reference.removeEventListener(listener) }
+        }
+
         override suspend fun getCurrentUser(): Flow<Resource<UserData>> = getUser(user.uid)
 
         override suspend fun getUser(uid: String): Flow<Resource<UserData>> = callbackFlow {
             val reference = databaseReference
                 .child(NODE_USER)
                 .child(uid)
-            val listener = getUserEventListener {
-                if (it is Resource.Success) Log.i("TAG", it.data.toString())
+            val listener = listener<UserData.Base> {
                 trySendBlocking(it)
             }
             reference.addValueEventListener(listener)
             awaitClose { reference.removeEventListener(listener) }
+        }
+
+        private inline fun <reified T> listener(
+            crossinline function: (Resource<T>) -> Unit
+        ) = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                function(Resource.Success(snapshot.getValue(T::class.java)!!))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                function(Resource.Failure(error.toException()))
+            }
         }
 
         override suspend fun saveUsername(username: String): Flow<Resource<Nothing?>> =
@@ -54,17 +78,6 @@ interface UserRepository {
                 userReference.addValueEventListener(listener)
                 awaitClose { userReference.removeEventListener(listener) }
             }
-
-        private inline fun getUserEventListener(
-            crossinline function: (Resource<UserData>) -> Unit
-        ) = object : ValueEventListener {
-
-            override fun onDataChange(snapshot: DataSnapshot) =
-                function(Resource.Success(snapshot.getValue(UserData.Base::class.java)!!))
-
-            override fun onCancelled(error: DatabaseError) =
-                function(Resource.Failure(error.toException()))
-        }
 
         override suspend fun saveImage(uri: Uri): Flow<Resource<Nothing?>> = callbackFlow {
             val referenceUser = databaseReference.child(NODE_USER).child(user.uid).child(CHILD_URL)

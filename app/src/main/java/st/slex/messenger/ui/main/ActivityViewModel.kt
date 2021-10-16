@@ -6,7 +6,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import st.slex.messenger.core.Resource
 import st.slex.messenger.data.main_activity.ActivityRepository
-import st.slex.messenger.ui.contacts.ContactsUI
+import st.slex.messenger.ui.contacts.ContactUI
 import st.slex.messenger.ui.contacts.ContactsUIMapper
 import javax.inject.Inject
 
@@ -26,10 +26,10 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getContacts(): Flow<List<ContactsUI>> =
+    private suspend fun getContacts(): Flow<List<ContactUI>> =
         contactsManager.getContacts()
 
-    private suspend fun updateContacts(list: List<ContactsUI>): StateFlow<Resource<Nothing?>> =
+    private suspend fun updateContacts(list: List<ContactUI>): StateFlow<Resource<Nothing?>> =
         repository.updateContacts(mapper.map(list))
             .onCompletion {
                 contactsJob.cancelChildren()

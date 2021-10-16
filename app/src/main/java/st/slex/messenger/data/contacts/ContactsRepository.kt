@@ -11,6 +11,7 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.core.Resource
+import st.slex.messenger.utilites.CHILD_FULL_NAME
 import st.slex.messenger.utilites.NODE_CONTACT
 import st.slex.messenger.utilites.NODE_USER
 import javax.inject.Inject
@@ -18,16 +19,32 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 interface ContactsRepository {
 
-    suspend fun getContacts(): Flow<Resource<List<ContactsData>>>
+    suspend fun getContactFullName(uid: String): Flow<Resource<String>>
+    suspend fun getContacts(): Flow<Resource<List<ContactData>>>
+    suspend fun getContact(uid: String): Flow<Resource<ContactData>>
 
     class Base @Inject constructor(
         private val reference: DatabaseReference,
         private val user: FirebaseUser
     ) : ContactsRepository {
 
-        override suspend fun getContacts(): Flow<Resource<List<ContactsData>>> =
+        override suspend fun getContactFullName(uid: String): Flow<Resource<String>> =
             callbackFlow {
-                val listener = listener { trySendBlocking(it) }
+                val listener = singleListener<String> { trySendBlocking(it) }
+                val currentReference = contactsReference.child(uid).child(CHILD_FULL_NAME)
+                currentReference.addListenerForSingleValueEvent(listener)
+                awaitClose { currentReference.removeEventListener(listener) }
+            }
+
+        override suspend fun getContact(uid: String): Flow<Resource<ContactData>> = callbackFlow {
+            val listener = singleListener<ContactData.Base> { trySendBlocking(it) }
+            contactsReference.child(uid).addListenerForSingleValueEvent(listener)
+            awaitClose { contactsReference.child(uid).removeEventListener(listener) }
+        }
+
+        override suspend fun getContacts(): Flow<Resource<List<ContactData>>> =
+            callbackFlow {
+                val listener = multipleListener<ContactData.Base> { trySendBlocking(it) }
                 contactsReference.addListenerForSingleValueEvent(listener)
                 awaitClose { contactsReference.removeEventListener(listener) }
             }
@@ -36,19 +53,26 @@ interface ContactsRepository {
             reference.child(NODE_USER).child(user.uid).child(NODE_CONTACT)
         }
 
-        private inline fun listener(
-            crossinline function: (Resource<List<ContactsData>>) -> Unit
-        ): ValueEventListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val result = snapshot.children.mapNotNull {
-                    it.getValue(ContactsData.Base::class.java)!!
-                }
-                function(Resource.Success(result))
-            }
+        private inline fun <reified T> singleListener(
+            crossinline function: (Resource<T>) -> Unit
+        ) = object : ValueEventListener {
 
-            override fun onCancelled(error: DatabaseError) {
+            override fun onDataChange(snapshot: DataSnapshot) =
+                function(Resource.Success(snapshot.getValue(T::class.java)!!))
+
+            override fun onCancelled(error: DatabaseError) =
                 function(Resource.Failure(error.toException()))
-            }
+        }
+
+        private inline fun <reified T> multipleListener(
+            crossinline function: (Resource<List<T>>) -> Unit
+        ): ValueEventListener = object : ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) =
+                function(Resource.Success(snapshot.children.mapNotNull { it.getValue(T::class.java)!! }))
+
+            override fun onCancelled(error: DatabaseError) =
+                function(Resource.Failure(error.toException()))
         }
     }
 }
