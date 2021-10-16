@@ -20,16 +20,17 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
 import st.slex.messenger.core.Resource
-import st.slex.messenger.data.chat.MessageModel
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.user_profile.UserUI
-import st.slex.messenger.utilites.NODE_CHAT
+import st.slex.messenger.utilites.NODE_MESSAGES
 
 
 @ExperimentalCoroutinesApi
@@ -43,18 +44,20 @@ class SingleChatFragment : BaseFragment() {
     }
 
     private var _uid: String? = null
-    private val uid: String get() = _uid ?: ""
+    private val uid: String get() = checkNotNull(_uid)
 
     private val adapter: SingleChatAdapter by lazy {
         val baseQuery: Query = FirebaseDatabase
             .getInstance()
             .reference
-            .child(NODE_CHAT)
+            .child(NODE_MESSAGES)
             .child(Firebase.auth.uid.toString())
             .child(uid)
-        val options = FirebaseRecyclerOptions.Builder<MessageModel>()
+        val options = FirebaseRecyclerOptions.Builder<MessageUI>()
             .setLifecycleOwner(viewLifecycleOwner)
-            .setQuery(baseQuery, MessageModel::class.java)
+            .setQuery(baseQuery) {
+                it.getValue(MessageUI.Base::class.java)!!
+            }
             .build()
         SingleChatAdapter(options)
     }
@@ -118,7 +121,7 @@ class SingleChatFragment : BaseFragment() {
                     userName = binding.toolbarInfo.usernameTextView,
                     stateText = binding.toolbarInfo.stateTextView
                 )
-                binding.singleChatRecyclerButton.setOnClickListener(data.sendClicker)
+                binding.singleChatRecyclerButton.setOnClickListener(sendClicker)
             }
             is Resource.Failure -> {
                 Log.e("TAG", exception.message, exception.cause)
@@ -129,7 +132,7 @@ class SingleChatFragment : BaseFragment() {
         }
     }
 
-    private val UserUI.sendClicker: View.OnClickListener
+    private val sendClicker: View.OnClickListener
         get() = View.OnClickListener {
             val message = binding.singleChatRecyclerTextInput.editText?.text.toString()
             if (message.isEmpty()) {
@@ -139,11 +142,28 @@ class SingleChatFragment : BaseFragment() {
                 snackBar.setAction("Ok") {}
                 snackBar.show()
             } else {
-                viewModel.sendMessage(message, this)
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    viewModel.sendMessage(receiverId = uid, message = message).collect {
+                        collect(it)
+                    }
+                }
+            }
+        }
+
+    private suspend fun collect(result: Resource<Nothing?>) = withContext(Dispatchers.Main) {
+        when (result) {
+            is Resource.Success -> {
                 binding.singleChatRecycler.scrollToPosition(adapter.itemCount)
                 binding.singleChatRecyclerTextInput.editText?.setText("")
             }
+            is Resource.Failure -> {
+
+            }
+            is Resource.Loading -> {
+
+            }
         }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

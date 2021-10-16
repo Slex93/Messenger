@@ -23,6 +23,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 interface ActivityRepository {
+
     suspend fun changeState(state: String)
     suspend fun updateContacts(list: List<ContactsData>): Flow<Resource<Nothing?>>
 

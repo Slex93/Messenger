@@ -42,7 +42,7 @@ interface UserRepository {
                 if (it is Resource.Success) Log.i("TAG", it.data.toString())
                 trySendBlocking(it)
             }
-            reference.addListenerForSingleValueEvent(listener)
+            reference.addValueEventListener(listener)
             awaitClose { reference.removeEventListener(listener) }
         }
 

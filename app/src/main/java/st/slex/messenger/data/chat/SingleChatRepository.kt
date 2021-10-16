@@ -1,120 +1,87 @@
 package st.slex.messenger.data.chat
 
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.trySendBlocking
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.core.Resource
-import st.slex.messenger.ui.user_profile.UserUI
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
+import kotlin.coroutines.suspendCoroutine
 
 interface SingleChatRepository {
 
-    suspend fun sendMessage(
-        message: String,
-        user: UserUI,
-        currentUser: UserUI
-    ): Flow<Resource<Nothing?>>
+    suspend fun sendMessage(receiverId: String, message: String): Resource<Nothing?>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
-        private val databaseReference: DatabaseReference,
+        private val reference: DatabaseReference,
         private val auth: FirebaseUser
     ) : SingleChatRepository {
 
         override suspend fun sendMessage(
-            message: String,
-            user: UserUI,
-            currentUser: UserUI
-        ): Flow<Resource<Nothing?>> = callbackFlow {
-            val refDialogUser = "$NODE_CHAT/${auth.uid}/${user.id()}"
-            val refDialogReceivingUser = "$NODE_CHAT/${user.id()}/${auth.uid}"
-            val messageKey = databaseReference.child(refDialogUser).push().key
-            val mapMessage = hashMapOf<String, Any>()
-            mapMessage[CHILD_FROM] = auth.uid
-            mapMessage[CHILD_TEXT] = message
-            mapMessage[CHILD_TIMESTAMP] = System.currentTimeMillis()
-            val mapDialog = hashMapOf<String, Any>()
-            mapDialog["$refDialogUser/$messageKey"] = mapMessage
-            mapDialog["$refDialogReceivingUser/$messageKey"] = mapMessage
+            receiverId: String, message: String
+        ): Resource<Nothing?> = suspendCoroutine { continuation ->
 
-            val task = databaseReference
-                .updateChildren(mapDialog)
+            val referenceSenderMessages = messagesReference.child(auth.uid).child(receiverId)
+            val referenceReceiverMessages = messagesReference.child(receiverId).child(auth.uid)
+            val referenceChatsSender = chatsReference.child(auth.uid).child(receiverId)
+            val referenceChatsReceiver = chatsReference.child(receiverId).child(auth.uid)
 
-            val taskUser = databaseReference.child(NODE_CHAT_LIST).child(auth.uid)
-                .child(user.id()).updateChildren(
-                    getMapUser(
-                        user,
-                        currentUser,
-                        message,
-                        messageKey.toString()
-                    )
-                )
+            val messageKey = referenceSenderMessages.push().key.toString()
 
-            val taskReceiver = databaseReference.child(NODE_CHAT_LIST).child(user.id())
-                .child(auth.uid).updateChildren(
-                    getMapReceiver(
-                        currentUser,
-                        message,
-                        messageKey.toString()
-                    )
-                )
+            val taskMessageSender = referenceSenderMessages
+                .child(messageKey)
+                .updateChildren(mapMessage(message))
+            val taskMessageReceiver = referenceReceiverMessages
+                .child(messageKey)
+                .updateChildren(mapMessage(message))
+            val taskChatsSender = referenceChatsSender.updateChildren(mapMessage(message))
+            val taskChatsReceiver = referenceChatsReceiver.updateChildren(mapMessage(message))
 
-            task.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    taskUser.addOnCompleteListener { uTask ->
-                        if (it.isSuccessful) {
-                            taskReceiver.addOnCompleteListener { rTask ->
-                                if (rTask.isSuccessful) {
-                                    trySendBlocking(Resource.Success(null))
-                                } else {
-                                    trySendBlocking(Resource.Failure(rTask.exception!!))
-                                }
-                            }
-                        } else {
-                            trySendBlocking(Resource.Failure(uTask.exception!!))
-                        }
-                    }
-                } else {
-                    trySendBlocking(Resource.Failure(it.exception!!))
-                }
+            val failureListener = OnFailureListener {
+                continuation.resumeWith(Result.success(Resource.Failure<Nothing>(it)))
+            }
+            val successListenerChatReceiver = OnSuccessListener<Void> {
+                continuation.resumeWith(Result.success(Resource.Success(null)))
             }
 
-            awaitClose { }
+            val successListenerChatSender = OnSuccessListener<Void> {
+                taskChatsReceiver
+                    .addOnSuccessListener(successListenerChatReceiver)
+                    .addOnFailureListener(failureListener)
+            }
+
+            val successListenerMessageReceiver = OnSuccessListener<Void> {
+                taskChatsSender
+                    .addOnSuccessListener(successListenerChatSender)
+                    .addOnFailureListener(failureListener)
+            }
+
+            val successListenerMessageSender = OnSuccessListener<Void> {
+                taskMessageReceiver
+                    .addOnSuccessListener(successListenerMessageReceiver)
+                    .addOnFailureListener(failureListener)
+            }
+
+            taskMessageSender
+                .addOnSuccessListener(successListenerMessageSender)
+                .addOnFailureListener(failureListener)
         }
 
-        private fun getMapUser(
-            user: UserUI,
-            currentUser: UserUI,
-            message: String,
-            messageKey: String
-        ): Map<String, Any> = mapOf(
-            CHILD_MESSAGE_KEY to messageKey,
-            CHILD_FROM to currentUser.id(),
-            CHILD_TEXT to message,
-            CHILD_TIMESTAMP to System.currentTimeMillis(),
-            CHILD_FULL_NAME to user.fullName(),
-            CHILD_USERNAME to user.username(),
-            CHILD_URL to user.url(),
-            CHILD_ID to user.id()
-        )
+        private val messagesReference: DatabaseReference by lazy {
+            reference.child(NODE_MESSAGES)
+        }
 
-        private fun getMapReceiver(
-            currentUser: UserUI,
-            message: String,
-            messageKey: String
-        ): Map<String, Any> = mapOf(
-            CHILD_MESSAGE_KEY to messageKey,
-            CHILD_FROM to currentUser.id(),
-            CHILD_TEXT to message,
-            CHILD_TIMESTAMP to System.currentTimeMillis(),
-            CHILD_FULL_NAME to currentUser.fullName(),
-            CHILD_USERNAME to currentUser.username(),
-            CHILD_URL to currentUser.url()
+        private val chatsReference: DatabaseReference by lazy {
+            reference.child(NODE_CHATS)
+        }
+
+        private fun mapMessage(message: String): Map<String, Any> = mapOf(
+            CHILD_FROM to auth.uid,
+            CHILD_MESSAGE to message,
+            CHILD_TIMESTAMP to System.currentTimeMillis().toString()
         )
     }
 }

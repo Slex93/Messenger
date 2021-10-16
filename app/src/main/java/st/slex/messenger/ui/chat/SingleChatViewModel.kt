@@ -2,10 +2,8 @@ package st.slex.messenger.ui.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import st.slex.messenger.core.Resource
 import st.slex.messenger.data.chat.SingleChatRepository
 import st.slex.messenger.data.profile.UserDataMapper
@@ -29,19 +27,10 @@ class SingleChatViewModel @Inject constructor(
                 initialValue = Resource.Loading
             )
 
-    private suspend fun currentUser(): StateFlow<Resource<UserUI>> =
-        userRepository.getCurrentUser()
-            .flatMapLatest { flowOf(it.map(mapper)) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.Lazily,
-                initialValue = Resource.Loading
-            )
-
-    fun sendMessage(message: String, user: UserUI) = viewModelScope.launch(Dispatchers.IO) {
-        currentUser().collect {
-            if (it is Resource.Success)
-                repository.sendMessage(message = message, user = user, it.data).collect()
-        }
-    }
+    suspend fun sendMessage(receiverId: String, message: String): StateFlow<Resource<Nothing?>> =
+        flowOf(repository.sendMessage(receiverId = receiverId, message = message)).stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = Resource.Loading
+        )
 }

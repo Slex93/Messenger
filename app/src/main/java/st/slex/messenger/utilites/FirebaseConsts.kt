@@ -9,6 +9,10 @@ const val NODE_CHAT = "chats"
 const val NODE_CHAT_LIST = "chat_list"
 const val NODE_MESSAGES = "messages"
 
+const val CHILD_MESSAGE = "message"
+const val NODE_CHATS = "chats"
+
+
 /*Storage*/
 const val FOLDER_PROFILE_IMAGE = "profile_image"
 

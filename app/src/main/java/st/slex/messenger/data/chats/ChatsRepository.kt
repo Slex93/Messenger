@@ -53,6 +53,5 @@ interface ChatsRepository {
             override fun onCancelled(error: DatabaseError) =
                 function(Resource.Failure(error.toException()))
         }
-
     }
 }
