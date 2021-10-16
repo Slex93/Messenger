@@ -1,4 +1,4 @@
-package st.slex.messenger.ui.chat
+package st.slex.messenger.ui.single_chat
 
 import st.slex.messenger.ui.core.AbstractView
 

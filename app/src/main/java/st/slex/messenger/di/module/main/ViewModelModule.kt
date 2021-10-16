@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.di.key.ViewModelKey
-import st.slex.messenger.ui.chat.SingleChatViewModel
+import st.slex.messenger.ui.single_chat.SingleChatViewModel
 import st.slex.messenger.ui.chats.ChatsViewModel
 import st.slex.messenger.ui.contacts.ContactViewModel
 import st.slex.messenger.ui.main.ActivityViewModel

@@ -39,7 +39,6 @@ class ContactFragment : BaseFragment() {
             .child(NODE_USER)
             .child(Firebase.auth.uid.toString())
             .child(NODE_CONTACT)
-
         val options = FirebaseRecyclerOptions.Builder<ContactUI>()
             .setLifecycleOwner(viewLifecycleOwner)
             .setQuery(query, parser)

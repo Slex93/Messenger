@@ -11,9 +11,9 @@ class ChatsDataMapper @Inject constructor() :
     override fun map(data: List<ChatsData>): Resource<List<ChatsUI>> =
         Resource.Success(data.map {
             ChatsUI.Base(
-                id = it.chatId(),
-                username = it.username(),
-                text = it.text(),
+                from = it.chatId(),
+                full_name = it.username(),
+                message = it.text(),
                 url = it.url(),
                 timestamp = it.timestamp()
             )

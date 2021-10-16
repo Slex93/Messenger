@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import st.slex.messenger.core.Resource
 import st.slex.messenger.data.settings.SettingsRepository
@@ -16,7 +17,7 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     suspend fun signOut(state: String): StateFlow<Resource<Nothing?>> =
-        repository.signOut(state).stateIn(
+        flowOf(repository.signOut(state)).stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
             initialValue = Resource.Loading

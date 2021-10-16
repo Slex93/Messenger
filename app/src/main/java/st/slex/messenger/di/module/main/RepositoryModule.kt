@@ -3,11 +3,11 @@ package st.slex.messenger.di.module.main
 import dagger.Binds
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.data.chat.SingleChatRepository
+import st.slex.messenger.data.single_chat.SingleChatRepository
 import st.slex.messenger.data.chats.ChatsRepository
 import st.slex.messenger.data.contacts.ContactsRepository
 import st.slex.messenger.data.main_activity.ActivityRepository
-import st.slex.messenger.data.profile.UserRepository
+import st.slex.messenger.data.user.UserRepository
 import st.slex.messenger.data.settings.SettingsRepository
 
 @ExperimentalCoroutinesApi

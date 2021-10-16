@@ -9,8 +9,8 @@ import st.slex.messenger.data.chats.ChatsDataMapper
 import st.slex.messenger.data.contacts.ContactData
 import st.slex.messenger.data.contacts.ContactDataMapper
 import st.slex.messenger.data.contacts.ContactsDataMapper
-import st.slex.messenger.data.profile.UserData
-import st.slex.messenger.data.profile.UserDataMapper
+import st.slex.messenger.data.user.UserData
+import st.slex.messenger.data.user.UserDataMapper
 import st.slex.messenger.ui.chats.ChatsUI
 import st.slex.messenger.ui.contacts.ContactUI
 import st.slex.messenger.ui.contacts.ContactsUIMapper

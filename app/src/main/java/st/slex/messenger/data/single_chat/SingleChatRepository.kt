@@ -1,4 +1,4 @@
-package st.slex.messenger.data.chat
+package st.slex.messenger.data.single_chat
 
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
@@ -31,14 +31,15 @@ interface SingleChatRepository {
 
             val messageKey = referenceSenderMessages.push().key.toString()
 
-            val taskMessageSender = referenceSenderMessages
-                .child(messageKey)
-                .updateChildren(mapMessage(message))
-            val taskMessageReceiver = referenceReceiverMessages
-                .child(messageKey)
-                .updateChildren(mapMessage(message))
-            val taskChatsSender = referenceChatsSender.updateChildren(mapMessage(message))
-            val taskChatsReceiver = referenceChatsReceiver.updateChildren(mapMessage(message))
+            val mapSender = mapMessage(message, receiverId)
+            val mapReceiver = mapMessage(message, auth.uid)
+            val taskMessageSender =
+                referenceSenderMessages.child(messageKey).updateChildren(mapSender)
+            val taskMessageReceiver =
+                referenceReceiverMessages.child(messageKey).updateChildren(mapReceiver)
+
+            val taskChatsSender = referenceChatsSender.updateChildren(mapSender)
+            val taskChatsReceiver = referenceChatsReceiver.updateChildren(mapReceiver)
 
             val failureListener = OnFailureListener {
                 continuation.resumeWith(Result.success(Resource.Failure<Nothing>(it)))
@@ -78,7 +79,8 @@ interface SingleChatRepository {
             reference.child(NODE_CHATS)
         }
 
-        private fun mapMessage(message: String): Map<String, Any> = mapOf(
+        private fun mapMessage(message: String, id: String): Map<String, Any> = mapOf(
+            CHILD_ID to id,
             CHILD_FROM to auth.uid,
             CHILD_MESSAGE to message,
             CHILD_TIMESTAMP to System.currentTimeMillis().toString()

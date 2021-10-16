@@ -1,16 +1,15 @@
 package st.slex.messenger.data.contacts
 
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import st.slex.messenger.core.Resource
+import st.slex.messenger.data.core.Listeners.multipleListener
+import st.slex.messenger.data.core.Listeners.singleListener
 import st.slex.messenger.utilites.CHILD_FULL_NAME
 import st.slex.messenger.utilites.NODE_CONTACT
 import st.slex.messenger.utilites.NODE_USER
@@ -51,28 +50,6 @@ interface ContactsRepository {
 
         private val contactsReference: DatabaseReference by lazy {
             reference.child(NODE_USER).child(user.uid).child(NODE_CONTACT)
-        }
-
-        private inline fun <reified T> singleListener(
-            crossinline function: (Resource<T>) -> Unit
-        ) = object : ValueEventListener {
-
-            override fun onDataChange(snapshot: DataSnapshot) =
-                function(Resource.Success(snapshot.getValue(T::class.java)!!))
-
-            override fun onCancelled(error: DatabaseError) =
-                function(Resource.Failure(error.toException()))
-        }
-
-        private inline fun <reified T> multipleListener(
-            crossinline function: (Resource<List<T>>) -> Unit
-        ): ValueEventListener = object : ValueEventListener {
-
-            override fun onDataChange(snapshot: DataSnapshot) =
-                function(Resource.Success(snapshot.children.mapNotNull { it.getValue(T::class.java)!! }))
-
-            override fun onCancelled(error: DatabaseError) =
-                function(Resource.Failure(error.toException()))
         }
     }
 }

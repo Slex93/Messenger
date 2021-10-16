@@ -62,7 +62,7 @@ interface ContactUI {
             phone: String?,
             full_name: String?,
             url: String?
-        ): ContactUI = copy(
+        ): ContactUI = Base(
             id = id ?: this.id,
             phone = phone ?: this.phone,
             full_name = full_name ?: this.full_name,

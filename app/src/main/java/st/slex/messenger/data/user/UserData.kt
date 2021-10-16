@@ -1,4 +1,4 @@
-package st.slex.messenger.data.profile
+package st.slex.messenger.data.user
 
 interface UserData {
 

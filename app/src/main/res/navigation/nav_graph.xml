@@ -44,7 +44,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_single_chat"
-        android:name="st.slex.messenger.ui.chat.SingleChatFragment"
+        android:name="st.slex.messenger.ui.single_chat.SingleChatFragment"
         tools:layout="@layout/fragment_single_chat">
         <argument
             android:name="id"

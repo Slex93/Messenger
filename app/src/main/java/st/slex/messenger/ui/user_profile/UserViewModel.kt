@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import st.slex.messenger.core.Resource
-import st.slex.messenger.data.profile.UserDataMapper
-import st.slex.messenger.data.profile.UserRepository
+import st.slex.messenger.data.user.UserDataMapper
+import st.slex.messenger.data.user.UserRepository
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
