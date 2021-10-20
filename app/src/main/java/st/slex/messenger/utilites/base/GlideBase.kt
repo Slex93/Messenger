@@ -10,6 +10,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import st.slex.common.messenger.R
 
+//TODO Refactor this
 @JvmInline
 value class GlideBase(
     val startPostponedEnterTransition: () -> Unit

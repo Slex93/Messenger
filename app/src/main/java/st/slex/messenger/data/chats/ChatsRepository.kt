@@ -12,8 +12,5 @@ interface ChatsRepository {
     class Base @Inject constructor(
         private val databaseReference: DatabaseReference,
         private val user: FirebaseUser
-    ) : ChatsRepository {
-
-
-    }
+    ) : ChatsRepository
 }

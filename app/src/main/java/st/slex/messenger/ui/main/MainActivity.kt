@@ -11,7 +11,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.ActivityMainBinding
 import st.slex.messenger.appComponent
-import st.slex.messenger.di.component.MainActivitySubcomponent
+import st.slex.messenger.di.main_activity.DaggerMainActivityComponent
+import st.slex.messenger.di.main_activity.MainActivityComponent
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -20,8 +21,8 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private var _activityComponent: MainActivitySubcomponent? = null
-    val activityComponent: MainActivitySubcomponent
+    private var _activityComponent: MainActivityComponent? = null
+    val activityComponent: MainActivityComponent
         get() = checkNotNull(_activityComponent)
 
     private var _binding: ActivityMainBinding? = null
@@ -32,7 +33,10 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        _activityComponent = appComponent.mainActivityBuilder.activity(this).create()
+        _activityComponent = DaggerMainActivityComponent.builder()
+            .activity(this)
+            .appComponent(appComponent)
+            .create()
         activityComponent.inject(this)
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
