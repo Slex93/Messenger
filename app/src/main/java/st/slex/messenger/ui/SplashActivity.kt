@@ -2,8 +2,8 @@ package st.slex.messenger.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.ui.auth.AuthActivity
@@ -13,14 +13,18 @@ import st.slex.messenger.ui.main.MainActivity
 @ExperimentalCoroutinesApi
 class SplashActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val initialJob = lifecycleScope.launchWhenCreated {
         val intent = if (FirebaseAuth.getInstance().currentUser != null) {
-            Intent(this, MainActivity::class.java)
+            Intent(this@SplashActivity, MainActivity::class.java)
         } else {
-            Intent(this, AuthActivity::class.java)
+            Intent(this@SplashActivity, AuthActivity::class.java)
         }
         startActivity(intent)
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        initialJob.cancel()
     }
 }

@@ -2,6 +2,7 @@ package st.slex.messenger.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.storage.internal.ActivityLifecycleListener
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import st.slex.messenger.core.Resource
