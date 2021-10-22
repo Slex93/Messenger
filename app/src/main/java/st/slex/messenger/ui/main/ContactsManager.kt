@@ -64,6 +64,5 @@ interface ContactsManager {
                 emit(false)
             }
         }
-
     }
 }
