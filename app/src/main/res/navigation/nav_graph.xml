@@ -38,7 +38,7 @@
         android:name="st.slex.messenger.ui.contacts.ContactFragment"
         tools:layout="@layout/fragment_contact">
         <action
-            android:id="@+id/action_nav_contact_to_nav_single_chat"
+            android:id="@+id/navContactToChat"
             app:destination="@id/nav_single_chat"
             app:popUpTo="@id/nav_home" />
     </fragment>

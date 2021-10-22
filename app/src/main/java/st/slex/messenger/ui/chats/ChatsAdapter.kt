@@ -29,7 +29,7 @@ class ChatsAdapter(
     }
 
     override fun onBindViewHolder(holder: ChatsViewHolder, position: Int, model: ChatsUI) {
-        lifecycleScope.launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             kSuspendFunction.invoke(model).collect {
                 launch(Dispatchers.Main) {
                     when (it) {
