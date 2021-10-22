@@ -69,10 +69,8 @@ class EnterCodeFragment : BaseAuthFragment() {
             context = Dispatchers.IO,
             start = CoroutineStart.LAZY
         ) {
-            viewModel.sendCode(
-                id = id,
-                code = editTextList.getCodeFromList()
-            ).collect { collector(it) }
+            viewModel.sendCode(id = id, code = editTextList.getCodeFromList())
+                .collect { collector(it) }
         }
     }
 

@@ -43,20 +43,5 @@ interface ValueSnapshotListener {
                 }
                 eventResult(Resource.Success(result))
             })
-
-        class ValueListener(
-            val cancelled: (Resource.Failure<Nothing>) -> Unit,
-            val dataChange: (snapshot: DataSnapshot) -> Unit
-        ) : ValueEventListener {
-
-            override fun onCancelled(error: DatabaseError) =
-                cancelled(Resource.Failure(error.toException()))
-
-            override fun onDataChange(snapshot: DataSnapshot) = try {
-                dataChange(snapshot)
-            } catch (exception: Exception) {
-                cancelled(Resource.Failure(exception))
-            }
-        }
     }
 }

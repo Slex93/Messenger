@@ -7,7 +7,9 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
 import st.slex.messenger.core.Resource
@@ -29,9 +31,12 @@ class ContactAdapter(
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int, model: ContactUI) {
         lifecycleScope.launch(Dispatchers.IO) {
-            kSuspendFunction.invoke(model.getId).collectLatest { result ->
-                launch(Dispatchers.Main) {
-                    if (result is Resource.Success) holder.bind(model.copy(url = result.data.url()))
+            kSuspendFunction.invoke(model.getId).collect { result ->
+                if (result is Resource.Success) {
+                    val url = result.data.url()
+                    launch(Dispatchers.Main) {
+                        holder.bind(model.copy(url = result.data.url()))
+                    }
                 }
             }
         }

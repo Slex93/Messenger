@@ -27,22 +27,27 @@ class ContactFragment : BaseFragment() {
     private var _binding: FragmentContactBinding? = null
     private val binding get() = checkNotNull(_binding)
 
+    private val viewModel: ContactViewModel by viewModels { viewModelFactory.get() }
+
+    private val query: Query by lazy {
+        FirebaseDatabase.getInstance().reference
+            .child(NODE_USER)
+            .child(Firebase.auth.uid.toString())
+            .child(NODE_CONTACT)
+    }
+
     private val parser: SnapshotParser<ContactUI> = SnapshotParser {
         return@SnapshotParser it.getValue(ContactUI.Base::class.java)!!
     }
 
-    private val viewModel: ContactViewModel by viewModels { viewModelFactory.get() }
-
-    private val adapter: ContactAdapter by lazy {
-        val query: Query = FirebaseDatabase
-            .getInstance().reference
-            .child(NODE_USER)
-            .child(Firebase.auth.uid.toString())
-            .child(NODE_CONTACT)
-        val options = FirebaseRecyclerOptions.Builder<ContactUI>()
+    private val options: FirebaseRecyclerOptions<ContactUI> by lazy {
+        FirebaseRecyclerOptions.Builder<ContactUI>()
             .setLifecycleOwner(viewLifecycleOwner)
             .setQuery(query, parser)
             .build()
+    }
+
+    private val adapter: ContactAdapter by lazy {
         ContactAdapter(options, ItemClick(), viewModel::getUser, viewLifecycleOwner.lifecycleScope)
     }
 
@@ -66,11 +71,9 @@ class ContactFragment : BaseFragment() {
     private inner class ItemClick : ClickListener<ContactUI> {
         override fun click(item: ContactUI) {
             item.openChat { card, url ->
-                val directions = ContactFragmentDirections.actionNavContactToNavSingleChat(
-                    card.transitionName,
-                    url
-                )
-                val extras = FragmentNavigatorExtras(card to card.transitionName)
+                val transitionName = card.transitionName
+                val directions = ContactFragmentDirections.navContactToChat(transitionName, url)
+                val extras = FragmentNavigatorExtras(card to transitionName)
                 findNavController().navigate(directions, extras)
             }
         }
