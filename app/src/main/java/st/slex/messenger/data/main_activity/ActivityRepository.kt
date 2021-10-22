@@ -49,35 +49,15 @@ interface ActivityRepository {
             }
 
         private suspend inline fun listener(
-            list: List<ContactData>,
+            contactsList: List<ContactData>,
             crossinline function: (Resource<Nothing?>) -> Unit
         ) = withContext(Dispatchers.IO) {
             return@withContext object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    snapshot.children.forEach { snapshotPhone ->
-                        val phone: String = snapshotPhone.key.toString()
-                        val id: String = snapshotPhone.value.toString()
-                        if (list.isNullOrEmpty()) {
-                            this@withContext.launch {
-                                val task = contactsReference.setValue(list)
-                                function(handle(task))
-                            }
-                        } else {
-                            list.forEach { contact ->
-                                if (auth.uid != id && contact.getPhone == phone) {
-                                    val task = contactsReference.child(id)
-                                        .setValue(
-                                            mapContact(
-                                                id = id,
-                                                phone = phone,
-                                                username = contact.getFullName
-                                            )
-                                        )
-                                    this@withContext.launch {
-                                        function(handle(task))
-                                    }
-                                }
-                            }
+                    contactsParser(contactsList, snapshot.mapIdToPhones).forEach {
+                        val task = contactsReference.child(it.getId).setValue(mapContact(it))
+                        this@withContext.launch {
+                            function(handle(task))
                         }
                     }
                 }
@@ -94,6 +74,21 @@ interface ActivityRepository {
                     .addOnFailureListener { continuation.resumeWithException(it) }
             }
 
+        private fun contactsParser(
+            contacts: List<ContactData>,
+            snapUsers: Map<String, String>
+        ): List<ContactData> =
+            contacts.filter { contact ->
+                snapUsers.containsKey(contact.getPhone) && !snapUsers.containsValue(auth.uid)
+            }.map { contact ->
+                contact.copy(id = snapUsers[contact.getPhone])
+            }
+
+        private val DataSnapshot.mapIdToPhones: Map<String, String>
+            get() = children.mapNotNull {
+                it.key.toString() to it.value.toString()
+            }.toMap()
+
         private val contactsReference: DatabaseReference by lazy {
             reference.child(NODE_USER).child(auth.uid).child(NODE_CONTACT)
         }
@@ -106,10 +101,10 @@ interface ActivityRepository {
             reference.child(NODE_USER).child(auth.uid).child(CHILD_STATE)
         }
 
-        private fun mapContact(id: String, phone: String, username: String) = mapOf<String, Any>(
-            CHILD_ID to id,
-            CHILD_PHONE to phone,
-            CHILD_FULL_NAME to username
+        private fun mapContact(contact: ContactData) = mapOf<String, Any>(
+            CHILD_ID to contact.getId,
+            CHILD_PHONE to contact.getPhone,
+            CHILD_FULL_NAME to contact.getFullName
         )
     }
 }
