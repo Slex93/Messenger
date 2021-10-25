@@ -52,9 +52,7 @@ class EditUsernameFragment : BaseFragment() {
         binding.editUnBtnSave.setOnClickListener {
             val username = binding.editUnTextInput.editText?.text.toString()
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.saveUsername(username.lowercase()).collect {
-                    it.collector()
-                }
+                viewModel.saveUsername(username.lowercase()).collect { it.collector() }
             }
         }
     }

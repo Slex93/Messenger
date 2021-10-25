@@ -23,11 +23,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="st.slex.messenger.ui.auth.AuthActivity"
-            android:exported="true" />
-        <activity
             android:name="st.slex.messenger.ui.main.MainActivity"
             android:exported="true" />
+        <activity
+            android:name="st.slex.messenger.auth.ui.AuthActivity"
+            android:exported="false" />
     </application>
-
 </manifest>

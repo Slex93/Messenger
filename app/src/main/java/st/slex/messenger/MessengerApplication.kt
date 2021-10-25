@@ -8,15 +8,14 @@ import st.slex.messenger.di.application.DaggerAppComponent
 
 @ExperimentalCoroutinesApi
 class MessengerApplication : Application() {
-    private var _appComponent: AppComponent? = null
-    val appComponent: AppComponent
-        get() = checkNotNull(_appComponent)
+
+    val appComponent: AppComponent by lazy {
+        DaggerAppComponent.builder().application(this).create()
+    }
 
     override fun onCreate() {
         super.onCreate()
-        _appComponent = DaggerAppComponent.builder()
-            .application(this)
-            .create()
+        appComponent.inject(this)
     }
 }
 

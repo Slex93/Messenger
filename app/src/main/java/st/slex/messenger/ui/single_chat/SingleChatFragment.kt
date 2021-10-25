@@ -23,9 +23,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSingleChatBinding
+import st.slex.messenger.core.FirebaseConstants.NODE_MESSAGES
 import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.core.BaseFragment
-import st.slex.messenger.utilites.NODE_MESSAGES
 
 
 @ExperimentalCoroutinesApi

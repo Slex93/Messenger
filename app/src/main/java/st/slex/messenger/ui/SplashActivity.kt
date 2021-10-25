@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.ui.auth.AuthActivity
+import st.slex.messenger.auth.ui.AuthActivity
 import st.slex.messenger.ui.main.MainActivity
 
 @SuppressLint("CustomSplashScreen")

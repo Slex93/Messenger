@@ -42,7 +42,8 @@ android {
 }
 
 dependencies {
-    implementation project(':phoneedittext')
+    implementation project(':auth')
+    implementation project(':core')
 
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.5.31"
 

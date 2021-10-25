@@ -4,9 +4,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import st.slex.messenger.core.FirebaseConstants.CHILD_STATE
+import st.slex.messenger.core.FirebaseConstants.NODE_USER
 import st.slex.messenger.core.Resource
-import st.slex.messenger.utilites.CHILD_STATE
-import st.slex.messenger.utilites.NODE_USER
 import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
 

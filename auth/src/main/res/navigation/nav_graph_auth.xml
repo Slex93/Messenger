@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_auth"
+    app:startDestination="@id/nav_auth_phone">
+
+    <fragment
+        android:id="@+id/nav_auth_phone"
+        android:name="st.slex.messenger.auth.ui.EnterPhoneFragment"
+        android:label="fragment_enter_phone"
+        tools:layout="@layout/fragment_enter_phone">
+        <action
+            android:id="@+id/action_nav_auth_phone_to_nav_auth_code"
+            app:destination="@id/nav_auth_code" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_auth_code"
+        android:name="st.slex.messenger.auth.ui.EnterCodeFragment"
+        android:label="fragment_enter_code"
+        tools:layout="@layout/fragment_enter_code">
+        <argument
+            android:name="id"
+            app:argType="string" />
+    </fragment>
+</navigation>
