@@ -1,6 +1,7 @@
 package st.slex.messenger.auth.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -90,11 +91,12 @@ class EnterPhoneFragment : BaseAuthFragment() {
 
     private fun LoginUIResult.collector() = when (this) {
         is LoginUIResult.Success.LogIn -> {
-            requireActivity().application.onCreate()
+            val intent = Intent()
+            intent.setClassName(requireContext(), "st.slex.messenger.ui.main.MainActivity")
+            startActivity(intent)
         }
         is LoginUIResult.Success.SendCode -> {
             binding.fragmentCodeProgressIndicator.visibility = View.GONE
-            //binding.root.showPrimarySnackBar(getString(R.string.snack_code_send))
             val direction =
                 EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(id)
             val extras =
