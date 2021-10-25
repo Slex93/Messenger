@@ -1,5 +1,6 @@
 package st.slex.messenger.auth.ui
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -104,7 +105,9 @@ class EnterCodeFragment : BaseAuthFragment() {
             is LoginUIResult.Success -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 //binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                //requireActivity().application.onCreate()
+                val intent = Intent()
+                intent.setClassName(requireContext(), "st.slex.messenger.ui.main.MainActivity")
+                startActivity(intent)
                 Snackbar.make(binding.root, "SUCCESS", Snackbar.LENGTH_LONG).show()
             }
             is LoginUIResult.Failure -> {
