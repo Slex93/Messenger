@@ -2,8 +2,8 @@ package st.slex.messenger.di.main_activity.modules
 
 import dagger.Module
 import dagger.Provides
-import st.slex.messenger.auth.core.Mapper
-import st.slex.messenger.auth.core.Resource
+import st.slex.messenger.core.Mapper
+import st.slex.messenger.core.Resource
 import st.slex.messenger.data.chats.ChatsData
 import st.slex.messenger.data.chats.ChatsDataMapper
 import st.slex.messenger.data.contacts.ContactData

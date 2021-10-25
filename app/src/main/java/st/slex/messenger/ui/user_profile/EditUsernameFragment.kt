@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentEditUsernameBinding
-import st.slex.messenger.auth.core.Resource
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.utilites.funs.showPrimarySnackBar
 
@@ -52,9 +52,7 @@ class EditUsernameFragment : BaseFragment() {
         binding.editUnBtnSave.setOnClickListener {
             val username = binding.editUnTextInput.editText?.text.toString()
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.saveUsername(username.lowercase()).collect {
-                    it.collector()
-                }
+                viewModel.saveUsername(username.lowercase()).collect { it.collector() }
             }
         }
     }

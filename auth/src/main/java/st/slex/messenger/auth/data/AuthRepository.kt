@@ -8,7 +8,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import st.slex.messenger.auth.core.*
+import st.slex.messenger.core.FirebaseConstants.CHILD_ID
+import st.slex.messenger.core.FirebaseConstants.CHILD_PHONE
+import st.slex.messenger.core.FirebaseConstants.NODE_PHONE
+import st.slex.messenger.core.FirebaseConstants.NODE_USER
+import st.slex.messenger.core.Resource
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException

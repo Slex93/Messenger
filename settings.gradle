@@ -2,3 +2,4 @@ rootProject.name = "Messenger"
 include ':app'
 include ':phoneedittext'
 include ':auth'
+include ':core'

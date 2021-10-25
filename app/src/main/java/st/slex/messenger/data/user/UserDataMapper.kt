@@ -1,7 +1,7 @@
 package st.slex.messenger.data.user
 
-import st.slex.messenger.auth.core.Mapper
-import st.slex.messenger.auth.core.Resource
+import st.slex.messenger.core.Mapper
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.user_profile.UserUI
 import javax.inject.Inject
 

@@ -5,10 +5,10 @@ import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import st.slex.messenger.auth.core.Resource
 import st.slex.messenger.auth.data.AuthRepository
 import st.slex.messenger.auth.ui.LoginEngine
 import st.slex.messenger.auth.ui.SendCodeEngine
+import st.slex.messenger.core.Resource
 import javax.inject.Inject
 
 interface AuthInteractor {

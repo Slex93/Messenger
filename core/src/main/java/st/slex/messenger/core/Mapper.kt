@@ -1,7 +1,5 @@
 package st.slex.messenger.core
 
-import st.slex.messenger.auth.core.Mapper
-
 interface Mapper {
 
     interface Data<S, R> : Mapper {

@@ -1,7 +1,7 @@
 package st.slex.messenger.data.core
 
 import com.google.android.gms.tasks.OnCompleteListener
-import st.slex.messenger.auth.core.Resource
+import st.slex.messenger.core.Resource
 import javax.inject.Inject
 
 interface CompleteTaskListener {

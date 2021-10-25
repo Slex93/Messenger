@@ -11,6 +11,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -101,7 +102,8 @@ class EnterCodeFragment : BaseAuthFragment() {
             is LoginUIResult.Success -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
                 //binding.root.showPrimarySnackBar(getString(R.string.snack_success))
-                requireActivity().application.onCreate()
+                //requireActivity().application.onCreate()
+                Snackbar.make(binding.root, "SUCCESS", Snackbar.LENGTH_LONG).show()
             }
             is LoginUIResult.Failure -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
