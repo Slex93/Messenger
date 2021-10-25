@@ -5,8 +5,13 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.auth.core.Resource
-import st.slex.messenger.utilites.*
+import st.slex.messenger.core.FirebaseConstants.CHILD_FROM
+import st.slex.messenger.core.FirebaseConstants.CHILD_ID
+import st.slex.messenger.core.FirebaseConstants.CHILD_MESSAGE
+import st.slex.messenger.core.FirebaseConstants.CHILD_TIMESTAMP
+import st.slex.messenger.core.FirebaseConstants.NODE_CHATS
+import st.slex.messenger.core.FirebaseConstants.NODE_MESSAGES
+import st.slex.messenger.core.Resource
 import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
 

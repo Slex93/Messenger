@@ -1,4 +1,4 @@
-package st.slex.messenger.auth.core
+package st.slex.messenger.core
 
 interface TextMapper<T> : Mapper.Data<String, T> {
 

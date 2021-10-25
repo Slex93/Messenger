@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -38,6 +39,7 @@ android {
 
 dependencies {
     implementation project(':phoneedittext')
+    implementation project(':core')
 
     /*Navigation Component*/
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -47,13 +49,15 @@ dependencies {
     implementation("com.google.dagger:dagger:2.37")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation 'com.google.dagger:dagger-android:2.37'
+    kapt("com.google.dagger:dagger-compiler:2.37")
+    kapt("com.google.dagger:dagger-android-processor:2.37")
+    implementation 'com.google.dagger:dagger-android-support:2.37'
+
+    /*Firebase*/
     implementation 'com.google.firebase:firebase-common-ktx:20.0.0'
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.1'
     implementation 'com.google.firebase:firebase-database-ktx:20.0.2'
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.0'
-    kapt("com.google.dagger:dagger-compiler:2.37")
-    kapt("com.google.dagger:dagger-android-processor:2.37")
-    implementation 'com.google.dagger:dagger-android-support:2.37'
 
     /*Lifecycle components*/
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"

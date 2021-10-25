@@ -13,10 +13,15 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.auth.core.Resource
+import st.slex.messenger.core.FirebaseConstants.CHILD_STATE
+import st.slex.messenger.core.FirebaseConstants.CHILD_URL
+import st.slex.messenger.core.FirebaseConstants.CHILD_USERNAME
+import st.slex.messenger.core.FirebaseConstants.FOLDER_PROFILE_IMAGE
+import st.slex.messenger.core.FirebaseConstants.NODE_USER
+import st.slex.messenger.core.FirebaseConstants.NODE_USERNAME
+import st.slex.messenger.core.Resource
 import st.slex.messenger.data.core.CompleteTaskListener
 import st.slex.messenger.data.core.ValueSnapshotListener
-import st.slex.messenger.utilites.*
 import javax.inject.Inject
 
 interface UserRepository {

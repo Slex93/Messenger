@@ -14,7 +14,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import st.slex.messenger.auth.core.Resource
+import st.slex.messenger.core.FirebaseConstants.CHILD_FULL_NAME
+import st.slex.messenger.core.FirebaseConstants.CHILD_ID
+import st.slex.messenger.core.FirebaseConstants.CHILD_PHONE
+import st.slex.messenger.core.FirebaseConstants.CHILD_STATE
+import st.slex.messenger.core.FirebaseConstants.NODE_CONTACT
+import st.slex.messenger.core.FirebaseConstants.NODE_PHONE
+import st.slex.messenger.core.FirebaseConstants.NODE_USER
+import st.slex.messenger.core.Resource
 import st.slex.messenger.data.contacts.ContactData
 import st.slex.messenger.utilites.*
 import javax.inject.Inject

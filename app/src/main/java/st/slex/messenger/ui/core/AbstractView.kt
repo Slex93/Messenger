@@ -1,6 +1,6 @@
 package st.slex.messenger.ui.core
 
-import st.slex.messenger.auth.core.TextMapper
+import st.slex.messenger.core.TextMapper
 
 interface AbstractView {
 

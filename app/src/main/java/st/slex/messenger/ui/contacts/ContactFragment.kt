@@ -14,10 +14,10 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentContactBinding
+import st.slex.messenger.core.FirebaseConstants.NODE_CONTACT
+import st.slex.messenger.core.FirebaseConstants.NODE_USER
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.ui.core.ClickListener
-import st.slex.messenger.utilites.NODE_CONTACT
-import st.slex.messenger.utilites.NODE_USER
 import st.slex.messenger.utilites.funs.setSupportActionBar
 
 

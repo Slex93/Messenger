@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.R
 import st.slex.common.messenger.databinding.FragmentSettingsBinding
-import st.slex.messenger.auth.core.Resource
 import st.slex.messenger.auth.ui.AuthActivity
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.core.BaseFragment
 import st.slex.messenger.utilites.funs.setSupportActionBar
 

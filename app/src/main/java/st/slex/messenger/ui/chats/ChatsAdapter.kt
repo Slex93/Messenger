@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.databinding.ItemRecyclerMainBinding
-import st.slex.messenger.auth.core.Resource
+import st.slex.messenger.core.Resource
 import st.slex.messenger.ui.core.ClickListener
 import kotlin.reflect.KSuspendFunction1
 
