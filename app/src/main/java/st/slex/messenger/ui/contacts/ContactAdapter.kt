@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import st.slex.common.messenger.databinding.ItemRecyclerContactBinding
-import st.slex.messenger.core.Resource
+import st.slex.messenger.auth.core.Resource
 import st.slex.messenger.ui.core.ClickListener
 import st.slex.messenger.ui.user_profile.UserUI
 

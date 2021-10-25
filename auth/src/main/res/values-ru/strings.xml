@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="next_step">Дальше</string>
+    <!--Title-->
+    <string name="title_code">Введите код</string>
+    <string name="title_contacts">Контакты</string>
+
+    <!--Snack-->
+    <string name="snack_success">Успешно</string>
+    <string name="snack_failure">Ошибка</string>
+    <string name="snack_code_send">Код отправлен</string>
+
+    <!--Enter code-->
+    <string name="enter_code">Код</string>
+
+    <!--Enter phone-->
+    <string name="hint_phone_number">Номер телефона</string>
+    <string name="code">код</string>
+    <string name="country_code_ru">+7</string>
+    <string name="search">поиск</string>
+    <string name="label_sign_out">Выйти</string>
+
+    <!--State-->
+    <string name="label_btn_send">отправить</string>
+    <string name="label_input_message">Ввод сообщения…</string>
+    <string name="label_nav_all_chats">Все чаты</string>
+    <string name="label_nav_contacts">Контакты</string>
+    <string name="label_nav_settings">Настройки</string>
+    <string name="label_nav_connect_me">Связь с разрабочтком</string>
+    <string name="label_nav_help">Помощь</string>
+</resources>

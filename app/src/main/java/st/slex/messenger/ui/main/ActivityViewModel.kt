@@ -2,10 +2,9 @@ package st.slex.messenger.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.storage.internal.ActivityLifecycleListener
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.core.Resource
+import st.slex.messenger.auth.core.Resource
 import st.slex.messenger.data.main_activity.ActivityRepository
 import st.slex.messenger.ui.contacts.ContactUI
 import st.slex.messenger.ui.contacts.ContactsUIMapper
