@@ -8,6 +8,8 @@
         <entry key="app/src/main/res/drawable/bg_receiving_message.xml" value="0.4875" />
         <entry key="app/src/main/res/drawable/ic_baseline_home_24.xml" value="0.4947916666666667" />
         <entry key="app/src/main/res/drawable/ic_default_photo.xml" value="0.20989583333333334" />
+        <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.3177083333333333" />
+        <entry key="app/src/main/res/drawable/splash_screen.xml" value="0.3177083333333333" />
         <entry key="app/src/main/res/layout/activity_auth.xml" value="0.41875" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.23279758915118032" />
         <entry key="app/src/main/res/layout/fragment_contact.xml" value="0.2259963768115942" />
@@ -31,6 +33,9 @@
         <entry key="auth/src/main/res/layout/activity_auth.xml" value="0.22275238573581116" />
         <entry key="auth/src/main/res/layout/fragment_enter_code.xml" value="0.22275238573581116" />
         <entry key="auth/src/main/res/layout/fragment_enter_phone.xml" value="0.22275238573581116" />
+        <entry key="main/src/main/res/drawable/ic_baseline_message_24.xml" value="0.3177083333333333" />
+        <entry key="main/src/main/res/layout/item_recycler_single_chat.xml" value="0.15806159420289856" />
+        <entry key="main/src/main/res/menu/menu_navigation_drawer.xml" value="0.29270833333333335" />
       </map>
     </option>
   </component>

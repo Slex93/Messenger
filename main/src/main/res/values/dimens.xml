@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="small_padding">8dp</dimen>
+    <dimen name="primary_padding">16dp</dimen>
+    <dimen name="big_padding">32dp</dimen>
+    <dimen name="phone_default_flag_size">20sp</dimen>
+</resources>

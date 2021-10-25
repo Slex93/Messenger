@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<st.slex.messenger.main.ui.core.CustomCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemCardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:checkable="true"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="@dimen/primary_padding"
+            android:weightSum="10">
+
+            <st.slex.messenger.main.ui.core.CustomImageView
+                android:id="@+id/avatarImageView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/description_user_avatar"
+                tools:src="@drawable/test_image" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/primary_padding"
+                android:orientation="vertical">
+
+                <st.slex.messenger.main.ui.core.CustomTextView
+                    android:id="@+id/usernameTextView"
+                    style="@style/TextAppearance.MaterialComponents.Body1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLength="15"
+                    android:maxLines="1"
+                    tools:text="UserName" />
+
+                <st.slex.messenger.main.ui.core.CustomTextView
+                    android:id="@+id/phoneTextView"
+                    style="@style/TextAppearance.MaterialComponents.Body2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    tools:text="PhoneNumber" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:dividerInsetStart="82dp" />
+    </LinearLayout>
+
+</st.slex.messenger.main.ui.core.CustomCardView>
