@@ -3,7 +3,7 @@ package st.slex.messenger.data.core
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import st.slex.messenger.core.Resource
+import st.slex.messenger.auth.core.Resource
 import javax.inject.Inject
 import kotlin.reflect.KClass
 

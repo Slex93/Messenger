@@ -5,7 +5,7 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.core.Resource
+import st.slex.messenger.auth.core.Resource
 import st.slex.messenger.utilites.*
 import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine

@@ -13,7 +13,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.core.Resource
+import st.slex.messenger.auth.core.Resource
 import st.slex.messenger.data.core.CompleteTaskListener
 import st.slex.messenger.data.core.ValueSnapshotListener
 import st.slex.messenger.utilites.*

@@ -1,7 +1,7 @@
 package st.slex.messenger.data.contacts
 
-import st.slex.messenger.core.Mapper
-import st.slex.messenger.core.Resource
+import st.slex.messenger.auth.core.Mapper
+import st.slex.messenger.auth.core.Resource
 import st.slex.messenger.ui.contacts.ContactUI
 
 class ContactsDataMapper : Mapper.ToUI<List<ContactData>, Resource<List<ContactUI>>> {
