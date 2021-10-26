@@ -3,7 +3,6 @@ package st.slex.messenger
 import android.app.Application
 import dagger.BindsInstance
 import dagger.Component
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Singleton
 
 @Singleton
@@ -17,7 +16,4 @@ interface AppComponent {
         fun application(application: Application): Builder
         fun create(): AppComponent
     }
-
-    @ExperimentalCoroutinesApi
-    fun inject(activity: SplashActivity)
 }

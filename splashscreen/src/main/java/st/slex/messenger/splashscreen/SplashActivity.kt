@@ -1,23 +1,25 @@
-package st.slex.messenger
+package st.slex.messenger.splashscreen
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.auth.ui.AuthActivity
-import st.slex.messenger.main.ui.main.MainActivity
 
 @SuppressLint("CustomSplashScreen")
-@ExperimentalCoroutinesApi
 class SplashActivity : AppCompatActivity() {
 
     private val initialJob = lifecycleScope.launchWhenCreated {
         val intent = if (FirebaseAuth.getInstance().currentUser != null) {
-            Intent(this@SplashActivity, MainActivity::class.java)
+            Intent().setClassName(
+                this@SplashActivity,
+                "st.slex.messenger.main.ui.main.MainActivity"
+            )
         } else {
-            Intent(this@SplashActivity, AuthActivity::class.java)
+            Intent().setClassName(
+                this@SplashActivity,
+                "st.slex.messenger.auth.ui.AuthActivity"
+            )
         }
         startActivity(intent)
         finish()

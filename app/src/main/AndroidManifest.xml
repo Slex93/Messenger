@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/ProjectTheme">
         <activity
-            android:name="st.slex.messenger.SplashActivity"
+            android:name="st.slex.messenger.splashscreen.SplashActivity"
             android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
