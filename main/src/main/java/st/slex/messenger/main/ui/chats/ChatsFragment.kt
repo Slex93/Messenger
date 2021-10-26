@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -29,7 +28,6 @@ import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentChatsBinding
 import st.slex.messenger.main.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.main.ui.core.BaseFragment
-import st.slex.messenger.main.ui.core.ClickListener
 import st.slex.messenger.main.ui.user_profile.UserUI
 
 @ExperimentalCoroutinesApi
@@ -54,12 +52,7 @@ class ChatsFragment : BaseFragment() {
             .setLifecycleOwner(this)
             .setQuery(query, parser)
             .build()
-        ChatsAdapter(
-            options,
-            ItemClick(),
-            viewModel::getChatUIHead,
-            lifecycleScope
-        )
+        ChatsAdapter(options, ChatsItemClicker(), viewModel::getChatUIHead, lifecycleScope)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,20 +103,6 @@ class ChatsFragment : BaseFragment() {
             }
             is Resource.Loading -> {
                 /*Start progress bar*/
-            }
-        }
-    }
-
-    private inner class ItemClick : ClickListener<ChatsUI> {
-        override fun click(item: ChatsUI) {
-            item.startChat { card, url ->
-                val directions =
-                    ChatsFragmentDirections.actionNavHomeToNavSingleChat(
-                        card.transitionName,
-                        url
-                    )
-                val extras = FragmentNavigatorExtras(card to card.transitionName)
-                findNavController().navigate(directions, extras)
             }
         }
     }

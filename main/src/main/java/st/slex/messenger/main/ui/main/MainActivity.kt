@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.ActivityMainBinding
-import st.slex.messenger.main.di.DaggerMainActivityComponent
-import st.slex.messenger.main.di.MainActivityComponent
+import st.slex.messenger.main.di.component.DaggerMainActivityComponent
+import st.slex.messenger.main.di.component.MainActivityComponent
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi

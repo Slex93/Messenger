@@ -1,6 +1,5 @@
 package st.slex.messenger.main.ui.chats
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -31,22 +30,21 @@ class ChatsAdapter(
     override fun onBindViewHolder(holder: ChatsViewHolder, position: Int, model: ChatsUI) {
         lifecycleScope.launch(Dispatchers.IO) {
             kSuspendFunction.invoke(model).collect {
-                launch(Dispatchers.Main) {
-                    when (it) {
-                        is Resource.Success -> {
-                            Log.i("TAG", it.data.toString())
-                            holder.bind(it.data)
-                        }
-                        is Resource.Failure -> {
-                            Log.i("TAG Resource.Failure", it.exception.toString())
-                            holder.bindError(it.exception.message.toString())
-                        }
-                        is Resource.Loading -> {
-                            holder.bindLoading()
-                        }
-                    }
-                }
+                launch(Dispatchers.Main) { bindState(holder, it) }
             }
         }
     }
+
+    private fun bindState(holder: ChatsViewHolder, result: Resource<ChatsUI>) =
+        when (result) {
+            is Resource.Success -> {
+                holder.bind(result.data)
+            }
+            is Resource.Failure -> {
+                holder.bindError(result.exception.message.toString())
+            }
+            is Resource.Loading -> {
+                holder.bindLoading()
+            }
+        }
 }

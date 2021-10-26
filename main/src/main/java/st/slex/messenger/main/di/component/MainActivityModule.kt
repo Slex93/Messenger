@@ -1,4 +1,4 @@
-package st.slex.messenger.main.di
+package st.slex.messenger.main.di.component
 
 import dagger.Module
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,7 +12,8 @@ import st.slex.messenger.main.di.modules.*
         RepositoryModule::class,
         ViewModelModule::class,
         ViewModelFactoryModule::class,
-        ReferencesModule::class
+        ReferencesModule::class,
+        InteractorsModule::class
     ]
 )
 class MainActivityModule

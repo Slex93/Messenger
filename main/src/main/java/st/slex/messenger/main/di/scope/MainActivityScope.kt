@@ -1,4 +1,4 @@
-package st.slex.messenger.main.di
+package st.slex.messenger.main.di.scope
 
 import javax.inject.Scope
 
