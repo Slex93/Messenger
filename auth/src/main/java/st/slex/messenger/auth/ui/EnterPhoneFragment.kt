@@ -92,7 +92,7 @@ class EnterPhoneFragment : BaseAuthFragment() {
     private fun LoginUIResult.collector() = when (this) {
         is LoginUIResult.Success.LogIn -> {
             val intent = Intent()
-            intent.setClassName(requireContext(), "st.slex.messenger.main.ui.main.MainActivity")
+            intent.setClassName(requireContext(), "st.slex.messenger.main.ui.MainActivity")
             startActivity(intent)
         }
         is LoginUIResult.Success.SendCode -> {

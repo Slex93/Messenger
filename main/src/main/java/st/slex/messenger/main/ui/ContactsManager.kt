@@ -1,4 +1,4 @@
-package st.slex.messenger.main.ui.main
+package st.slex.messenger.main.ui
 
 import android.Manifest
 import android.annotation.SuppressLint

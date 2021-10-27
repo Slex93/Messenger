@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dagger.Lazy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.main.ui.main.MainActivity
+import st.slex.messenger.main.ui.MainActivity
 import st.slex.messenger.main.utilites.base.GlideBase
 import st.slex.messenger.main.utilites.base.SetImageWithGlide
 import javax.inject.Inject

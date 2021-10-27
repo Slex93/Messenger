@@ -4,8 +4,8 @@ import dagger.BindsInstance
 import dagger.Component
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.main.di.scope.MainActivityScope
+import st.slex.messenger.main.ui.MainActivity
 import st.slex.messenger.main.ui.core.BaseFragment
-import st.slex.messenger.main.ui.main.MainActivity
 
 @MainActivityScope
 @ExperimentalCoroutinesApi

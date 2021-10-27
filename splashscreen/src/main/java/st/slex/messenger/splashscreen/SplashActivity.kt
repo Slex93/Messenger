@@ -13,7 +13,7 @@ class SplashActivity : AppCompatActivity() {
         val intent = if (FirebaseAuth.getInstance().currentUser != null) {
             Intent().setClassName(
                 this@SplashActivity,
-                "st.slex.messenger.main.ui.main.MainActivity"
+                "st.slex.messenger.main.ui.MainActivity"
             )
         } else {
             Intent().setClassName(

@@ -1,4 +1,4 @@
-package st.slex.messenger.main.ui.main
+package st.slex.messenger.main.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

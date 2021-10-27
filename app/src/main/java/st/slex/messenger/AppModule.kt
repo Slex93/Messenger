@@ -7,7 +7,7 @@ import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.auth.ui.AuthActivity
-import st.slex.messenger.main.ui.main.MainActivity
+import st.slex.messenger.main.ui.MainActivity
 
 @Module
 class AppModule {

@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.messenger.core.Resource
@@ -17,7 +17,7 @@ import kotlin.reflect.KSuspendFunction1
 class ChatsAdapter(
     options: FirebaseRecyclerOptions<ChatsUI>,
     private val itemClick: ClickListener<ChatsUI>,
-    private val kSuspendFunction: KSuspendFunction1<ChatsUI, SharedFlow<Resource<ChatsUI>>>,
+    private val kSuspendFunction: KSuspendFunction1<ChatsUI, StateFlow<Resource<ChatsUI>>>,
     private val lifecycleScope: LifecycleCoroutineScope
 ) : FirebaseRecyclerAdapter<ChatsUI, ChatsViewHolder>(options) {
 
@@ -28,7 +28,7 @@ class ChatsAdapter(
     }
 
     override fun onBindViewHolder(holder: ChatsViewHolder, position: Int, model: ChatsUI) {
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launchWhenResumed {
             kSuspendFunction.invoke(model).collect {
                 launch(Dispatchers.Main) { bindState(holder, it) }
             }

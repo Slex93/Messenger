@@ -4,6 +4,9 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
+import com.google.firebase.messaging.ktx.remoteMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.core.FirebaseConstants.CHILD_FROM
 import st.slex.messenger.core.FirebaseConstants.CHILD_ID
@@ -46,9 +49,16 @@ interface SingleChatRepository {
             val taskChatsSender = referenceChatsSender.updateChildren(mapSender)
             val taskChatsReceiver = referenceChatsReceiver.updateChildren(mapReceiver)
 
+            val remoteMessage = remoteMessage(receiverId) {
+                setMessageId(messageKey)
+                setData(mapReceiver).build()
+            }
+            Firebase.messaging.send(remoteMessage)
+
             val failureListener = OnFailureListener {
                 continuation.resumeWith(Result.success(Resource.Failure<Nothing>(it)))
             }
+
             val successListenerChatReceiver = OnSuccessListener<Void> {
                 continuation.resumeWith(Result.success(Resource.Success(null)))
             }
@@ -84,7 +94,7 @@ interface SingleChatRepository {
             reference.child(NODE_CHATS)
         }
 
-        private fun mapMessage(message: String, id: String): Map<String, Any> = mapOf(
+        private fun mapMessage(message: String, id: String): Map<String, String> = mapOf(
             CHILD_ID to id,
             CHILD_FROM to auth.uid,
             CHILD_MESSAGE to message,

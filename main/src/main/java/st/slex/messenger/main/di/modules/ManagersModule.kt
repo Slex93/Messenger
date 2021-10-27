@@ -6,7 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.main.data.core.CompleteTaskListener
 import st.slex.messenger.main.data.core.ValueSnapshotListener
 import st.slex.messenger.main.data.main_activity.ActivityContactsUpdater
-import st.slex.messenger.main.ui.main.ContactsManager
+import st.slex.messenger.main.ui.ContactsManager
 
 @Module
 interface ManagersModule {

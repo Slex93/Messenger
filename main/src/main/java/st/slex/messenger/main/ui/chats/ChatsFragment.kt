@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -19,6 +20,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -42,18 +44,9 @@ class ChatsFragment : BaseFragment() {
         return@SnapshotParser it.getValue(ChatsUI.Base::class.java)!!
     }
 
-    private val adapter: ChatsAdapter by lazy {
-        val query: Query = FirebaseDatabase
-            .getInstance().reference
-            .child(NODE_CHATS)
-            .child(Firebase.auth.uid.toString())
-            .orderByKey()
-        val options = FirebaseRecyclerOptions.Builder<ChatsUI>()
-            .setLifecycleOwner(this)
-            .setQuery(query, parser)
-            .build()
-        ChatsAdapter(options, ChatsItemClicker(), viewModel::getChatUIHead, lifecycleScope)
-    }
+    private var _adapter: ChatsAdapter? = null
+    private val adapter: ChatsAdapter
+        get() = checkNotNull(_adapter)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,9 +68,25 @@ class ChatsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.recyclerView.adapter = adapter
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.currentUser().collect { it.collector() }
+        val query: Query = FirebaseDatabase
+            .getInstance().reference
+            .child(NODE_CHATS)
+            .child(Firebase.auth.uid.toString())
+            .orderByKey()
+        val options = FirebaseRecyclerOptions.Builder<ChatsUI>()
+            .setLifecycleOwner(viewLifecycleOwner)
+            .setQuery(query, parser)
+            .build()
+        _adapter = ChatsAdapter(
+            options,
+            ChatsItemClicker(),
+            viewModel::getChatUIHead,
+            viewLifecycleOwner.lifecycleScope
+        )
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.currentUser().collect {
+                launch(Dispatchers.Main) { it.collector() }
+            }
         }
         NavigationUI.setupWithNavController(
             binding.mainScreenToolbar,
@@ -85,6 +94,21 @@ class ChatsFragment : BaseFragment() {
             AppBarConfiguration(setOf(R.id.nav_home), binding.mainScreenDrawerLayout)
         )
         binding.navView.setupWithNavController(findNavController())
+    }
+
+    override fun onStart() {
+        super.onStart()
+        adapter.startListening()
+        binding.recyclerView.adapter = adapter
+        postponeEnterTransition()
+        binding.recyclerView.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        adapter.stopListening()
     }
 
     private fun Resource<UserUI>.collector() {

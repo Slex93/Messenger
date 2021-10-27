@@ -23,10 +23,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="st.slex.messenger.main.ui.main.MainActivity"
+            android:name="st.slex.messenger.main.ui.MainActivity"
             android:exported="true" />
         <activity
             android:name="st.slex.messenger.auth.ui.AuthActivity"
             android:exported="false" />
+
+        <service
+            android:name="st.slex.messenger.main.notification.PushService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_baseline_contacts_24" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorBlueLight" />
     </application>
 </manifest>
