@@ -102,9 +102,8 @@ class EnterCodeFragment : BaseAuthFragment() {
         when (result) {
             is LoginUIResult.Success -> {
                 binding.fragmentCodeProgressIndicator.visibility = View.GONE
-                //binding.root.showPrimarySnackBar(getString(R.string.snack_success))
                 val intent = Intent()
-                intent.setClassName(requireContext(), "st.slex.messenger.main.ui.main.MainActivity")
+                intent.setClassName(requireContext(), "st.slex.messenger.main.ui.MainActivity")
                 startActivity(intent)
                 Snackbar.make(binding.root, "SUCCESS", Snackbar.LENGTH_LONG).show()
             }

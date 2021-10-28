@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.messaging.ktx.remoteMessage
@@ -14,7 +15,9 @@ import st.slex.messenger.core.FirebaseConstants.CHILD_MESSAGE
 import st.slex.messenger.core.FirebaseConstants.CHILD_TIMESTAMP
 import st.slex.messenger.core.FirebaseConstants.NODE_CHATS
 import st.slex.messenger.core.FirebaseConstants.NODE_MESSAGES
+import st.slex.messenger.core.FirebaseConstants.NODE_TOKENS
 import st.slex.messenger.core.Resource
+import st.slex.messenger.main.data.core.ValueSnapshotListener
 import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
 
@@ -25,7 +28,8 @@ interface SingleChatRepository {
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
         private val reference: DatabaseReference,
-        private val auth: FirebaseUser
+        private val auth: FirebaseUser,
+        private val listener: ValueSnapshotListener
     ) : SingleChatRepository {
 
         override suspend fun sendMessage(
@@ -49,11 +53,7 @@ interface SingleChatRepository {
             val taskChatsSender = referenceChatsSender.updateChildren(mapSender)
             val taskChatsReceiver = referenceChatsReceiver.updateChildren(mapReceiver)
 
-            val remoteMessage = remoteMessage(receiverId) {
-                setMessageId(messageKey)
-                setData(mapReceiver).build()
-            }
-            Firebase.messaging.send(remoteMessage)
+            notificationSender(receiverId, messageKey, mapReceiver)
 
             val failureListener = OnFailureListener {
                 continuation.resumeWith(Result.success(Resource.Failure<Nothing>(it)))
@@ -84,6 +84,39 @@ interface SingleChatRepository {
             taskMessageSender
                 .addOnSuccessListener(successListenerMessageSender)
                 .addOnFailureListener(failureListener)
+        }
+
+        private fun notificationSender(
+            receiverId: String,
+            messageKey: String,
+            mapReceiver: Map<String, String>
+        ) {
+            val notificationReference: DatabaseReference =
+                reference.child(NODE_TOKENS).child(receiverId)
+            val listener = tokenListener(receiverId, messageKey, mapReceiver)
+            notificationReference.addListenerForSingleValueEvent(listener)
+        }
+
+        private fun tokenListener(
+            receiverId: String, messageKey: String, mapReceiver: Map<String, String>
+        ): ValueEventListener = listener.singleEventListener(String::class) {
+            when (it) {
+                is Resource.Success -> sendNotification(it.data, messageKey, mapReceiver)
+                else -> {
+                }
+            }
+        }
+
+        private fun sendNotification(
+            receiverToken: String,
+            messageKey: String,
+            mapReceiver: Map<String, String>
+        ) {
+            val remoteMessage = remoteMessage(receiverToken) {
+                setMessageId(messageKey)
+                setData(mapReceiver).build()
+            }
+            Firebase.messaging.send(remoteMessage)
         }
 
         private val messagesReference: DatabaseReference by lazy {

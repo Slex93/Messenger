@@ -14,8 +14,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.ActivityMainBinding
@@ -65,28 +63,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        firebaseService()
         val intentFilter = IntentFilter()
         intentFilter.addAction(INTENT_FILTER)
         registerReceiver(pushBroadcastReceiver, intentFilter)
-    }
-
-
-    private fun firebaseService() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-
-            // Get new FCM registration token
-            val token = task.result
-
-            // Log and toast
-            val msg = token.toString()
-            Log.d(TAG, msg)
-            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-        })
     }
 
     override fun onStart() {

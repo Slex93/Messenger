@@ -10,6 +10,7 @@ object FirebaseConstants {
     const val NODE_CHAT = "chats"
     const val NODE_CHAT_LIST = "chat_list"
     const val NODE_MESSAGES = "messages"
+    const val NODE_TOKENS = "tokens"
 
     const val CHILD_MESSAGE = "message"
     const val NODE_CHATS = "chats"
