@@ -28,8 +28,9 @@ interface SendCodeEngine {
         private inline fun listener(
             crossinline function: (LoginDomainResult) -> Unit
         ) = OnCompleteListener<AuthResult> {
-            if (it.isSuccessful) function(LoginDomainResult.Success.LogIn)
-            else function(LoginDomainResult.Failure(it.exception!!))
+            val authResult = if (it.isSuccessful) LoginDomainResult.Success.LogIn
+            else LoginDomainResult.Failure(it.exception!!)
+            function(authResult)
         }
     }
 }

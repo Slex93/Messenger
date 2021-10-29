@@ -15,11 +15,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import st.slex.messenger.core.FirebaseConstants.CHILD_ID
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.ActivityMainBinding
 import st.slex.messenger.main.di.component.DaggerMainActivityComponent
 import st.slex.messenger.main.di.component.MainActivityComponent
+import st.slex.messenger.main.notification.PushService.Companion.ACTION_SHOW_MESSAGE
 import st.slex.messenger.main.notification.PushService.Companion.INTENT_FILTER
+import st.slex.messenger.main.notification.PushService.Companion.KEY_ACTION
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -38,16 +41,16 @@ class MainActivity : AppCompatActivity() {
                 val extras = intent?.extras
                 Log.i(TAG, extras.toString())
                 Toast.makeText(context, extras.toString(), Toast.LENGTH_SHORT).show()
-//                extras?.keySet()?.firstOrNull { it == KEY_ACTION }?.let { key ->
-//                    when (extras.getString(key)) {
-//                        ACTION_SHOW_MESSAGE -> {
-//                            extras.getString(CHILD_ID)?.let { message ->
-//                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-//                            }
-//                        }
-//                        else -> Log.e(TAG, "No needed key found")
-//                    }
-//                }
+                extras?.keySet()?.firstOrNull { it == KEY_ACTION }?.let { key ->
+                    when (extras.getString(key)) {
+                        ACTION_SHOW_MESSAGE -> {
+                            extras.getString(CHILD_ID)?.let { message ->
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        else -> Log.e(TAG, "No needed key found")
+                    }
+                }
             }
         }
     }

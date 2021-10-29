@@ -1,8 +1,5 @@
 package st.slex.messenger.auth.data
 
-import android.content.ContentValues
-import android.util.Log
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
@@ -22,54 +19,47 @@ import st.slex.messenger.core.FirebaseConstants.NODE_USER
 import st.slex.messenger.core.Resource
 import javax.inject.Inject
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 @ExperimentalCoroutinesApi
 @InternalCoroutinesApi
 interface AuthRepository {
 
-    suspend fun saveUser(): Flow<Resource<Nothing?>>
+    suspend fun saveUser(): Flow<Resource<Void>>
 
     class Base @Inject constructor(
         private val reference: Lazy<DatabaseReference>,
         private val user: Lazy<FirebaseUser>
     ) : AuthRepository {
 
-        override suspend fun saveUser(): Flow<Resource<Nothing?>> = flow {
-            val task1 = userReference.updateChildren(mapUser)
-            val task2 = phoneReference.setValue(user.get().uid)
-            handle(task1).also {
-                if (it is Resource.Success) {
-                    sendToken()
-                    emit(handle(task2))
-                } else emit(it)
+        override suspend fun saveUser(): Flow<Resource<Void>> = flow {
+            val updateUserTask = userReference.updateChildren(mapUser)
+            val updatePhoneTask = phoneReference.setValue(user.get().uid)
+            updateUserTask.handle().also { updateUserResult ->
+                if (updateUserResult is Resource.Success) {
+                    sendToken().also {
+                        if (it is Resource.Failure) emit(Resource.Failure(it.exception))
+                    }
+                    emit(updatePhoneTask.handle())
+                } else emit(updateUserResult)
             }
         }
 
         private suspend fun sendToken() = withContext(Dispatchers.IO) {
-            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Log.w(
-                        ContentValues.TAG,
-                        "Fetching FCM registration token failed",
-                        task.exception
-                    )
-                    return@OnCompleteListener
-                } else {
-                    reference.get().child(NODE_TOKENS).child(user.get().uid).setValue(task.result)
-                    // Log and toast
-                    val msg = task.result.toString()
-                    Log.d(ContentValues.TAG, msg)
-                }
-            })
+            FirebaseMessaging.getInstance().token.handle().also { token ->
+                return@withContext tokenReference.setValue(token).handle()
+            }
         }
 
-        private suspend fun handle(task: Task<Void>): Resource<Nothing?> =
+        private suspend fun <T> Task<T>.handle(): Resource<T> =
             suspendCoroutine { continuation ->
-                task.addOnSuccessListener { continuation.resume(Resource.Success(null)) }
-                    .addOnFailureListener { continuation.resumeWithException(it) }
+                addOnSuccessListener { continuation.resume(Resource.Success(it)) }
+                addOnFailureListener { continuation.resume(Resource.Failure(it)) }
             }
+
+        private val tokenReference: DatabaseReference by lazy {
+            reference.get().child(NODE_TOKENS).child(user.get().uid)
+        }
 
         private val userReference: DatabaseReference by lazy {
             reference.get().child(NODE_USER).child(user.get().uid)
