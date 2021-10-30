@@ -38,7 +38,8 @@ interface AuthRepository {
             updateUserTask.handle().also { updateUserResult ->
                 if (updateUserResult is Resource.Success) {
                     sendToken().also {
-                        if (it is Resource.Failure) emit(Resource.Failure(it.exception))
+                        if (it is Resource.Failure)
+                            emit(Resource.Failure(it.exception))
                     }
                     emit(updatePhoneTask.handle())
                 } else emit(updateUserResult)

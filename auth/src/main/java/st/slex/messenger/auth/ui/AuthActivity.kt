@@ -14,14 +14,11 @@ class AuthActivity : AppCompatActivity() {
     private val binding: ActivityAuthBinding
         get() = checkNotNull(_binding)
 
-    private var _authComponent: AuthComponent? = null
-    val authComponent: AuthComponent
-        get() = checkNotNull(_authComponent)
+    val authComponent: AuthComponent by lazy {
+        DaggerAuthComponent.builder().activity(this).create()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        _authComponent = DaggerAuthComponent.builder()
-            .activity(this)
-            .create()
         super.onCreate(savedInstanceState)
         _binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -30,6 +27,5 @@ class AuthActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        _authComponent = null
     }
 }
