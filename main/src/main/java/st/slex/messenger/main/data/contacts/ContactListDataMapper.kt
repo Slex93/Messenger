@@ -4,7 +4,7 @@ import st.slex.messenger.core.Mapper
 import st.slex.messenger.core.Resource
 import st.slex.messenger.main.ui.contacts.ContactUI
 
-class ContactsDataMapper : Mapper.ToUI<List<ContactData>, Resource<List<ContactUI>>> {
+class ContactListDataMapper : Mapper.ToUI<List<ContactData>, Resource<List<ContactUI>>> {
 
     override fun map(data: List<ContactData>): Resource<List<ContactUI>> =
         Resource.Success(data.map {

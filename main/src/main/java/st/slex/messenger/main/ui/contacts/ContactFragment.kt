@@ -6,14 +6,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.firebase.ui.database.SnapshotParser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.*
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.core.FirebaseConstants.NODE_CONTACT
-import st.slex.messenger.core.FirebaseConstants.NODE_USER
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import st.slex.messenger.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentContactBinding
 import st.slex.messenger.main.ui.core.BaseFragment
@@ -29,26 +24,20 @@ class ContactFragment : BaseFragment() {
 
     private val viewModel: ContactViewModel by viewModels { viewModelFactory.get() }
 
-    private val query: Query by lazy {
-        FirebaseDatabase.getInstance().reference
-            .child(NODE_USER)
-            .child(Firebase.auth.uid.toString())
-            .child(NODE_CONTACT)
-    }
-
-    private val parser: SnapshotParser<ContactUI> = SnapshotParser {
-        return@SnapshotParser it.getValue(ContactUI.Base::class.java)!!
-    }
-
-    private val options: FirebaseRecyclerOptions<ContactUI> by lazy {
-        FirebaseRecyclerOptions.Builder<ContactUI>()
-            .setLifecycleOwner(viewLifecycleOwner)
-            .setQuery(query, parser)
-            .build()
-    }
-
     private val adapter: ContactAdapter by lazy {
-        ContactAdapter(options, ItemClick(), viewModel::getUser, viewLifecycleOwner.lifecycleScope)
+        ContactAdapter(ItemClick(), viewModel::getUser, viewLifecycleOwner.lifecycleScope)
+    }
+
+    private val jobListeningContacts: Job by lazy {
+        viewLifecycleOwner.lifecycleScope.launch(
+            context = Dispatchers.IO, start = CoroutineStart.LAZY
+        ) {
+            viewModel.getAllContacts().collect {
+                if (it is Resource.Success) launch(Dispatchers.Main) {
+                    adapter.setItems(it.data)
+                }
+            }
+        }
     }
 
     override fun onCreateView(
@@ -66,6 +55,7 @@ class ContactFragment : BaseFragment() {
         binding.fragmentContactToolbar.title = getString(R.string.title_contacts)
         setSupportActionBar(binding.fragmentContactToolbar)
         binding.recyclerView.adapter = adapter
+        jobListeningContacts.start()
     }
 
     private inner class ItemClick : ClickListener<ContactUI> {
@@ -87,5 +77,6 @@ class ContactFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        jobListeningContacts.cancel()
     }
 }

@@ -3,8 +3,8 @@ package st.slex.messenger.main.ui.contacts
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleCoroutineScope
-import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -15,11 +15,12 @@ import st.slex.messenger.main.ui.core.ClickListener
 import st.slex.messenger.main.ui.user_profile.UserUI
 
 class ContactAdapter(
-    options: FirebaseRecyclerOptions<ContactUI>,
     private val clickListener: ClickListener<ContactUI>,
     private val kSuspendFunction: suspend (String) -> StateFlow<Resource<UserUI>>,
-    private val lifecycleScope: LifecycleCoroutineScope,
-) : FirebaseRecyclerAdapter<ContactUI, ContactViewHolder>(options) {
+    private val lifecycleScope: LifecycleCoroutineScope
+) : RecyclerView.Adapter<ContactViewHolder>() {
+
+    private val contacts = mutableListOf<ContactUI>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -27,16 +28,26 @@ class ContactAdapter(
         return ContactViewHolder.Base(binding, clickListener)
     }
 
-    override fun onBindViewHolder(holder: ContactViewHolder, position: Int, model: ContactUI) {
+    override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
+        val contact = contacts[position]
         lifecycleScope.launch(Dispatchers.IO) {
-            kSuspendFunction.invoke(model.getId).collect { result ->
+            kSuspendFunction.invoke(contact.getId).collect { result ->
                 if (result is Resource.Success) {
-                    val url = result.data.url()
                     launch(Dispatchers.Main) {
-                        holder.bind(model.copy(url = result.data.url()))
+                        holder.bind(contact.copy(url = result.data.url()))
                     }
                 }
             }
         }
+    }
+
+    override fun getItemCount(): Int = contacts.size
+
+    fun setItems(items: List<ContactUI>) {
+        val diffUtil = ContactsDiffUtilCallback(contacts, items)
+        val calculatedResult = DiffUtil.calculateDiff(diffUtil)
+        contacts.clear()
+        contacts.addAll(items)
+        calculatedResult.dispatchUpdatesTo(this)
     }
 }
