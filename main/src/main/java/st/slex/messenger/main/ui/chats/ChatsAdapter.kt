@@ -30,25 +30,19 @@ class ChatsAdapter(
     }
 
     override fun onBindViewHolder(holder: ChatsViewHolder, position: Int) {
-        lifecycleScope.launchWhenResumed {
+        holder.bind(chats[position])
+        lifecycleScope.launch(Dispatchers.IO) {
             kSuspendFunction.invoke(chats[position]).collect {
-                launch(Dispatchers.Main) { bindState(holder, it) }
+                launch(Dispatchers.Main) { holder.bindState(it) }
             }
         }
     }
 
-    private fun bindState(holder: ChatsViewHolder, result: Resource<ChatsUI>) =
-        when (result) {
-            is Resource.Success -> {
-                holder.bind(result.data)
-            }
-            is Resource.Failure -> {
-                holder.bindError(result.exception.message.toString())
-            }
-            is Resource.Loading -> {
-                holder.bindLoading()
-            }
-        }
+    private fun ChatsViewHolder.bindState(result: Resource<ChatsUI>) = when (result) {
+        is Resource.Success -> bind(result.data)
+        is Resource.Failure -> bindError(result.exception.message.toString())
+        is Resource.Loading -> bindLoading()
+    }
 
     override fun getItemCount(): Int = chats.size
 

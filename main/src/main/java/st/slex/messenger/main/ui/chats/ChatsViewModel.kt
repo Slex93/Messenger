@@ -27,7 +27,7 @@ class ChatsViewModel @Inject constructor(
             .flatMapLatest { flowOf(it.map(chatsMapper)) }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.Lazily,
+                started = SharingStarted.WhileSubscribed(),
                 initialValue = Resource.Loading
             )
 
@@ -43,7 +43,7 @@ class ChatsViewModel @Inject constructor(
             .flatMapLatest { flowOf(it.map(userMapper)) }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.Lazily,
+                started = SharingStarted.WhileSubscribed(),
                 initialValue = Resource.Loading
             )
 }

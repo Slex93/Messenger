@@ -65,13 +65,13 @@ class ChatsFragment : BaseFragment() {
             findNavController(),
             AppBarConfiguration(setOf(R.id.nav_home), binding.mainScreenDrawerLayout)
         )
+        binding.navView.setupWithNavController(findNavController())
+        chatsJob.start()
         binding.recyclerView.adapter = adapter
         postponeEnterTransition()
         binding.recyclerView.doOnPreDraw {
             startPostponedEnterTransition()
         }
-        chatsJob.start()
-        binding.navView.setupWithNavController(findNavController())
     }
 
     private val currentUserJob: Job by lazy {

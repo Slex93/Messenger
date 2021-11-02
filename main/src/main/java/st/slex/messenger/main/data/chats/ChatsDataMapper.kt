@@ -12,10 +12,10 @@ interface ChatsDataMapper : Mapper.ToUI<List<ChatsData>, Resource<List<ChatsUI>>
         override fun map(data: List<ChatsData>): Resource<List<ChatsUI>> =
             Resource.Success(data.map {
                 ChatsUI.Base(
-                    from = it.chatId(),
+                    id = it.chatId(),
+                    from = it.from(),
                     full_name = it.username(),
                     message = it.text(),
-                    url = it.url(),
                     timestamp = it.timestamp()
                 )
             })
