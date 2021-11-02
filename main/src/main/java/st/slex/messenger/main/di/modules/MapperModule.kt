@@ -1,40 +1,28 @@
 package st.slex.messenger.main.di.modules
 
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
-import st.slex.messenger.core.Mapper
-import st.slex.messenger.core.Resource
-import st.slex.messenger.main.data.chats.ChatsData
 import st.slex.messenger.main.data.chats.ChatsDataMapper
-import st.slex.messenger.main.data.contacts.ContactData
 import st.slex.messenger.main.data.contacts.ContactDataMapper
 import st.slex.messenger.main.data.contacts.ContactListDataMapper
-import st.slex.messenger.main.data.user.UserData
 import st.slex.messenger.main.data.user.UserDataMapper
-import st.slex.messenger.main.ui.chats.ChatsUI
-import st.slex.messenger.main.ui.contacts.ContactUI
 import st.slex.messenger.main.ui.contacts.ContactsUIMapper
-import st.slex.messenger.main.ui.user_profile.UserUI
 
 @Module
-class MapperModule {
+interface MapperModule {
 
-    @Provides
-    fun providesChatsDataMapper(): Mapper.ToUI<List<ChatsData>, Resource<List<ChatsUI>>> =
-        ChatsDataMapper()
+    @Binds
+    fun bindsChatsDataMapper(mapper: ChatsDataMapper.Base): ChatsDataMapper
 
-    @Provides
-    fun providesContactsDataMapper(): Mapper.ToUI<List<ContactData>, Resource<List<ContactUI>>> =
-        ContactListDataMapper()
+    @Binds
+    fun bindsContactListDataMapper(mapper: ContactListDataMapper.Base): ContactListDataMapper
 
-    @Provides
-    fun providesUserDataMapper(): Mapper.ToUI<UserData, Resource<UserUI>> = UserDataMapper()
+    @Binds
+    fun bindsUserDataMapper(mapper: UserDataMapper.Base): UserDataMapper
 
-    @Provides
-    fun providesContactsUIMapper(): Mapper.Data<List<ContactUI>, List<ContactData>> =
-        ContactsUIMapper()
+    @Binds
+    fun bindsContactsUIMapper(mapper: ContactsUIMapper.Base): ContactsUIMapper
 
-    @Provides
-    fun providesContactDataMapper(): Mapper.ToUI<ContactData, Resource<ContactUI>> =
-        ContactDataMapper()
+    @Binds
+    fun bindsContactDataMapper(mapper: ContactDataMapper.Base): ContactDataMapper
 }

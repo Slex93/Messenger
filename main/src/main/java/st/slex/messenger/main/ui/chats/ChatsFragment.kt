@@ -13,18 +13,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.firebase.ui.database.SnapshotParser
 import com.google.android.material.transition.MaterialContainerTransform
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Query
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import st.slex.messenger.core.FirebaseConstants.NODE_CHATS
 import st.slex.messenger.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentChatsBinding
@@ -40,13 +31,13 @@ class ChatsFragment : BaseFragment() {
 
     private val viewModel: ChatsViewModel by viewModels { viewModelFactory.get() }
 
-    private val parser: SnapshotParser<ChatsUI> = SnapshotParser {
-        return@SnapshotParser it.getValue(ChatsUI.Base::class.java)!!
+    private val adapter: ChatsAdapter by lazy(LazyThreadSafetyMode.NONE) {
+        ChatsAdapter(
+            ChatsItemClicker(),
+            viewModel::getChatUIHead,
+            viewLifecycleOwner.lifecycleScope
+        )
     }
-
-    private var _adapter: ChatsAdapter? = null
-    private val adapter: ChatsAdapter
-        get() = checkNotNull(_adapter)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,62 +59,66 @@ class ChatsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val query: Query = FirebaseDatabase
-            .getInstance().reference
-            .child(NODE_CHATS)
-            .child(Firebase.auth.uid.toString())
-            .orderByKey()
-        val options = FirebaseRecyclerOptions.Builder<ChatsUI>()
-            .setLifecycleOwner(viewLifecycleOwner)
-            .setQuery(query, parser)
-            .build()
-        _adapter = ChatsAdapter(
-            options,
-            ChatsItemClicker(),
-            viewModel::getChatUIHead,
-            viewLifecycleOwner.lifecycleScope
-        )
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.currentUser().collect {
-                launch(Dispatchers.Main) { it.collector() }
-            }
-        }
+        currentUserJob.start()
         NavigationUI.setupWithNavController(
             binding.mainScreenToolbar,
             findNavController(),
             AppBarConfiguration(setOf(R.id.nav_home), binding.mainScreenDrawerLayout)
         )
-        binding.navView.setupWithNavController(findNavController())
-    }
-
-    override fun onStart() {
-        super.onStart()
-        adapter.startListening()
         binding.recyclerView.adapter = adapter
         postponeEnterTransition()
         binding.recyclerView.doOnPreDraw {
             startPostponedEnterTransition()
         }
+        chatsJob.start()
+        binding.navView.setupWithNavController(findNavController())
     }
 
-    override fun onStop() {
-        super.onStop()
-        adapter.stopListening()
+    private val currentUserJob: Job by lazy {
+        viewLifecycleOwner.lifecycleScope.launch(
+            context = Dispatchers.IO, start = CoroutineStart.LAZY
+        ) {
+            viewModel.currentUser().collect {
+                launch(Dispatchers.Main) { userCollector(it) }
+            }
+        }
     }
 
-    private fun Resource<UserUI>.collector() {
+    private val chatsJob: Job by lazy {
+        viewLifecycleOwner.lifecycleScope.launch(
+            context = Dispatchers.IO, start = CoroutineStart.LAZY
+        ) {
+            viewModel.getChats().collect {
+                launch(Dispatchers.Main) { chatsCollector(it) }
+            }
+        }
+    }
+
+    private fun chatsCollector(result: Resource<List<ChatsUI>>) {
+        when (result) {
+            is Resource.Success -> adapter.setItems(result.data)
+            is Resource.Failure -> {
+                Log.i("Cancelled", result.exception.message.toString())
+            }
+            is Resource.Loading -> {
+                /*Start progress bar*/
+            }
+        }
+    }
+
+    private fun userCollector(result: Resource<UserUI>) {
         val headerView = binding.navView.getHeaderView(0)
         val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
-        when (this) {
+        when (result) {
             is Resource.Success -> {
-                data.mapMainScreen(
+                result.data.mapMainScreen(
                     phoneNumber = headerBinding.phoneTextView,
                     userName = headerBinding.usernameTextView,
                     avatar = headerBinding.avatarImageView
                 )
             }
             is Resource.Failure -> {
-                Log.i("Cancelled", exception.message.toString())
+                Log.i("Cancelled", result.exception.message.toString())
             }
             is Resource.Loading -> {
                 /*Start progress bar*/
@@ -134,6 +129,11 @@ class ChatsFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        currentUserJob.cancel(CAUSE_DESTROY)
+        chatsJob.cancel(CAUSE_DESTROY)
     }
 
+    companion object {
+        private const val CAUSE_DESTROY = "onDestroyView"
+    }
 }

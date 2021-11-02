@@ -5,18 +5,21 @@ import st.slex.messenger.core.Resource
 import st.slex.messenger.main.ui.contacts.ContactUI
 import javax.inject.Inject
 
-class ContactDataMapper @Inject constructor() : Mapper.ToUI<ContactData, Resource<ContactUI>> {
+interface ContactDataMapper : Mapper.ToUI<ContactData, Resource<ContactUI>> {
 
-    override fun map(data: ContactData): Resource<ContactUI> =
-        Resource.Success(with(data) {
-            ContactUI.Base(
-                id = getId,
-                full_name = getFullName,
-                phone = getPhone
-            )
-        })
+    class Base @Inject constructor() : ContactDataMapper {
 
-    override fun map(exception: Exception): Resource<ContactUI> = Resource.Failure(exception)
+        override fun map(data: ContactData): Resource<ContactUI> =
+            Resource.Success(with(data) {
+                ContactUI.Base(
+                    id = getId,
+                    full_name = getFullName,
+                    phone = getPhone
+                )
+            })
 
-    override fun map(): Resource<ContactUI> = Resource.Loading
+        override fun map(exception: Exception): Resource<ContactUI> = Resource.Failure(exception)
+
+        override fun map(): Resource<ContactUI> = Resource.Loading
+    }
 }

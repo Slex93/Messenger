@@ -3,8 +3,8 @@ package st.slex.messenger.main.ui.chats
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleCoroutineScope
-import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -15,11 +15,13 @@ import st.slex.messenger.main.ui.core.ClickListener
 import kotlin.reflect.KSuspendFunction1
 
 class ChatsAdapter(
-    options: FirebaseRecyclerOptions<ChatsUI>,
     private val itemClick: ClickListener<ChatsUI>,
     private val kSuspendFunction: KSuspendFunction1<ChatsUI, StateFlow<Resource<ChatsUI>>>,
     private val lifecycleScope: LifecycleCoroutineScope
-) : FirebaseRecyclerAdapter<ChatsUI, ChatsViewHolder>(options) {
+) : RecyclerView.Adapter<ChatsViewHolder>() {
+
+    private val _chats = mutableListOf<ChatsUI>()
+    private val chats: List<ChatsUI> get() = _chats.toList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -27,9 +29,9 @@ class ChatsAdapter(
         return ChatsViewHolder.Base(binding, itemClick)
     }
 
-    override fun onBindViewHolder(holder: ChatsViewHolder, position: Int, model: ChatsUI) {
+    override fun onBindViewHolder(holder: ChatsViewHolder, position: Int) {
         lifecycleScope.launchWhenResumed {
-            kSuspendFunction.invoke(model).collect {
+            kSuspendFunction.invoke(chats[position]).collect {
                 launch(Dispatchers.Main) { bindState(holder, it) }
             }
         }
@@ -47,4 +49,14 @@ class ChatsAdapter(
                 holder.bindLoading()
             }
         }
+
+    override fun getItemCount(): Int = chats.size
+
+    fun setItems(items: List<ChatsUI>) {
+        val diffUtil = ChatsDiffUtilCallback(chats, items)
+        val result = DiffUtil.calculateDiff(diffUtil)
+        _chats.clear()
+        _chats.addAll(items)
+        result.dispatchUpdatesTo(this)
+    }
 }
