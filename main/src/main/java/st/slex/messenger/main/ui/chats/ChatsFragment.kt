@@ -14,8 +14,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.transition.MaterialContainerTransform
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import st.slex.messenger.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentChatsBinding
@@ -30,13 +32,17 @@ class ChatsFragment : BaseFragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ChatsViewModel by viewModels { viewModelFactory.get() }
+    private val _pageNumber: MutableStateFlow<Int> = MutableStateFlow(INITIAL_PAGE)
+    private val pageNumber: StateFlow<Int>
+        get() = _pageNumber.asStateFlow()
+            .stateIn(
+                scope = viewLifecycleOwner.lifecycleScope,
+                started = SharingStarted.Lazily,
+                initialValue = INITIAL_PAGE
+            )
 
     private val adapter: ChatsAdapter by lazy(LazyThreadSafetyMode.NONE) {
-        ChatsAdapter(
-            ChatsItemClicker(),
-            viewModel::getChatUIHead,
-            viewLifecycleOwner.lifecycleScope
-        )
+        ChatsAdapter(ChatsItemClicker())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,14 +65,24 @@ class ChatsFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentUserJob.start()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentUser().collect {
+                launch(Dispatchers.Main) { userCollector(it) }
+            }
+        }
         NavigationUI.setupWithNavController(
             binding.mainScreenToolbar,
             findNavController(),
             AppBarConfiguration(setOf(R.id.nav_home), binding.mainScreenDrawerLayout)
         )
         binding.navView.setupWithNavController(findNavController())
-        chatsJob.start()
+        viewLifecycleOwner.lifecycleScope.launch {
+            pageNumber.collect { page ->
+                viewModel.getChats(page * PAGE_SIZE).collect {
+                    chatsCollector(it)
+                }
+            }
+        }
         binding.recyclerView.adapter = adapter
         postponeEnterTransition()
         binding.recyclerView.doOnPreDraw {
@@ -74,27 +90,7 @@ class ChatsFragment : BaseFragment() {
         }
     }
 
-    private val currentUserJob: Job by lazy {
-        viewLifecycleOwner.lifecycleScope.launch(
-            context = Dispatchers.IO, start = CoroutineStart.LAZY
-        ) {
-            viewModel.currentUser().collect {
-                launch(Dispatchers.Main) { userCollector(it) }
-            }
-        }
-    }
-
-    private val chatsJob: Job by lazy {
-        viewLifecycleOwner.lifecycleScope.launch(
-            context = Dispatchers.IO, start = CoroutineStart.LAZY
-        ) {
-            viewModel.getChats().collect {
-                launch(Dispatchers.Main) { chatsCollector(it) }
-            }
-        }
-    }
-
-    private fun chatsCollector(result: Resource<List<ChatsUI>>) {
+    private fun chatsCollector(result: Resource<List<Resource<ChatsUI>>>) {
         when (result) {
             is Resource.Success -> adapter.setItems(result.data)
             is Resource.Failure -> {
@@ -129,11 +125,12 @@ class ChatsFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        currentUserJob.cancel(CAUSE_DESTROY)
-        chatsJob.cancel(CAUSE_DESTROY)
+        _pageNumber.tryEmit(INITIAL_PAGE)
     }
 
     companion object {
         private const val CAUSE_DESTROY = "onDestroyView"
+        private const val PAGE_SIZE = 10
+        private const val INITIAL_PAGE = 1
     }
 }

@@ -5,23 +5,41 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import st.slex.messenger.core.Resource
+import st.slex.messenger.main.data.chats.ChatsDataMapper
 import st.slex.messenger.main.data.contacts.ContactsRepository
 import st.slex.messenger.main.data.user.UserRepository
 import st.slex.messenger.main.ui.chats.ChatsUI
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 interface ChatsInteractor {
 
-    suspend fun getChatUIHead(chat: ChatsUI): Flow<Resource<ChatsUI>>
+    suspend fun getAllChats(pageNumber: Int): Flow<Resource<List<Resource<ChatsUI>>>>
 
-    class Base @ExperimentalCoroutinesApi
-    @Inject constructor(
+    class Base @Inject constructor(
         private val userRepository: UserRepository,
-        private val contactsRepository: ContactsRepository
+        private val contactsRepository: ContactsRepository,
+        private val chatsUseCase: ChatsUseCase,
+        private val mapper: ChatsDataMapper
     ) : ChatsInteractor {
 
-        @ExperimentalCoroutinesApi
-        override suspend fun getChatUIHead(chat: ChatsUI): Flow<Resource<ChatsUI>> =
+        override suspend fun getAllChats(pageNumber: Int): Flow<Resource<List<Resource<ChatsUI>>>> =
+            flow {
+                chatsUseCase.invoke(pageNumber).getAllChats().collect { allChatsResult ->
+                    when (val result = allChatsResult.map(mapper)) {
+                        is Resource.Success -> {
+                            val mappedChats = result.data.map { chatsUI ->
+                                getChatUIHead(chatsUI).last()
+                            }
+                            emit(Resource.Success(mappedChats))
+                        }
+                        is Resource.Failure -> emit(Resource.Failure<Nothing>(result.exception))
+                        is Resource.Loading -> emit(Resource.Loading)
+                    }
+                }
+            }
+
+        private suspend fun getChatUIHead(chat: ChatsUI): Flow<Resource<ChatsUI>> =
             getUserUrl(chat.gettingId()).combine(getUserName(chat.gettingId())) { resUrl, resName ->
                 mediatorForCheckingResult(resName = resName, resUrl = resUrl, chat = chat)
             }
@@ -29,7 +47,6 @@ interface ChatsInteractor {
         private suspend fun getUserUrl(id: String): Flow<Resource<String>> =
             userRepository.getUserUrl(id)
 
-        @ExperimentalCoroutinesApi
         private suspend fun getUserName(id: String): Flow<Resource<String>> =
             contactsRepository.getContactFullName(id)
 
