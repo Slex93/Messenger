@@ -46,18 +46,16 @@ interface ActivityContactsUpdater {
                         val task = contactsReference
                             .child(contact.getId)
                             .setValue(mapContact(contact))
-                        this@withContext.launch(Dispatchers.IO) {
-                            eventResult(handle(task))
-                        }
+                        launch(Dispatchers.IO) { eventResult(task.handle()) }
                     }
                 }
             )
         }
 
-        private suspend fun handle(result: Task<Void>): Resource<Nothing?> =
+        private suspend fun Task<Void>.handle(): Resource<Nothing?> =
             suspendCoroutine { continuation ->
-                result.addOnSuccessListener { continuation.resume(Resource.Success(null)) }
-                    .addOnFailureListener { continuation.resumeWithException(it) }
+                addOnSuccessListener { continuation.resume(Resource.Success(null)) }
+                addOnFailureListener { continuation.resumeWithException(it) }
             }
 
         private fun filterContactsBySnapshot(
@@ -66,26 +64,22 @@ interface ActivityContactsUpdater {
         ): List<ContactData> {
             val mappedSnapshot = snapshot.mapIdToPhones()
             val filteredContacts = contacts.filterBySnapshots(mappedSnapshot)
-            return filteredContacts.saveIdFromSnapMap(mappedSnapshot)
-        }
-
-        private fun List<ContactData>.filterBySnapshots(
-            mappedSnapshot: Map<String, String>
-        ): List<ContactData> = filter { contact ->
-            mappedSnapshot.containsKey(contact.getPhone) && !mappedSnapshot.containsValue(auth.uid)
-        }
-
-        private fun List<ContactData>.saveIdFromSnapMap(
-            mappedSnapshot: Map<String, String>
-        ): List<ContactData> = map { contact ->
-            contact.copy(id = mappedSnapshot[contact.getPhone])
+            return filteredContacts.saveIdFromSnapshotMap(mappedSnapshot)
         }
 
         private fun DataSnapshot.mapIdToPhones(): Map<String, String> =
             children.mapNotNull { it.key.toString() to it.value.toString() }.toMap()
 
-        private val contactsReference: DatabaseReference by lazy {
-            reference.child(NODE_USER).child(auth.uid).child(NODE_CONTACT)
+        private fun List<ContactData>.filterBySnapshots(
+            mappedSnapshot: Map<String, String>
+        ): List<ContactData> = filter { contact ->
+            mappedSnapshot.containsKey(contact.getPhone) && contact.getPhone != auth.phoneNumber
+        }
+
+        private fun List<ContactData>.saveIdFromSnapshotMap(
+            mappedSnapshot: Map<String, String>
+        ): List<ContactData> = map { contact ->
+            contact.copy(id = mappedSnapshot[contact.getPhone])
         }
 
         private fun mapContact(contact: ContactData) = mapOf<String, Any>(
@@ -93,5 +87,9 @@ interface ActivityContactsUpdater {
             CHILD_PHONE to contact.getPhone,
             CHILD_FULL_NAME to contact.getFullName
         )
+
+        private val contactsReference: DatabaseReference by lazy {
+            reference.child(NODE_USER).child(auth.uid).child(NODE_CONTACT)
+        }
     }
 }
