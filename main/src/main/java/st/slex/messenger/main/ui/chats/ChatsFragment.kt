@@ -14,10 +14,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.transition.MaterialContainerTransform
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import st.slex.messenger.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentChatsBinding
@@ -29,7 +27,10 @@ import st.slex.messenger.main.ui.user_profile.UserUI
 class ChatsFragment : BaseFragment() {
 
     private var _binding: FragmentChatsBinding? = null
-    private val binding get() = _binding!!
+    private val binding: FragmentChatsBinding get() = checkNotNull(_binding)
+
+    private var _headerBinding: NavigationDrawerHeaderBinding? = null
+    private val headerBinding: NavigationDrawerHeaderBinding get() = checkNotNull(_headerBinding)
 
     private val viewModel: ChatsViewModel by viewModels { viewModelFactory.get() }
     private val _pageNumber: MutableStateFlow<Int> = MutableStateFlow(INITIAL_PAGE)
@@ -60,33 +61,41 @@ class ChatsFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChatsBinding.inflate(inflater, container, false)
+        val headerView = binding.navView.getHeaderView(0)
+        _headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.currentUser().collect {
-                launch(Dispatchers.Main) { userCollector(it) }
-            }
-        }
         NavigationUI.setupWithNavController(
             binding.mainScreenToolbar,
             findNavController(),
             AppBarConfiguration(setOf(R.id.nav_home), binding.mainScreenDrawerLayout)
         )
         binding.navView.setupWithNavController(findNavController())
-        viewLifecycleOwner.lifecycleScope.launch {
-            pageNumber.collect { page ->
-                viewModel.getChats(page * PAGE_SIZE).collect {
-                    chatsCollector(it)
-                }
-            }
-        }
+        userHeadJob.start()
+        chatsJob.start()
         binding.recyclerView.adapter = adapter
         postponeEnterTransition()
         binding.recyclerView.doOnPreDraw {
             startPostponedEnterTransition()
+        }
+    }
+
+    private val userHeadJob: Job by lazy {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.currentUser().collect { userCollector(it) }
+        }
+    }
+
+    private val chatsJob: Job by lazy {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            pageNumber.collect { page ->
+                viewModel.getChats(page * PAGE_SIZE).collect {
+                    launch(Dispatchers.Main) { chatsCollector(it) }
+                }
+            }
         }
     }
 
@@ -102,30 +111,30 @@ class ChatsFragment : BaseFragment() {
         }
     }
 
-    private fun userCollector(result: Resource<UserUI>) {
-        val headerView = binding.navView.getHeaderView(0)
-        val headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
+    private suspend fun userCollector(result: Resource<UserUI>) {
         when (result) {
-            is Resource.Success -> {
-                result.data.mapMainScreen(
-                    phoneNumber = headerBinding.phoneTextView,
-                    userName = headerBinding.usernameTextView,
-                    avatar = headerBinding.avatarImageView
-                )
-            }
-            is Resource.Failure -> {
-                Log.i("Cancelled", result.exception.message.toString())
-            }
+            is Resource.Success -> userCollector(result.data)
+            is Resource.Failure -> Log.i("Cancelled", result.exception.message.toString())
             is Resource.Loading -> {
                 /*Start progress bar*/
             }
         }
     }
 
+    private suspend fun userCollector(user: UserUI) = withContext(Dispatchers.Main) {
+        user.mapMainScreen(
+            phoneNumber = headerBinding.phoneTextView,
+            userName = headerBinding.usernameTextView,
+            avatar = headerBinding.avatarImageView
+        )
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        _headerBinding = null
         _pageNumber.tryEmit(INITIAL_PAGE)
+        chatsJob.cancel()
     }
 
     companion object {

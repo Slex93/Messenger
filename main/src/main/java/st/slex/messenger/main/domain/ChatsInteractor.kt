@@ -29,7 +29,7 @@ interface ChatsInteractor {
                     when (val result = allChatsResult.map(mapper)) {
                         is Resource.Success -> {
                             val mappedChats = result.data.map { chatsUI ->
-                                getChatUIHead(chatsUI).last()
+                                getChatUIHead(chatsUI).first()
                             }
                             emit(Resource.Success(mappedChats))
                         }

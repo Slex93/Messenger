@@ -27,10 +27,9 @@ import javax.inject.Inject
 interface UserRepository {
 
     suspend fun getUserState(uid: String): Flow<Resource<String>>
-    suspend fun getUser(uid: String): Flow<Resource<UserData>>
+    suspend fun getUser(uid: String? = null): Flow<Resource<UserData>>
     suspend fun saveUsername(username: String): Flow<Resource<Nothing?>>
     suspend fun saveImage(uri: Uri): Flow<Resource<Nothing?>>
-    suspend fun getCurrentUser(): Flow<Resource<UserData>>
     suspend fun getUserUrl(uid: String): Flow<Resource<String>>
 
     @ExperimentalCoroutinesApi
@@ -56,14 +55,13 @@ interface UserRepository {
             awaitClose { reference.removeEventListener(listener) }
         }
 
-        override suspend fun getCurrentUser(): Flow<Resource<UserData>> = getUser(user.uid)
-
-        override suspend fun getUser(uid: String): Flow<Resource<UserData>> = callbackFlow {
+        override suspend fun getUser(uid: String?): Flow<Resource<UserData>> = callbackFlow {
             val reference = databaseReference
                 .child(NODE_USER)
-                .child(uid)
-            val listener =
-                listener.singleEventListener(UserData.Base::class) { trySendBlocking(it) }
+                .child(uid ?: user.uid)
+            val listener = listener.singleEventListener(UserData.Base::class) {
+                trySendBlocking(it)
+            }
             reference.addValueEventListener(listener)
             awaitClose { reference.removeEventListener(listener) }
         }

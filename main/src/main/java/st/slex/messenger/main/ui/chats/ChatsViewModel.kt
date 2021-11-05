@@ -26,7 +26,7 @@ class ChatsViewModel @Inject constructor(
         )
 
     suspend fun currentUser(): StateFlow<Resource<UserUI>> =
-        userRepository.getCurrentUser()
+        userRepository.getUser()
             .flatMapLatest { flowOf(it.map(userMapper)) }
             .stateIn(
                 scope = viewModelScope,

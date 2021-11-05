@@ -18,7 +18,7 @@ class UserViewModel
 ) : ViewModel() {
 
     suspend fun currentUser(): StateFlow<Resource<UserUI>> =
-        repository.getCurrentUser()
+        repository.getUser()
             .flatMapLatest { flowOf(it.map(mapper)) }
             .stateIn(
                 scope = viewModelScope,

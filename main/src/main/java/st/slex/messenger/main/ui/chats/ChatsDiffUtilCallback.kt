@@ -24,6 +24,6 @@ class ChatsDiffUtilCallback(
         val newItem = newList[newItemPosition]
         return if (oldItem is Resource.Success && newItem is Resource.Success) {
             oldItem.data.same(newItem.data)
-        } else false
+        } else true
     }
 }
