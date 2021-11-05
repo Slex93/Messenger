@@ -24,4 +24,11 @@
         android:layout_gravity="center"
         android:text="@string/label_sign_out" />
 
+    <ProgressBar
+        android:id="@+id/SHOW_PROGRESS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:visibility="invisible" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

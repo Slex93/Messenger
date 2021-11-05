@@ -1,5 +1,8 @@
 package st.slex.messenger.main.data.settings
 
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
@@ -12,26 +15,39 @@ import kotlin.coroutines.suspendCoroutine
 
 interface SettingsRepository {
 
-    suspend fun signOut(state: String): Resource<Nothing?>
+    suspend fun signOut(): Resource<Nothing?>
 
     @ExperimentalCoroutinesApi
     class Base @Inject constructor(
-        private val databaseReference: DatabaseReference
+        reference: DatabaseReference,
+        user: FirebaseUser
     ) : SettingsRepository {
 
-        override suspend fun signOut(state: String): Resource<Nothing?> =
+        private val signOutReference = reference.child(NODE_USER).child(user.uid).child(CHILD_STATE)
+
+        override suspend fun signOut(): Resource<Nothing?> =
             suspendCoroutine { continuation ->
-                databaseReference
-                    .child(NODE_USER)
-                    .child(Firebase.auth.uid.toString())
-                    .child(CHILD_STATE)
-                    .setValue(state)
-                    .addOnSuccessListener {
-                        Firebase.auth.signOut()
-                        continuation.resumeWith(Result.success(Resource.Success(null)))
-                    }.addOnFailureListener {
-                        continuation.resumeWith(Result.success(Resource.Failure(it)))
-                    }
+                val task: Task<Void> = signOutReference.setValue(SIGN_OUT_STATE)
+                val listener = signOutListener {
+                    continuation.resumeWith(it)
+                }
+                task.addOnCompleteListener(listener)
             }
+
+        private fun signOutListener(function: (Result<Resource<Nothing?>>) -> Unit) =
+            OnCompleteListener<Void> {
+                val result = if (it.isSuccessful) {
+                    Firebase.auth.signOut()
+                    Resource.Success(null)
+                } else {
+                    val exception: Exception = it.exception!!
+                    Resource.Failure<Nothing>(exception)
+                }
+                function(Result.success(result))
+            }
+
+        companion object {
+            private const val SIGN_OUT_STATE: String = "Offline"
+        }
     }
 }
