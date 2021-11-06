@@ -41,6 +41,13 @@
             android:contentDescription="@string/description_write_message"
             android:src="@drawable/ic_baseline_create_24" />
 
+        <ProgressBar
+            android:id="@+id/SHOW_PROGRESS"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView

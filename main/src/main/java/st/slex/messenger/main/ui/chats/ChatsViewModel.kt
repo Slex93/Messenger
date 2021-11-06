@@ -19,18 +19,19 @@ class ChatsViewModel @Inject constructor(
 ) : ViewModel() {
 
     suspend fun getChats(pageNumber: Int): StateFlow<Resource<List<Resource<ChatsUI>>>> =
-        chatsInteractor.getAllChats(pageNumber).stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = Resource.Loading
-        )
+        chatsInteractor.getAllChats(pageNumber)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = Resource.Loading
+            )
 
     suspend fun currentUser(): StateFlow<Resource<UserUI>> =
         userRepository.getUser()
             .flatMapLatest { flowOf(it.map(userMapper)) }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
+                started = SharingStarted.Lazily,
                 initialValue = Resource.Loading
             )
 }

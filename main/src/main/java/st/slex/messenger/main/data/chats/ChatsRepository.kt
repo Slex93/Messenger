@@ -30,7 +30,7 @@ interface ChatsRepository {
         private val chatsReference: Query = reference
             .child(NODE_CHATS)
             .child(user.uid)
-            .limitToLast(pageNumber)
+            .limitToLast(pageNumber * PAGE_SIZE)
 
         override suspend fun getAllChats(): Flow<Resource<List<ChatsData>>> = callbackFlow {
             val listener = valueListener.multipleEventListener(ChatsData.Base::class) {
@@ -38,6 +38,10 @@ interface ChatsRepository {
             }
             chatsReference.addValueEventListener(listener)
             awaitClose { chatsReference.removeEventListener(listener) }
+        }
+
+        companion object {
+            private const val PAGE_SIZE: Int = 10
         }
     }
 

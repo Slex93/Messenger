@@ -1,6 +1,6 @@
 package st.slex.messenger.main.ui.chats
 
-import android.graphics.Color
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,7 +13,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.transition.MaterialContainerTransform
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import st.slex.messenger.core.Resource
@@ -21,6 +20,7 @@ import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentChatsBinding
 import st.slex.messenger.main.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.main.ui.core.BaseFragment
+import st.slex.messenger.main.ui.core.UIExtensions.changeVisibility
 import st.slex.messenger.main.ui.user_profile.UserUI
 
 @ExperimentalCoroutinesApi
@@ -35,24 +35,14 @@ class ChatsFragment : BaseFragment() {
     private val viewModel: ChatsViewModel by viewModels { viewModelFactory.get() }
     private val _pageNumber: MutableStateFlow<Int> = MutableStateFlow(INITIAL_PAGE)
     private val pageNumber: StateFlow<Int>
-        get() = _pageNumber.asStateFlow()
-            .stateIn(
-                scope = viewLifecycleOwner.lifecycleScope,
-                started = SharingStarted.Lazily,
-                initialValue = INITIAL_PAGE
-            )
+        get() = _pageNumber.asStateFlow().stateIn(
+            scope = viewLifecycleOwner.lifecycleScope,
+            started = SharingStarted.Lazily,
+            initialValue = INITIAL_PAGE
+        )
 
     private val adapter: ChatsAdapter by lazy(LazyThreadSafetyMode.NONE) {
         ChatsAdapter(ChatsItemClicker())
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            drawingViewId = R.id.nav_host_fragment
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = Color.TRANSPARENT
-        }
     }
 
     override fun onCreateView(
@@ -61,20 +51,24 @@ class ChatsFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentChatsBinding.inflate(inflater, container, false)
-        val headerView = binding.navView.getHeaderView(0)
-        _headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
+        setupNavigationView()
         return binding.root
+    }
+
+    private fun setupNavigationView() = with(binding) {
+        val topLvlDestIds: Set<Int> = setOf(R.id.nav_home)
+        val appBarConfig = AppBarConfiguration(topLvlDestIds, mainScreenDrawerLayout)
+        NavigationUI.setupWithNavController(mainScreenToolbar, findNavController(), appBarConfig)
+        navView.setupWithNavController(findNavController())
+        val headerView = navView.getHeaderView(0)
+        _headerBinding = NavigationDrawerHeaderBinding.bind(headerView)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        NavigationUI.setupWithNavController(
-            binding.mainScreenToolbar,
-            findNavController(),
-            AppBarConfiguration(setOf(R.id.nav_home), binding.mainScreenDrawerLayout)
-        )
-        binding.navView.setupWithNavController(findNavController())
-        userHeadJob.start()
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.currentUser().collect { it.collector() }
+        }
         chatsJob.start()
         binding.recyclerView.adapter = adapter
         postponeEnterTransition()
@@ -83,63 +77,74 @@ class ChatsFragment : BaseFragment() {
         }
     }
 
-    private val userHeadJob: Job by lazy {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.currentUser().collect { userCollector(it) }
-        }
-    }
-
     private val chatsJob: Job by lazy {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             pageNumber.collect { page ->
-                viewModel.getChats(page * PAGE_SIZE).collect {
-                    launch(Dispatchers.Main) { chatsCollector(it) }
-                }
+                viewModel.getChats(page).collect { it.collector() }
             }
         }
     }
 
-    private fun chatsCollector(result: Resource<List<Resource<ChatsUI>>>) {
-        when (result) {
-            is Resource.Success -> adapter.setItems(result.data)
-            is Resource.Failure -> {
-                Log.i("Cancelled", result.exception.message.toString())
-            }
-            is Resource.Loading -> {
-                /*Start progress bar*/
-            }
-        }
+    @JvmName("collectorChatsUI")
+    private suspend fun Resource<List<Resource<ChatsUI>>>.collector(): Unit = when (this) {
+        is Resource.Success -> successResult()
+        is Resource.Failure -> failureResult(binding.SHOWPROGRESS)
+        is Resource.Loading -> loadingResult()
     }
 
-    private suspend fun userCollector(result: Resource<UserUI>) {
-        when (result) {
-            is Resource.Success -> userCollector(result.data)
-            is Resource.Failure -> Log.i("Cancelled", result.exception.message.toString())
-            is Resource.Loading -> {
-                /*Start progress bar*/
-            }
-        }
+    @JvmName("collectorUserUI")
+    private suspend fun Resource<UserUI>.collector(): Unit = when (this) {
+        is Resource.Success -> successResult()
+        is Resource.Failure -> failureResult(headerBinding.SHOWPROGRESS)
+        is Resource.Loading -> loadingResult()
     }
 
-    private suspend fun userCollector(user: UserUI) = withContext(Dispatchers.Main) {
-        user.mapMainScreen(
+    @JvmName("collectorUserUI")
+    private suspend fun Resource.Success<UserUI>.successResult() {
+        headerBinding.SHOWPROGRESS.changeVisibility()
+        drawResult(data)
+    }
+
+    @JvmName("collectorChatsUI")
+    private suspend fun Resource.Success<List<Resource<ChatsUI>>>.successResult() {
+        binding.SHOWPROGRESS.changeVisibility()
+        drawResult(data)
+    }
+
+    private suspend fun drawResult(result: UserUI) = withContext(Dispatchers.Main) {
+        result.mapMainScreen(
             phoneNumber = headerBinding.phoneTextView,
             userName = headerBinding.usernameTextView,
             avatar = headerBinding.avatarImageView
         )
     }
 
+    private suspend fun drawResult(result: List<Resource<ChatsUI>>) =
+        withContext(Dispatchers.Main) {
+            adapter.setItems(result)
+        }
+
+    private suspend fun <T> Resource.Failure<T>.failureResult(view: View) {
+        view.changeVisibility()
+        Log.e(TAG, exception.message, exception.cause)
+    }
+
+    private suspend fun loadingResult() = headerBinding.SHOWPROGRESS.changeVisibility()
+
     override fun onDestroyView() {
         super.onDestroyView()
+        cleanAllJobsAndVariables()
+    }
+
+    private fun cleanAllJobsAndVariables() {
         _binding = null
         _headerBinding = null
         _pageNumber.tryEmit(INITIAL_PAGE)
-        chatsJob.cancel()
+        chatsJob.cancel(CAUSE_DESTROY)
     }
 
     companion object {
         private const val CAUSE_DESTROY = "onDestroyView"
-        private const val PAGE_SIZE = 10
         private const val INITIAL_PAGE = 1
     }
 }
