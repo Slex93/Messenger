@@ -17,7 +17,7 @@
             android:id="@+id/action_nav_home_to_nav_contact"
             app:destination="@id/nav_contact" />
         <action
-            android:id="@+id/action_nav_home_to_nav_single_chat"
+            android:id="@+id/nav_to_single_chat"
             app:destination="@id/nav_single_chat" />
         <action
             android:id="@+id/action_nav_home_to_nav_settings"
