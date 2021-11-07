@@ -67,7 +67,8 @@ class ChatsFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.currentUser().collect { ResourceChats.User(it).collector() }
+            viewModel.currentUser()
+                .collect { ResourceChats.User(it).collector(headerBinding.SHOWPROGRESS) }
         }
         chatsJob.start()
         binding.recyclerView.adapter = adapter
@@ -80,40 +81,50 @@ class ChatsFragment : BaseFragment() {
     private val chatsJob: Job by lazy {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             pageNumber.collect { page ->
-                viewModel.getChats(page).collect { ResourceChats.Chats(it).collector() }
+                viewModel.getChats(page).collect {
+                    ResourceChats.Chats(it).collector(binding.SHOWPROGRESS)
+                }
             }
         }
     }
 
-    private suspend fun <T> ResourceChats<T>.collector() {
+    private suspend fun <T> ResourceChats<T>.collector(view: View) {
         when (result) {
             is Resource.Success<*> -> {
                 when (this) {
-                    is ResourceChats.Chats -> (result as Resource.Success<List<Resource<ChatsUI>>>).successResult()
-                    is ResourceChats.User -> (result as Resource.Success<UserUI>).successResult()
+                    is ResourceChats.Chats -> {
+                        val convertedResult = (result as Resource.Success<List<Resource<ChatsUI>>>)
+                        convertedResult.successResult(view)
+                    }
+                    is ResourceChats.User -> {
+                        val convertedResult = (result as Resource.Success<UserUI>)
+                        convertedResult.successResult(view)
+                    }
                 }
             }
-            is Resource.Failure<*> -> result.failureResult(headerBinding.SHOWPROGRESS)
-            is Resource.Loading -> headerBinding.SHOWPROGRESS.loadingResult()
+            is Resource.Failure<*> -> result.failureResult(view)
+            is Resource.Loading -> view.loadingResult()
         }
     }
 
     sealed class ResourceChats<out T>(val result: T) {
-        class Chats(result: Resource<List<Resource<ChatsUI>>>) :
-            ResourceChats<Resource<List<Resource<ChatsUI>>>>(result)
+
+        class Chats(
+            result: Resource<List<Resource<ChatsUI>>>
+        ) : ResourceChats<Resource<List<Resource<ChatsUI>>>>(result)
 
         class User(result: Resource<UserUI>) : ResourceChats<Resource<UserUI>>(result)
     }
 
     @JvmName("collectorUserUI")
-    private suspend fun Resource.Success<UserUI>.successResult() {
-        headerBinding.SHOWPROGRESS.changeVisibility()
+    private suspend fun Resource.Success<UserUI>.successResult(view: View) {
+        view.changeVisibility()
         drawResult(data)
     }
 
     @JvmName("collectorChatsUI")
-    private suspend fun Resource.Success<List<Resource<ChatsUI>>>.successResult() {
-        binding.SHOWPROGRESS.changeVisibility()
+    private suspend fun Resource.Success<List<Resource<ChatsUI>>>.successResult(view: View) {
+        view.changeVisibility()
         drawResult(data)
     }
 
