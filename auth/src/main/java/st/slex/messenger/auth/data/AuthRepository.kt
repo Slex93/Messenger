@@ -5,12 +5,10 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Lazy
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
 import st.slex.messenger.core.FirebaseConstants.CHILD_ID
 import st.slex.messenger.core.FirebaseConstants.CHILD_PHONE
 import st.slex.messenger.core.FirebaseConstants.NODE_PHONE
@@ -35,21 +33,16 @@ interface AuthRepository {
         override suspend fun saveUser(): Flow<Resource<Void>> = flow {
             val updateUserTask = userReference.updateChildren(mapUser)
             val updatePhoneTask = phoneReference.setValue(user.get().uid)
-            updateUserTask.handle().also { updateUserResult ->
-                if (updateUserResult is Resource.Success) {
-                    sendToken().also {
-                        if (it is Resource.Failure)
-                            emit(Resource.Failure(it.exception))
-                    }
-                    emit(updatePhoneTask.handle())
-                } else emit(updateUserResult)
-            }
+            val updateUserResult = updateUserTask.handle()
+            if (updateUserResult is Resource.Success) {
+                sendToken()
+                emit(updatePhoneTask.handle())
+            } else emit(updateUserResult)
         }
 
-        private suspend fun sendToken() = withContext(Dispatchers.IO) {
-            FirebaseMessaging.getInstance().token.handle().also { token ->
-                return@withContext tokenReference.setValue(token).handle()
-            }
+        private suspend fun sendToken() {
+            val token = FirebaseMessaging.getInstance().token.handle()
+            tokenReference.setValue(token).handle()
         }
 
         private suspend fun <T> Task<T>.handle(): Resource<T> =

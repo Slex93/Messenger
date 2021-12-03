@@ -16,7 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.messenger.auth.databinding.FragmentEnterPhoneBinding
@@ -68,12 +70,13 @@ class EnterPhoneFragment : BaseAuthFragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
         }
 
+    private var phoneClickJob: Job? = null
+
     private val phoneClickListener = View.OnClickListener {
+        phoneClickJob?.cancel()
         val phone = binding.phoneEditText.text.toString()
-        requireActivity().lifecycleScope.launch {
-            viewModel.login(phone).collect {
-                it.collector()
-            }
+        phoneClickJob = requireActivity().lifecycleScope.launch(Dispatchers.IO) {
+            viewModel.login(phone).collect(::collector)
         }
     }
 
@@ -84,32 +87,50 @@ class EnterPhoneFragment : BaseAuthFragment() {
         inputMethodManager.showSoftInput(textInputEditText, InputMethodManager.SHOW_IMPLICIT)
     }
 
+    private fun collector(resource: LoginUIResult) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            when (resource) {
+                is LoginUIResult.Success.LogIn -> resultLogIn()
+                is LoginUIResult.Success.SendCode -> resource.resultSendCode()
+                is LoginUIResult.Failure -> stopProgress()
+                is LoginUIResult.Loading -> showProgress()
+            }
+        }
+    }
+
+    private fun resultLogIn() {
+        val intent = Intent()
+        intent.setClassName(requireContext(), MAIN_ACTIVITY_PATH)
+        startActivity(intent)
+    }
+
+    private fun LoginUIResult.Success.SendCode.resultSendCode() {
+        binding.fragmentCodeProgressIndicator.visibility = View.GONE
+        val direction = EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(id)
+        val extras =
+            FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
+        findNavController().navigate(direction, extras)
+    }
+
+    private fun stopProgress() {
+        binding.fragmentCodeProgressIndicator.visibility = View.GONE
+    }
+
+    private fun showProgress() {
+        binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    private fun LoginUIResult.collector() = when (this) {
-        is LoginUIResult.Success.LogIn -> {
-            val intent = Intent()
-            intent.setClassName(requireContext(), "st.slex.messenger.main.ui.MainActivity")
-            startActivity(intent)
-        }
-        is LoginUIResult.Success.SendCode -> {
-            binding.fragmentCodeProgressIndicator.visibility = View.GONE
-            val direction =
-                EnterPhoneFragmentDirections.actionNavAuthPhoneToNavAuthCode(id)
-            val extras =
-                FragmentNavigatorExtras(binding.fragmentPhoneFab to binding.fragmentPhoneFab.transitionName)
-            findNavController().navigate(direction, extras)
-        }
-        is LoginUIResult.Failure -> {
-            binding.fragmentCodeProgressIndicator.visibility = View.GONE
-            //binding.root.showPrimarySnackBar(exception.toString())
-        }
-        is LoginUIResult.Loading -> {
-            binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        phoneClickJob?.cancel()
     }
 
+    companion object {
+        private const val MAIN_ACTIVITY_PATH = "st.slex.messenger.main.ui.MainActivity"
+    }
 }

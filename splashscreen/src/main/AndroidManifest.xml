@@ -1,4 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="st.slex.messenger.splashscreen">
-
-</manifest>
+<manifest package="st.slex.messenger.splashscreen" />

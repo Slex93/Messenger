@@ -14,8 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.messenger.auth.R
 import st.slex.messenger.auth.databinding.FragmentEnterCodeBinding
 import kotlin.coroutines.suspendCoroutine
@@ -26,8 +29,7 @@ class EnterCodeFragment : BaseAuthFragment() {
     private var _binding: FragmentEnterCodeBinding? = null
     private val binding get() = checkNotNull(_binding)
 
-    private var _id: String? = null
-    private val id: String get() = checkNotNull(_id)
+    private val args: EnterCodeFragmentArgs by navArgs()
 
     private val viewModel: AuthViewModel by viewModels {
         viewModelFactory.get()
@@ -54,9 +56,7 @@ class EnterCodeFragment : BaseAuthFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val args: EnterCodeFragmentArgs by navArgs()
-        _id = args.id
-        editTextList[0].requestFocus()
+        editTextList.first().requestFocus()
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             foreachCodeList(editTextList) { sendCode.start() }
         }
@@ -67,8 +67,7 @@ class EnterCodeFragment : BaseAuthFragment() {
             context = Dispatchers.IO,
             start = CoroutineStart.LAZY
         ) {
-            viewModel.sendCode(id = id, code = editTextList.getCodeFromList())
-                .collect { collector(it) }
+            viewModel.sendCode(id = args.id, code = codeFromList).collect(::collector)
         }
     }
 
@@ -81,10 +80,10 @@ class EnterCodeFragment : BaseAuthFragment() {
 
     private suspend inline fun foreachCodeList(
         list: List<EditText>,
-        crossinline function: () -> Unit
+        crossinline startSendingCode: () -> Unit
     ) = list.indices.forEach {
         listenCode(list[it]).also { _ ->
-            if (it == list.size - 1) function()
+            if (it == list.size - 1) startSendingCode()
             else list[it + 1].requestFocus()
         }
     }
@@ -95,31 +94,42 @@ class EnterCodeFragment : BaseAuthFragment() {
         }
     }
 
-    private fun List<EditText>.getCodeFromList(): String =
-        this.joinToString { it.text.toString() }.replace(", ", "")
+    private val codeFromList: String
+        get() = editTextList.joinToString { it.text.toString() }.replace(", ", "")
 
-    private suspend fun collector(result: LoginUIResult) = withContext(Dispatchers.Main) {
-        when (result) {
-            is LoginUIResult.Success -> {
-                binding.fragmentCodeProgressIndicator.visibility = View.GONE
-                val intent = Intent()
-                intent.setClassName(requireContext(), "st.slex.messenger.main.ui.MainActivity")
-                startActivity(intent)
-                Snackbar.make(binding.root, "SUCCESS", Snackbar.LENGTH_LONG).show()
-            }
-            is LoginUIResult.Failure -> {
-                binding.fragmentCodeProgressIndicator.visibility = View.GONE
-                //binding.root.showPrimarySnackBar(result.exception.toString())
-            }
-            is LoginUIResult.Loading -> {
-                binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
-            }
+    private fun collector(
+        resource: LoginUIResult
+    ) = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+        when (resource) {
+            is LoginUIResult.Success -> success()
+            is LoginUIResult.Failure -> stopProgress()
+            is LoginUIResult.Loading -> showProgress()
         }
+    }
+
+    private fun success() {
+        stopProgress()
+        val intent = Intent()
+        intent.setClassName(requireContext(), MAIN_ACTIVITY_PATH)
+        startActivity(intent)
+        Snackbar.make(binding.root, "SUCCESS", Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun showProgress() {
+        binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
+    }
+
+    private fun stopProgress() {
+        binding.fragmentCodeProgressIndicator.visibility = View.GONE
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val MAIN_ACTIVITY_PATH = "st.slex.messenger.main.ui.MainActivity"
     }
 }
 
