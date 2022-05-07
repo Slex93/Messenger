@@ -47,9 +47,9 @@ interface ContactUI {
         ) {
             phoneTextView.text = phone
             nameTextView.text = full_name
-            val urlSet = if (url.isEmpty()) {
-                R.drawable.test_image
-            } else url
+            val urlSet = url.ifEmpty {
+                R.drawable.ic_default_photo
+            }
             card.transitionName = id
             _cardView = card
             Glide.with(imageView).load(urlSet).into(imageView)

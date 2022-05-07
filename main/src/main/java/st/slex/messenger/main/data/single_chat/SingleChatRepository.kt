@@ -93,17 +93,16 @@ interface SingleChatRepository {
         ) {
             val notificationReference: DatabaseReference =
                 reference.child(NODE_TOKENS).child(receiverId)
-            val listener = tokenListener(receiverId, messageKey, mapReceiver)
+            val listener = tokenListener(messageKey, mapReceiver)
             notificationReference.addListenerForSingleValueEvent(listener)
         }
 
         private fun tokenListener(
-            receiverId: String, messageKey: String, mapReceiver: Map<String, String>
+            messageKey: String, mapReceiver: Map<String, String>
         ): ValueEventListener = listener.singleEventListener(String::class) {
             when (it) {
                 is Resource.Success -> sendNotification(it.data, messageKey, mapReceiver)
-                else -> {
-                }
+                else -> Unit
             }
         }
 

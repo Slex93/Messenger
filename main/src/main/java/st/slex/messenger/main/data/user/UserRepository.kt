@@ -80,7 +80,7 @@ interface UserRepository {
             val task = referenceStorage.putFile(uri)
 
             val userListener = taskListener.onCompleteListener<Void>({
-                trySendBlocking(it)
+                trySendBlocking(Resource.Success(null))
             }, {
                 trySendBlocking(it)
             })

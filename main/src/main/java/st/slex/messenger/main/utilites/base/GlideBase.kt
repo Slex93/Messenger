@@ -24,7 +24,7 @@ value class GlideBase(
         needOriginal: Boolean = false
     ) {
         val urlSet = if (url == "null" || url == "") {
-            R.drawable.test_image
+            R.drawable.ic_default_photo
         } else url
         val glide = Glide.with(imageView)
             .load(urlSet)

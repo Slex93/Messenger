@@ -17,9 +17,9 @@ class CustomImageView : androidx.appcompat.widget.AppCompatImageView, AbstractVi
     )
 
     override fun load(url: String) {
-        val urlSet = if (url.isEmpty()) {
-            R.drawable.test_image
-        } else url
+        val urlSet = url.ifEmpty {
+            R.drawable.ic_default_photo
+        }
         this.transitionName = url
         Glide.with(this).load(urlSet).circleCrop().into(this)
     }
