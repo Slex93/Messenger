@@ -1,7 +1,7 @@
 package st.slex.messenger.main.ui.chats
 
 import androidx.recyclerview.widget.DiffUtil
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 
 class ChatsDiffUtilCallback(
     private val oldList: List<Resource<ChatsUI>>,

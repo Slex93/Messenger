@@ -5,18 +5,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import st.slex.core.Resource
 import st.slex.messenger.auth.core.LoginValue
 import st.slex.messenger.auth.domain.interf.AuthInteractor
 import st.slex.messenger.auth.domain.interf.AuthRepository
-import st.slex.messenger.auth.ui.LoginEngine
 import st.slex.messenger.auth.ui.SendCodeEngine
-import st.slex.messenger.core.Resource
+import st.slex.messenger.auth.ui.utils.LoginHelper
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class AuthInteractorImpl @Inject constructor(
     private val repository: AuthRepository,
-    private val loginEngine: LoginEngine,
+    private val loginEngine: LoginHelper,
     private val sendCodeEngine: SendCodeEngine,
 ) : AuthInteractor {
 

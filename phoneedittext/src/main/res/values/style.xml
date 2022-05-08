@@ -13,5 +13,4 @@
         <attr name="phone_initialCountryCode" />
         <attr name="phone_initialRegionCode" />
     </declare-styleable>
-
 </resources>

@@ -1,4 +1,4 @@
-package st.slex.messenger.core
+package st.slex.core
 
 object FirebaseConstants {
 

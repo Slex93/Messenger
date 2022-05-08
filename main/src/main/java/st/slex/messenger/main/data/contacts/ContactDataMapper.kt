@@ -1,7 +1,7 @@
 package st.slex.messenger.main.data.contacts
 
-import st.slex.messenger.core.Mapper
-import st.slex.messenger.core.Resource
+import st.slex.core.Mapper
+import st.slex.core.Resource
 import st.slex.messenger.main.ui.contacts.ContactUI
 import javax.inject.Inject
 

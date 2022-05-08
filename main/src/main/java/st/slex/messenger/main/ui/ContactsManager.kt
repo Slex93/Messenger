@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import st.slex.messenger.core.FirebaseConstants.PERMISSION_REQUEST
+import st.slex.core.FirebaseConstants.PERMISSION_REQUEST
 import st.slex.messenger.main.ui.contacts.ContactUI
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException

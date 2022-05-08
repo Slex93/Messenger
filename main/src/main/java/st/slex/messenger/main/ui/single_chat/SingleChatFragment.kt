@@ -21,9 +21,9 @@ import com.google.firebase.database.Query
 import com.google.firebase.ktx.Firebase
 import dagger.Lazy
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import st.slex.messenger.core.FirebaseConstants.NODE_MESSAGES
-import st.slex.messenger.core.Resource
+import kotlinx.coroutines.flow.collectLatest
+import st.slex.core.FirebaseConstants.NODE_MESSAGES
+import st.slex.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentSingleChatBinding
 import st.slex.messenger.main.ui.MainActivity
@@ -97,7 +97,7 @@ class SingleChatFragment : BaseFragment() {
                 snackBar.show()
             } else {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                    viewModel.sendMessage(receiverId = args.id, message = message).collect {
+                    viewModel.sendMessage(receiverId = args.id, message = message).collectLatest {
                         collect(it)
                     }
                 }
@@ -137,7 +137,7 @@ class SingleChatFragment : BaseFragment() {
             context = Dispatchers.IO,
             start = CoroutineStart.LAZY
         ) {
-            viewModel.getChatUIHead(args.id).collect {
+            viewModel.getChatUIHead(args.id).collectLatest {
                 if (it is Resource.Success) {
                     viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                         with(binding.toolbarInfo) { it.data.bind(stateTextView, usernameTextView) }

@@ -9,24 +9,18 @@ import com.google.firebase.auth.FirebaseAuth
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
 
-    private val initialJob = lifecycleScope.launchWhenCreated {
-        val intent = if (FirebaseAuth.getInstance().currentUser != null) {
-            Intent().setClassName(
-                this@SplashActivity,
-                "st.slex.messenger.main.ui.MainActivity"
-            )
-        } else {
-            Intent().setClassName(
-                this@SplashActivity,
-                "st.slex.messenger.auth.ui.AuthActivity"
-            )
+    init {
+        lifecycleScope.launchWhenCreated {
+            val user = FirebaseAuth.getInstance().currentUser
+            val className = if (user == null) AUTH_ACTIVITY else MAIN_ACTIVITY
+            val intent = Intent().setClassName(this@SplashActivity, className)
+            startActivity(intent)
+            finish()
         }
-        startActivity(intent)
-        finish()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        initialJob.cancel()
+    companion object {
+        private const val MAIN_ACTIVITY = "st.slex.messenger.main.ui.MainActivity"
+        private const val AUTH_ACTIVITY = "st.slex.messenger.auth.ui.AuthActivity"
     }
 }
