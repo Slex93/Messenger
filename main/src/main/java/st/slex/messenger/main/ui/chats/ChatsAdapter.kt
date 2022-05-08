@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import st.slex.messenger.main.databinding.ItemRecyclerMainBinding
 import st.slex.messenger.main.ui.core.ClickListener
 

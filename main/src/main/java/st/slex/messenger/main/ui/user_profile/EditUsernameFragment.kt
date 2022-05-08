@@ -14,7 +14,7 @@ import dagger.Lazy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentEditUsernameBinding
 import st.slex.messenger.main.ui.MainActivity
@@ -57,7 +57,9 @@ class EditUsernameFragment : BaseFragment() {
         binding.editUnBtnSave.setOnClickListener {
             val username = binding.editUnTextInput.editText?.text.toString()
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.saveUsername(username.lowercase()).collect { it.collector() }
+                viewModel.saveUsername(username.lowercase()).collect {
+                    it.collector()
+                }
             }
         }
     }

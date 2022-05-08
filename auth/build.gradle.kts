@@ -56,7 +56,6 @@ dependencies {
     implementation(project(":phoneedittext"))
     implementation(project(":core"))
 
-
     /*Navigation Component*/
     val navVersion = "2.4.2"
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")

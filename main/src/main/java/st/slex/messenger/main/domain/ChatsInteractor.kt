@@ -4,7 +4,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import st.slex.messenger.main.data.chats.ChatsDataMapper
 import st.slex.messenger.main.data.contacts.ContactsRepository
 import st.slex.messenger.main.data.user.UserRepository

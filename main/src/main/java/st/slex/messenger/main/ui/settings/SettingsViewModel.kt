@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import st.slex.messenger.main.data.settings.SettingsRepository
 import javax.inject.Inject
 

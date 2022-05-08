@@ -1,7 +1,7 @@
 package st.slex.messenger.auth.data.core
 
 import com.google.android.gms.tasks.Task
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 

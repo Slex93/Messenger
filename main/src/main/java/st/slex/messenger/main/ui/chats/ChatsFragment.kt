@@ -18,7 +18,7 @@ import androidx.navigation.ui.setupWithNavController
 import dagger.Lazy
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentChatsBinding
 import st.slex.messenger.main.databinding.NavigationDrawerHeaderBinding

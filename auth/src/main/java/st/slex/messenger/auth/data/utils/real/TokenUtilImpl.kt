@@ -4,9 +4,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Lazy
+import st.slex.core.FirebaseConstants
 import st.slex.messenger.auth.data.core.CoroutinesHandle.handle
 import st.slex.messenger.auth.data.utils.interf.TokenUtil
-import st.slex.messenger.core.FirebaseConstants
 import javax.inject.Inject
 
 class TokenUtilImpl @Inject constructor(

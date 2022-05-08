@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import dagger.Lazy
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentContactBinding
 import st.slex.messenger.main.ui.MainActivity

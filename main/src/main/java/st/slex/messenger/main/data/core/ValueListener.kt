@@ -3,7 +3,7 @@ package st.slex.messenger.main.data.core
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 
 class ValueListener(
     val cancelled: (Resource.Failure<Nothing>) -> Unit,

@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.core.FirebaseConstants.CHILD_ID
+import st.slex.core.FirebaseConstants.CHILD_ID
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.ActivityMainBinding
 import st.slex.messenger.main.di.component.DaggerMainActivityComponent

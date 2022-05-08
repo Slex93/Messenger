@@ -97,10 +97,4 @@ open class PhoneTextInputEditText : TextInputEditText {
                 )
             )
         }.getOrNull() == true
-
-    fun setInternationalPhoneNumber(phoneNumber: String) {
-        setText("")
-        setText(phoneNumber)
-        setSelection(text!!.length)
-    }
 }

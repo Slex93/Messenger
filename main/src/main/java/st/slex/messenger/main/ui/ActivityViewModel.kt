@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import st.slex.messenger.main.data.main_activity.ActivityRepository
 import st.slex.messenger.main.ui.contacts.ContactUI
 import st.slex.messenger.main.ui.contacts.ContactsUIMapper

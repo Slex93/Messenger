@@ -3,8 +3,9 @@ package st.slex.messenger.main.ui.core
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import androidx.appcompat.widget.AppCompatTextView
 
-class CustomTextView : androidx.appcompat.widget.AppCompatTextView, AbstractView.Text {
+class CustomTextView : AppCompatTextView, AbstractView.Text {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)

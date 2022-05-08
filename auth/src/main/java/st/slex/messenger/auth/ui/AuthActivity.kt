@@ -1,7 +1,10 @@
 package st.slex.messenger.auth.ui
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.auth.databinding.ActivityAuthBinding
 import st.slex.messenger.auth.di.AuthComponent
 import st.slex.messenger.auth.di.DaggerAuthComponent
@@ -27,3 +30,10 @@ class AuthActivity : AppCompatActivity() {
         _binding = null
     }
 }
+
+@ExperimentalCoroutinesApi
+val Context.authComponent: AuthComponent
+    get() = when (this) {
+        is AuthActivity -> authComponent
+        else -> (this as FragmentActivity).authComponent
+    }

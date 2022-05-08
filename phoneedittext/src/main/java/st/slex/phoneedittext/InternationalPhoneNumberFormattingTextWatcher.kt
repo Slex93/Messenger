@@ -2,16 +2,17 @@ package st.slex.phoneedittext
 
 import android.telephony.PhoneNumberUtils
 import android.text.Editable
+import android.text.InputFilter
 import android.text.Selection
 import android.text.TextWatcher
 import java.util.*
 
-class InternationalPhoneNumberFormattingTextWatcher @JvmOverloads constructor(
+internal class InternationalPhoneNumberFormattingTextWatcher @JvmOverloads constructor(
     regionCode: String = Locale.getDefault().country
 ) : TextWatcher {
 
     private val formatter = PhoneNumberUtilInstanceProvider.get().getAsYouTypeFormatter(regionCode)
-
+    private val phoneNumberUtil = PhoneNumberUtilInstanceProvider.get()
     private var selfChange = false
     private var stopFormatting = false
 
@@ -28,7 +29,14 @@ class InternationalPhoneNumberFormattingTextWatcher @JvmOverloads constructor(
     @Synchronized
     override fun afterTextChanged(s: Editable) {
         if (selfChange) return
-
+        val filters = mutableListOf<InputFilter>()
+        if (isTextValid(s.toString())) {
+            val filter = InputFilter.LengthFilter(s.toString().length)
+            filters.add(filter)
+            s.filters = filters.toTypedArray()
+        } else {
+            filters.clear()
+        }
         if (!s.startsWith("+")) {
             selfChange = true
             s.replace(0, s.length, "+${s.toString().replaceFirst("+", "")}")
@@ -93,4 +101,14 @@ class InternationalPhoneNumberFormattingTextWatcher @JvmOverloads constructor(
         }
         return false
     }
+
+    private fun isTextValid(text: String) =
+        runCatching {
+            phoneNumberUtil.isValidNumber(
+                phoneNumberUtil.parse(
+                    text,
+                    null
+                )
+            )
+        }.getOrNull() == true
 }

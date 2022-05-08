@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import st.slex.messenger.main.databinding.ItemRecyclerContactBinding
 import st.slex.messenger.main.ui.core.ClickListener
 import st.slex.messenger.main.ui.user_profile.UserUI

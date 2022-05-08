@@ -1,7 +1,7 @@
 package st.slex.messenger.main.data.core
 
 import com.google.firebase.database.ValueEventListener
-import st.slex.messenger.core.Resource
+import st.slex.core.Resource
 import javax.inject.Inject
 import kotlin.reflect.KClass
 

@@ -7,10 +7,10 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import st.slex.messenger.core.FirebaseConstants.CHILD_FULL_NAME
-import st.slex.messenger.core.FirebaseConstants.NODE_CONTACT
-import st.slex.messenger.core.FirebaseConstants.NODE_USER
-import st.slex.messenger.core.Resource
+import st.slex.core.FirebaseConstants.CHILD_FULL_NAME
+import st.slex.core.FirebaseConstants.NODE_CONTACT
+import st.slex.core.FirebaseConstants.NODE_USER
+import st.slex.core.Resource
 import st.slex.messenger.main.data.core.ValueSnapshotListener
 import javax.inject.Inject
 

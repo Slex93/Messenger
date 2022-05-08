@@ -1,7 +1,7 @@
 package st.slex.messenger.main.data.chats
 
-import st.slex.messenger.core.Mapper
-import st.slex.messenger.core.Resource
+import st.slex.core.Mapper
+import st.slex.core.Resource
 import st.slex.messenger.main.ui.chats.ChatsUI
 import javax.inject.Inject
 

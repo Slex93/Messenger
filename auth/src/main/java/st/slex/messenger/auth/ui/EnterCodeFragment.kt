@@ -21,7 +21,6 @@ import dagger.Lazy
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.messenger.auth.R
 import st.slex.messenger.auth.databinding.FragmentEnterCodeBinding
@@ -47,7 +46,7 @@ class EnterCodeFragment : Fragment() {
     }
 
     override fun onAttach(context: Context) {
-        (requireActivity() as AuthActivity).authComponent.inject(this)
+        requireActivity().authComponent.inject(this)
         super.onAttach(context)
     }
 
