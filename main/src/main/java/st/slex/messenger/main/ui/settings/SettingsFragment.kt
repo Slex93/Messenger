@@ -12,8 +12,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import dagger.Lazy
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import st.slex.messenger.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentSettingsBinding
@@ -59,29 +61,27 @@ class SettingsFragment : BaseFragment() {
     }
 
     private val signOutClickListener: View.OnClickListener = View.OnClickListener {
-        signOutJob.start()
-    }
-
-    private val signOutJob: Job by lazy {
-        viewLifecycleOwner.lifecycleScope.launch(
-            context = Dispatchers.IO, start = CoroutineStart.LAZY
-        ) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             viewModel.signOut().collect {
                 it.collector()
             }
         }
     }
 
-    private suspend fun Resource<Nothing?>.collector(): Unit = when (this) {
-        is Resource.Success -> signOutResult()
-        is Resource.Failure -> signOutResult()
-        is Resource.Loading -> loading()
+    private suspend fun Resource<Nothing?>.collector() {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            when (this@collector) {
+                is Resource.Success -> signOutResult()
+                is Resource.Failure -> signOutResult()
+                is Resource.Loading -> loading()
+            }
+        }
     }
 
     private suspend fun signOutResult() {
         binding.SHOWPROGRESS.changeVisibility()
-        val intent = Intent().setClassName(requireContext(), AUTH_ACTIVITY)
-        startActivity(intent)
+        val intent = Intent().setClassName(requireContext(), SPLASH_ACTIVITY)
+        requireActivity().startActivity(intent)
         requireActivity().finish()
     }
 
@@ -97,11 +97,9 @@ class SettingsFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        signOutJob.cancel(CANCEL_JOB_CAUSE)
     }
 
     companion object {
-        private const val AUTH_ACTIVITY: String = "st.slex.messenger.auth.ui.AuthActivit"
-        private const val CANCEL_JOB_CAUSE: String = "onDestroyView"
+        private const val SPLASH_ACTIVITY: String = "st.slex.messenger.splashscreen.SplashActivity"
     }
 }

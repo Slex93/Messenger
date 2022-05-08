@@ -58,7 +58,8 @@ class EnterCodeFragment : Fragment() {
             duration = 500.toLong()
             scrimColor = Color.TRANSPARENT
         }
-        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.title_code)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title =
+            getString(R.string.title_code)
     }
 
     override fun onCreateView(
@@ -128,6 +129,7 @@ class EnterCodeFragment : Fragment() {
         val intent = Intent()
         intent.setClassName(requireContext(), MAIN_ACTIVITY_PATH)
         startActivity(intent)
+        requireActivity().finish()
         Snackbar.make(binding.root, "SUCCESS", Snackbar.LENGTH_LONG).show()
     }
 

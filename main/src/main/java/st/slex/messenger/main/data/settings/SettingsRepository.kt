@@ -1,6 +1,5 @@
 package st.slex.messenger.main.data.settings
 
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -23,28 +22,22 @@ interface SettingsRepository {
         user: FirebaseUser
     ) : SettingsRepository {
 
-        private val signOutReference = reference.child(NODE_USER).child(user.uid).child(CHILD_STATE)
+        private val signOutReference by lazy {
+            reference.child(NODE_USER).child(user.uid).child(CHILD_STATE)
+        }
 
-        override suspend fun signOut(): Resource<Nothing?> =
-            suspendCoroutine { continuation ->
-                val task: Task<Void> = signOutReference.setValue(SIGN_OUT_STATE)
-                val listener = signOutListener {
-                    continuation.resumeWith(it)
-                }
-                task.addOnCompleteListener(listener)
-            }
-
-        private fun signOutListener(function: (Result<Resource<Nothing?>>) -> Unit) =
-            OnCompleteListener<Void> {
-                val result = if (it.isSuccessful) {
+        override suspend fun signOut(): Resource<Nothing?> = suspendCoroutine { continuation ->
+            val task: Task<Void> = signOutReference.setValue(SIGN_OUT_STATE)
+            task.addOnCompleteListener {
+                if (it.isSuccessful) {
                     Firebase.auth.signOut()
-                    Resource.Success(null)
+                    continuation.resumeWith(Result.success(Resource.Success(null)))
                 } else {
-                    val exception: Exception = it.exception!!
-                    Resource.Failure<Nothing>(exception)
+                    continuation.resumeWith(Result.success(Resource.Failure(it.exception!!)))
+
                 }
-                function(Result.success(result))
             }
+        }
 
         companion object {
             private const val SIGN_OUT_STATE: String = "Offline"
