@@ -2,15 +2,14 @@ package st.slex.messenger.auth.di.modules
 
 import dagger.Binds
 import dagger.Module
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import st.slex.messenger.auth.data.AuthRepository
+import st.slex.messenger.auth.data.repository.AuthRepositoryImpl
+import st.slex.messenger.auth.domain.interf.AuthRepository
+import javax.inject.Singleton
 
 @Module
 interface RepositoryModule {
 
-    @ExperimentalCoroutinesApi
-    @InternalCoroutinesApi
     @Binds
-    fun bindsLoginRepository(repository: AuthRepository.Base): AuthRepository
+    @Singleton
+    fun bindsLoginRepository(repository: AuthRepositoryImpl): AuthRepository
 }

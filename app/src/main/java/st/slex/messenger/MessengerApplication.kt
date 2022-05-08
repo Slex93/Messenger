@@ -12,7 +12,6 @@ class MessengerApplication : Application() {
     }
 }
 
-/*Would be useful*/
 @ExperimentalCoroutinesApi
 val Context.appComponent: AppComponent
     get() = when (this) {

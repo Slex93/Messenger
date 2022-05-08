@@ -1,6 +1,7 @@
 package st.slex.messenger.main.ui.settings
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,23 +9,39 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import dagger.Lazy
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import st.slex.messenger.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentSettingsBinding
+import st.slex.messenger.main.ui.MainActivity
 import st.slex.messenger.main.ui.core.BaseFragment
 import st.slex.messenger.main.ui.core.UIExtensions.changeVisibility
 import st.slex.messenger.main.utilites.funs.setSupportActionBar
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class SettingsFragment : BaseFragment() {
 
     private var _binding: FragmentSettingsBinding? = null
-    private val binding get() = _binding!!
+    private val binding: FragmentSettingsBinding
+        get() = checkNotNull(_binding)
 
+    private lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
     private val viewModel: SettingsViewModel by viewModels { viewModelFactory.get() }
+
+    @Inject
+    fun injection(viewModelFactory: Lazy<ViewModelProvider.Factory>) {
+        this.viewModelFactory = viewModelFactory
+    }
+
+    override fun onAttach(context: Context) {
+        (requireActivity() as MainActivity).activityComponent.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,10 +75,10 @@ class SettingsFragment : BaseFragment() {
     private suspend fun Resource<Nothing?>.collector(): Unit = when (this) {
         is Resource.Success -> signOutResult()
         is Resource.Failure -> signOutResult()
-        is Resource.Loading -> signOutResult()
+        is Resource.Loading -> loading()
     }
 
-    private suspend fun Resource.Success<Nothing?>.signOutResult() {
+    private suspend fun signOutResult() {
         binding.SHOWPROGRESS.changeVisibility()
         val intent = Intent().setClassName(requireContext(), AUTH_ACTIVITY)
         startActivity(intent)
@@ -73,7 +90,7 @@ class SettingsFragment : BaseFragment() {
         Log.e(TAG, exception.message, exception.cause)
     }
 
-    private suspend fun Resource.Loading.signOutResult() {
+    private suspend fun loading() {
         binding.SHOWPROGRESS.changeVisibility()
     }
 
@@ -84,7 +101,7 @@ class SettingsFragment : BaseFragment() {
     }
 
     companion object {
-        private const val AUTH_ACTIVITY: String = "st.slex.messenger.auth.ui.AuthActivity"
+        private const val AUTH_ACTIVITY: String = "st.slex.messenger.auth.ui.AuthActivit"
         private const val CANCEL_JOB_CAUSE: String = "onDestroyView"
     }
 }

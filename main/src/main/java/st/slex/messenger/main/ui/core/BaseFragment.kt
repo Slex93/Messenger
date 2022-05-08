@@ -1,29 +1,16 @@
 package st.slex.messenger.main.ui.core
 
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.transition.MaterialContainerTransform
-import dagger.Lazy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import st.slex.messenger.main.R
-import st.slex.messenger.main.ui.MainActivity
 import st.slex.messenger.main.utilites.base.GlideBase
 import st.slex.messenger.main.utilites.base.SetImageWithGlide
-import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 open class BaseFragment : Fragment() {
-
-    @Inject
-    open lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
-
-    override fun onAttach(context: Context) {
-        (requireActivity() as MainActivity).activityComponent.inject(this)
-        super.onAttach(context)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

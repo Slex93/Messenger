@@ -1,6 +1,7 @@
 package st.slex.messenger.main.ui.chats
 
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,30 +9,37 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import dagger.Lazy
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import st.slex.messenger.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentChatsBinding
 import st.slex.messenger.main.databinding.NavigationDrawerHeaderBinding
+import st.slex.messenger.main.ui.MainActivity
 import st.slex.messenger.main.ui.core.BaseFragment
 import st.slex.messenger.main.ui.core.UIExtensions.changeVisibility
 import st.slex.messenger.main.ui.user_profile.UserUI
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class ChatsFragment : BaseFragment() {
 
     private var _binding: FragmentChatsBinding? = null
-    private val binding: FragmentChatsBinding get() = checkNotNull(_binding)
+    private val binding: FragmentChatsBinding
+        get() = checkNotNull(_binding)
 
     private var _headerBinding: NavigationDrawerHeaderBinding? = null
-    private val headerBinding: NavigationDrawerHeaderBinding get() = checkNotNull(_headerBinding)
+    private val headerBinding: NavigationDrawerHeaderBinding
+        get() = checkNotNull(_headerBinding)
 
+    private lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
     private val viewModel: ChatsViewModel by viewModels { viewModelFactory.get() }
     private val _pageNumber: MutableStateFlow<Int> = MutableStateFlow(INITIAL_PAGE)
     private val pageNumber: StateFlow<Int>
@@ -43,6 +51,16 @@ class ChatsFragment : BaseFragment() {
 
     private val adapter: ChatsAdapter by lazy(LazyThreadSafetyMode.NONE) {
         ChatsAdapter(ChatsItemClicker())
+    }
+
+    @Inject
+    fun injection(viewModelFactory: Lazy<ViewModelProvider.Factory>) {
+        this.viewModelFactory = viewModelFactory
+    }
+
+    override fun onAttach(context: Context) {
+        (requireActivity() as MainActivity).activityComponent.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(

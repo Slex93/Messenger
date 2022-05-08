@@ -5,19 +5,17 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.auth.domain.LoginDomainResult
+import st.slex.messenger.auth.core.LoginValue
 import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
 
 interface SendCodeEngine {
 
-    suspend fun sendCode(id: String, code: String): LoginDomainResult
+    suspend fun sendCode(id: String, code: String): LoginValue
 
-    @ExperimentalCoroutinesApi
     class Base @Inject constructor() : SendCodeEngine {
 
-        override suspend fun sendCode(id: String, code: String): LoginDomainResult =
+        override suspend fun sendCode(id: String, code: String): LoginValue =
             suspendCoroutine { continuation ->
                 val credential = PhoneAuthProvider.getCredential(id, code)
                 val task = Firebase.auth.signInWithCredential(credential)
@@ -26,10 +24,10 @@ interface SendCodeEngine {
             }
 
         private inline fun listener(
-            crossinline function: (LoginDomainResult) -> Unit
+            crossinline function: (LoginValue) -> Unit
         ) = OnCompleteListener<AuthResult> {
-            val authResult = if (it.isSuccessful) LoginDomainResult.Success.LogIn
-            else LoginDomainResult.Failure(it.exception!!)
+            val authResult = if (it.isSuccessful) LoginValue.Success.LogIn
+            else LoginValue.Failure(it.exception!!)
             function(authResult)
         }
     }

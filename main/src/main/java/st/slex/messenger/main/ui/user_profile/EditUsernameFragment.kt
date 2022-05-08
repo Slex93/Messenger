@@ -1,39 +1,44 @@
 package st.slex.messenger.main.ui.user_profile
 
-import android.graphics.Color
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.transition.MaterialContainerTransform
+import dagger.Lazy
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.messenger.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentEditUsernameBinding
+import st.slex.messenger.main.ui.MainActivity
 import st.slex.messenger.main.ui.core.BaseFragment
 import st.slex.messenger.main.utilites.funs.showPrimarySnackBar
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class EditUsernameFragment : BaseFragment() {
 
     private var _binding: FragmentEditUsernameBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = checkNotNull(_binding)
 
-    val viewModel: UserViewModel by viewModels { viewModelFactory.get() }
+    private lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
+    private val viewModel: UserViewModel by viewModels { viewModelFactory.get() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = MaterialContainerTransform().apply {
-            drawingViewId = R.id.nav_host_fragment
-            duration = resources.getInteger(R.integer.reply_motion_duration_large).toLong()
-            scrimColor = Color.TRANSPARENT
-        }
+    @Inject
+    fun injection(viewModelFactory: Lazy<ViewModelProvider.Factory>) {
+        this.viewModelFactory = viewModelFactory
+    }
+
+    override fun onAttach(context: Context) {
+        (requireActivity() as MainActivity).activityComponent.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(
