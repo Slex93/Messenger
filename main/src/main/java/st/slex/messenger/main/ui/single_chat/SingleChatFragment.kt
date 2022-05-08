@@ -1,10 +1,12 @@
 package st.slex.messenger.main.ui.single_chat
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -17,52 +19,37 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Query
 import com.google.firebase.ktx.Firebase
+import dagger.Lazy
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import st.slex.messenger.core.FirebaseConstants.NODE_MESSAGES
 import st.slex.messenger.core.Resource
 import st.slex.messenger.main.R
 import st.slex.messenger.main.databinding.FragmentSingleChatBinding
+import st.slex.messenger.main.ui.MainActivity
 import st.slex.messenger.main.ui.core.BaseFragment
+import javax.inject.Inject
 
 
 @ExperimentalCoroutinesApi
 class SingleChatFragment : BaseFragment() {
 
     private var _binding: FragmentSingleChatBinding? = null
-    private val binding get() = _binding!!
+    private val binding: FragmentSingleChatBinding
+        get() = checkNotNull(_binding)
+
+    private lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
     private val args: SingleChatFragmentArgs by navArgs()
     private val viewModel: SingleChatViewModel by viewModels { viewModelFactory.get() }
 
-    private val adapter: SingleChatAdapter by lazy {
-        val baseQuery: Query = FirebaseDatabase
-            .getInstance()
-            .reference
-            .child(NODE_MESSAGES)
-            .child(Firebase.auth.uid.toString())
-            .child(args.id)
-        val options = FirebaseRecyclerOptions.Builder<MessageUI>()
-            .setLifecycleOwner(viewLifecycleOwner)
-            .setQuery(baseQuery) {
-                it.getValue(MessageUI.Base::class.java)!!
-            }
-            .build()
-        SingleChatAdapter(options)
+    @Inject
+    fun injection(viewModelFactory: Lazy<ViewModelProvider.Factory>) {
+        this.viewModelFactory = viewModelFactory
     }
 
-    private val bindHeadToolbar by lazy {
-        viewLifecycleOwner.lifecycleScope.launch(
-            context = Dispatchers.IO,
-            start = CoroutineStart.LAZY
-        ) {
-            viewModel.getChatUIHead(args.id).collect {
-                if (it is Resource.Success) {
-                    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                        with(binding.toolbarInfo) { it.data.bind(stateTextView, usernameTextView) }
-                    }
-                }
-            }
-        }
+    override fun onAttach(context: Context) {
+        (requireActivity() as MainActivity).activityComponent.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(
@@ -129,4 +116,34 @@ class SingleChatFragment : BaseFragment() {
         _binding = null
     }
 
+    private val adapter: SingleChatAdapter by lazy {
+        val baseQuery: Query = FirebaseDatabase
+            .getInstance()
+            .reference
+            .child(NODE_MESSAGES)
+            .child(Firebase.auth.uid.toString())
+            .child(args.id)
+        val options = FirebaseRecyclerOptions.Builder<MessageUI>()
+            .setLifecycleOwner(viewLifecycleOwner)
+            .setQuery(baseQuery) {
+                it.getValue(MessageUI.Base::class.java)!!
+            }
+            .build()
+        SingleChatAdapter(options)
+    }
+
+    private val bindHeadToolbar by lazy {
+        viewLifecycleOwner.lifecycleScope.launch(
+            context = Dispatchers.IO,
+            start = CoroutineStart.LAZY
+        ) {
+            viewModel.getChatUIHead(args.id).collect {
+                if (it is Resource.Success) {
+                    viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                        with(binding.toolbarInfo) { it.data.bind(stateTextView, usernameTextView) }
+                    }
+                }
+            }
+        }
+    }
 }

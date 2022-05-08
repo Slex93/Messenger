@@ -1,4 +1,4 @@
-package st.slex.messenger.auth.di
+package st.slex.messenger.auth.di.keys
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

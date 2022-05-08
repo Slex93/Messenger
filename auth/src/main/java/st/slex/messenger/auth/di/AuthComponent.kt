@@ -2,12 +2,14 @@ package st.slex.messenger.auth.di
 
 import dagger.BindsInstance
 import dagger.Component
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import st.slex.messenger.auth.di.scopes.AuthScope
 import st.slex.messenger.auth.ui.AuthActivity
-import st.slex.messenger.auth.ui.BaseAuthFragment
+import st.slex.messenger.auth.ui.EnterCodeFragment
+import st.slex.messenger.auth.ui.EnterPhoneFragment
+import javax.inject.Singleton
 
 @AuthScope
-@ExperimentalCoroutinesApi
+@Singleton
 @Component(modules = [AuthModule::class])
 interface AuthComponent {
 
@@ -19,5 +21,6 @@ interface AuthComponent {
         fun create(): AuthComponent
     }
 
-    fun inject(fragment: BaseAuthFragment)
+    fun inject(fragment: EnterPhoneFragment)
+    fun inject(fragment: EnterCodeFragment)
 }

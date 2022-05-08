@@ -1,5 +1,6 @@
 package st.slex.messenger.auth.ui
 
+import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.os.Bundle
@@ -11,11 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
+import dagger.Lazy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -23,14 +27,26 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.messenger.auth.databinding.FragmentEnterPhoneBinding
 import java.util.*
+import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
-class EnterPhoneFragment : BaseAuthFragment() {
+class EnterPhoneFragment : Fragment() {
 
     private var _binding: FragmentEnterPhoneBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = checkNotNull(_binding)
 
+    private lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
     private val viewModel: AuthViewModel by viewModels { viewModelFactory.get() }
+
+    @Inject
+    fun injection(viewModelFactory: Lazy<ViewModelProvider.Factory>) {
+        this.viewModelFactory = viewModelFactory
+    }
+
+    override fun onAttach(context: Context) {
+        (requireActivity() as AuthActivity).authComponent.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,7 +104,7 @@ class EnterPhoneFragment : BaseAuthFragment() {
     }
 
     private fun collector(resource: LoginUIResult) {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             when (resource) {
                 is LoginUIResult.Success.LogIn -> resultLogIn()
                 is LoginUIResult.Success.SendCode -> resource.resultSendCode()

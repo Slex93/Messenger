@@ -6,21 +6,19 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import st.slex.messenger.auth.domain.LoginDomainResult
+import st.slex.messenger.auth.core.LoginValue
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
 
 interface LoginEngine {
-    suspend fun login(phone: String): LoginDomainResult
+    suspend fun login(phone: String): LoginValue
 
-    @ExperimentalCoroutinesApi
     class Base @Inject constructor(
         private val activity: AuthActivity
     ) : LoginEngine {
 
-        override suspend fun login(phone: String): LoginDomainResult =
+        override suspend fun login(phone: String): LoginValue =
             suspendCoroutine { continuation ->
                 val callback = callback { continuation.resumeWith(Result.success(it)) }
                 val phoneOptions = PhoneAuthOptions
@@ -34,26 +32,26 @@ interface LoginEngine {
             }
 
         private inline fun callback(
-            crossinline function: (LoginDomainResult) -> Unit
+            crossinline function: (LoginValue) -> Unit
         ) = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 Firebase.auth.signInWithCredential(credential).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        function(LoginDomainResult.Success.LogIn)
+                        function(LoginValue.Success.LogIn)
                     } else {
-                        function(LoginDomainResult.Failure(task.exception!!))
+                        function(LoginValue.Failure(task.exception!!))
                     }
                 }
             }
 
             override fun onVerificationFailed(e: FirebaseException): Unit =
-                function(LoginDomainResult.Failure(e))
+                function(LoginValue.Failure(e))
 
             override fun onCodeSent(
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken
-            ): Unit = function(LoginDomainResult.Success.SendCode(verificationId))
+            ): Unit = function(LoginValue.Success.SendCode(verificationId))
         }
     }
 }

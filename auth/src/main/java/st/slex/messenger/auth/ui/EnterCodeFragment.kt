@@ -1,5 +1,6 @@
 package st.slex.messenger.auth.ui
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -9,11 +10,14 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
+import dagger.Lazy
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,18 +25,30 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import st.slex.messenger.auth.R
 import st.slex.messenger.auth.databinding.FragmentEnterCodeBinding
+import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
 
 @ExperimentalCoroutinesApi
-class EnterCodeFragment : BaseAuthFragment() {
+class EnterCodeFragment : Fragment() {
 
     private var _binding: FragmentEnterCodeBinding? = null
     private val binding get() = checkNotNull(_binding)
 
     private val args: EnterCodeFragmentArgs by navArgs()
 
+    private lateinit var viewModelFactory: Lazy<ViewModelProvider.Factory>
     private val viewModel: AuthViewModel by viewModels {
         viewModelFactory.get()
+    }
+
+    @Inject
+    fun injection(viewModelFactory: Lazy<ViewModelProvider.Factory>) {
+        this.viewModelFactory = viewModelFactory
+    }
+
+    override fun onAttach(context: Context) {
+        (requireActivity() as AuthActivity).authComponent.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

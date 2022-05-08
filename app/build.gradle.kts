@@ -57,7 +57,9 @@ android {
 }
 
 dependencies {
-    implementation(project(mapOf("path" to ":splashscreen", "path" to ":auth", "path" to ":main")))
+    implementation(project(":splashscreen"))
+    implementation(project(":main"))
+    implementation(project(":auth"))
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
 

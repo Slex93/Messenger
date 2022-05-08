@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
-import st.slex.messenger.auth.domain.AuthInteractor
-import st.slex.messenger.auth.domain.LoginDomainMapper
+import st.slex.messenger.auth.domain.interf.AuthInteractor
+import st.slex.messenger.auth.domain.interf.LoginDomainMapper
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
