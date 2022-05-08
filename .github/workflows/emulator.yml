@@ -2,10 +2,10 @@ name: Android Emulator
 on:
   pull_request:
     branches: [ master ]
-    
-  push: 
+
+  push:
     branches: [ master ]
-    
+
   workflow_dispatch:
 
 jobs:
@@ -27,8 +27,11 @@ jobs:
           distribution: 'temurin'
           java-version: 11
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 32
+          api-level: 30
           script: ./gradlew build connectedCheck --full-stacktrace
