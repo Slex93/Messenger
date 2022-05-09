@@ -2,10 +2,10 @@ name: Android CI/CD
 on:
   pull_request:
     branches: [ master ]
-    
-  push: 
+
+  push:
     branches: [ master ]
-    
+
   workflow_dispatch:
 
 jobs:
@@ -23,7 +23,8 @@ jobs:
           GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE }}
         run: |
           echo "$GOOGLE_SERVICE" >> app/google-services.json
-          
+          echo "$GOOGLE_SERVICE" >> auth/google-services.json
+
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
@@ -45,6 +46,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-.
-            
+
       - name: Build application
         run: ./gradlew build --full-stacktrace
