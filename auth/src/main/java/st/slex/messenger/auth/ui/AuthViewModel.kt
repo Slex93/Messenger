@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import st.slex.messenger.auth.domain.interf.AuthInteractor
 import st.slex.messenger.auth.domain.interf.LoginDomainMapper
+import st.slex.messenger.auth.ui.core.LoginUIResult
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi

@@ -1,4 +1,4 @@
-package st.slex.messenger.auth.ui.utils
+package st.slex.messenger.auth.ui.use_case.impl
 
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
@@ -6,13 +6,14 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import st.slex.messenger.auth.core.LoginValue
 import st.slex.messenger.auth.ui.AuthActivity
+import st.slex.messenger.auth.ui.use_case.interf.LoginUseCase
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.coroutines.suspendCoroutine
 
-class LoginHelperImpl @Inject constructor(
+class LoginUseCaseImpl @Inject constructor(
     private val activity: AuthActivity
-) : LoginHelper {
+) : LoginUseCase {
 
     override suspend fun login(phone: String): LoginValue =
         suspendCoroutine { continuation ->

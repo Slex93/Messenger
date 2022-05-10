@@ -1,4 +1,4 @@
-package st.slex.messenger.auth.ui.utils
+package st.slex.messenger.auth.ui.use_case.impl
 
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential

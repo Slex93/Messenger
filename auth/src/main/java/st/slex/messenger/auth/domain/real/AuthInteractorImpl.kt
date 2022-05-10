@@ -9,15 +9,15 @@ import st.slex.core.Resource
 import st.slex.messenger.auth.core.LoginValue
 import st.slex.messenger.auth.domain.interf.AuthInteractor
 import st.slex.messenger.auth.domain.interf.AuthRepository
-import st.slex.messenger.auth.ui.SendCodeEngine
-import st.slex.messenger.auth.ui.utils.LoginHelper
+import st.slex.messenger.auth.ui.use_case.interf.LoginUseCase
+import st.slex.messenger.auth.ui.use_case.interf.SendCodeUseCase
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class AuthInteractorImpl @Inject constructor(
     private val repository: AuthRepository,
-    private val loginEngine: LoginHelper,
-    private val sendCodeEngine: SendCodeEngine,
+    private val loginEngine: LoginUseCase,
+    private val sendCodeEngine: SendCodeUseCase,
 ) : AuthInteractor {
 
     override suspend fun login(phone: String): Flow<LoginValue> = flow {

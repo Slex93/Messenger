@@ -1,4 +1,4 @@
-package st.slex.messenger.auth.ui
+package st.slex.messenger.auth.ui.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

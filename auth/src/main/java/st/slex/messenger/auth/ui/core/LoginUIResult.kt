@@ -1,4 +1,4 @@
-package st.slex.messenger.auth.ui
+package st.slex.messenger.auth.ui.core
 
 sealed class LoginUIResult {
 
