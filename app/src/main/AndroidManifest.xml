@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="st.slex.messenger.MessengerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -24,7 +23,7 @@
         </activity>
         <activity
             android:name="st.slex.messenger.main.ui.MainActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name="st.slex.messenger.auth.ui.AuthActivity"
             android:exported="false" />

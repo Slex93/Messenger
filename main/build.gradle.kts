@@ -4,7 +4,6 @@ plugins {
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
-    id("com.google.gms.google-services")
 }
 
 android {
@@ -100,14 +99,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
     androidTestImplementation("androidx.navigation:navigation-testing:$navVersion")
 
-    /*Lifecycle components*/
-    val lifecycleVersion = "2.4.1"
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion")
-
     /*Coroutines*/
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1-native-mt")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1-native-mt")
 
     implementation("androidx.core:core-ktx:1.7.0")
