@@ -1,57 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar_info_card_view"
     android:layout_width="match_parent"
     android:layout_height="?actionBarSize"
-    android:transitionName="transitCard">
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:transitionName="transitCard"
+    tools:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Material3.CardView.Filled"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/small_padding"
+        app:cardCornerRadius="@dimen/big_padding">
 
         <ImageView
             android:id="@+id/shapeableImageView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:adjustViewBounds="true"
+            android:contentDescription="@string/description_change_image"
             android:cropToPadding="true"
-            android:padding="@dimen/small_padding"
             android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:src="@drawable/ic_default_photo" />
+    </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/primary_padding"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <st.slex.messenger.main.ui.core.CustomTextView
+            android:id="@+id/usernameTextView"
+            style="@style/TextAppearance.MaterialComponents.Body2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/shapeableImageView"
-            app:layout_constraintTop_toTopOf="parent">
+            android:ellipsize="end"
+            android:gravity="center"
+            android:lines="1"
+            tools:text="Username" />
 
-            <st.slex.messenger.main.ui.core.CustomTextView
-                android:id="@+id/usernameTextView"
-                style="@style/TextAppearance.MaterialComponents.Body2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:lines="1"
-                tools:text="Username" />
-
-            <st.slex.messenger.main.ui.core.CustomTextView
-                android:id="@+id/stateTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                tools:text="status" />
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</FrameLayout>
+        <st.slex.messenger.main.ui.core.CustomTextView
+            android:id="@+id/stateTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            tools:text="status" />
+    </LinearLayout>
+</LinearLayout>

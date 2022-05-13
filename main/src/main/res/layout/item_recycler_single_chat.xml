@@ -1,95 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/chat_block_user_message"
+        style="@style/Widget.Material3.CardView.Outlined"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="end"
         android:layout_margin="@dimen/primary_padding"
-        android:background="@drawable/bg_user_message"
-        android:minWidth="100dp"
         android:maxWidth="300dp"
+        android:minWidth="100dp"
         android:padding="@dimen/primary_padding"
         android:paddingStart="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="RtlSymmetry">
 
-        <TextView
-            android:id="@+id/chat_user_message"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="250dp"
-            android:minWidth="100dp"
-            android:paddingStart="@dimen/small_padding"
-            android:textColor="#00796B"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="RtlSymmetry"
-            tools:text="receiver message" />
+            android:layout_margin="@dimen/primary_padding"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/chat_user_message_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:paddingTop="@dimen/small_padding"
-            android:paddingEnd="5dp"
-            android:textColor="#00796B"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chat_user_message"
-            tools:ignore="RtlSymmetry"
-            tools:text="21:45" />
+            <TextView
+                android:id="@+id/chat_user_message"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxWidth="250dp"
+                android:minWidth="100dp"
+                android:paddingStart="@dimen/small_padding"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="RtlSymmetry"
+                tools:text="receiver message" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/chat_user_message_time"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingTop="@dimen/small_padding"
+                android:paddingEnd="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chat_user_message"
+                tools:ignore="RtlSymmetry"
+                tools:text="21:45" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/chat_block_receiver_message"
+        style="@style/Widget.Material3.CardView.Outlined"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="start"
         android:layout_margin="@dimen/primary_padding"
-        android:background="@drawable/bg_receiving_message"
         android:maxWidth="300dp"
         android:minWidth="100dp"
-        android:padding="@dimen/primary_padding"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="@dimen/primary_padding">
 
-        <TextView
-            android:id="@+id/chat_receiver_message"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="250dp"
-            android:minWidth="100dp"
-            android:textColor="#455A64"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="ПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПривет" />
+            android:layout_margin="@dimen/primary_padding"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/chat_receiver_message_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:paddingTop="@dimen/small_padding"
-            android:paddingEnd="5dp"
-            android:textColor="#455A64"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chat_receiver_message"
-            tools:ignore="RtlSymmetry"
-            tools:text="21:45" />
+            <TextView
+                android:id="@+id/chat_receiver_message"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxWidth="250dp"
+                android:minWidth="100dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="ПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПриветПривет" />
 
+            <TextView
+                android:id="@+id/chat_receiver_message_time"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingTop="@dimen/small_padding"
+                android:paddingEnd="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chat_receiver_message"
+                tools:ignore="RtlSymmetry"
+                tools:text="21:45" />
+        </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

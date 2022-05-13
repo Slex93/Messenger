@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -88,11 +89,11 @@ class SingleChatFragment : BaseFragment() {
 
     private val sendClicker: View.OnClickListener
         get() = View.OnClickListener {
-            val message = binding.singleChatRecyclerTextInput.editText?.text.toString()
+            val message = binding.editText.text.toString()
             if (message.isEmpty()) {
                 val snackBar =
                     Snackbar.make(binding.root, "Empty message", Snackbar.LENGTH_SHORT)
-                snackBar.anchorView = binding.singleChatRecyclerTextInput
+                snackBar.anchorView = binding.editText
                 snackBar.setAction("Ok") {}
                 snackBar.show()
             } else {
@@ -107,7 +108,14 @@ class SingleChatFragment : BaseFragment() {
     private suspend fun collect(result: Resource<Nothing?>) = withContext(Dispatchers.Main) {
         if (result is Resource.Success) {
             binding.singleChatRecycler.scrollToPosition(adapter.itemCount)
-            binding.singleChatRecyclerTextInput.editText?.setText("")
+            val hidingView = requireActivity().currentFocus
+            val inputMethodManager =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(
+                hidingView!!.windowToken,
+                InputMethodManager.RESULT_UNCHANGED_SHOWN
+            )
+            binding.editText.setText("")
         }
     }
 

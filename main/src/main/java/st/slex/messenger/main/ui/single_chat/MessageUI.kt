@@ -1,6 +1,7 @@
 package st.slex.messenger.main.ui.single_chat
 
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import st.slex.messenger.main.utilites.funs.convertToTime
@@ -8,8 +9,8 @@ import st.slex.messenger.main.utilites.funs.convertToTime
 interface MessageUI {
 
     fun bindMessage(
-        hideLayout: ConstraintLayout,
-        showLayout: ConstraintLayout,
+        hideLayout: ViewGroup,
+        showLayout: ViewGroup,
         messageTextView: TextView,
         timeStampTextView: TextView
     )
@@ -25,8 +26,8 @@ interface MessageUI {
         override fun getId(): String = from
 
         override fun bindMessage(
-            hideLayout: ConstraintLayout,
-            showLayout: ConstraintLayout,
+            hideLayout: ViewGroup,
+            showLayout: ViewGroup,
             messageTextView: TextView,
             timeStampTextView: TextView
         ) {

@@ -19,5 +19,4 @@ class SetImageWithGlide(
         needCircleCrop: Boolean = false,
         needOriginal: Boolean = false
     ) = makeGlideImage(imageView, url, needCrop, needCircleCrop, needOriginal)
-
 }
