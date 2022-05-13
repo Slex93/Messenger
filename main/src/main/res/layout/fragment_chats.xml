@@ -3,11 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_screen_drawer_layout"
+    style="@style/Widget.Material3.DrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="st.slex.messenger.main.ui.chats.ChatsFragment">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/SHOW_PROGRESS"
+        style="@style/Widget.Material3.CircularProgressIndicator.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="visible" />
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -34,24 +43,18 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fragment_main_btn_create_message"
+            style="@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Surface"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/primary_padding"
             android:contentDescription="@string/description_write_message"
             android:src="@drawable/ic_baseline_create_24" />
-
-        <ProgressBar
-            android:id="@+id/SHOW_PROGRESS"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </FrameLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
+        style="@style/Widget.Material3.NavigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
@@ -59,5 +62,4 @@
         android:visibility="invisible"
         app:headerLayout="@layout/navigation_drawer_header"
         app:menu="@menu/menu_navigation_drawer" />
-
 </androidx.drawerlayout.widget.DrawerLayout>

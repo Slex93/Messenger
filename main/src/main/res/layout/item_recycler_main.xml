@@ -17,8 +17,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/SHOW_PROGRESS"
+            style="@style/Widget.Material3.CircularProgressIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"

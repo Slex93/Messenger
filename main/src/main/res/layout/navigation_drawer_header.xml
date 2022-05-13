@@ -2,6 +2,7 @@
 
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Material3.CardView.Elevated"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/big_padding">
@@ -20,11 +21,12 @@
         android:layout_gravity="bottom|center_horizontal"
         android:background="@color/blue_gray_200"
         android:orientation="vertical"
-        android:padding="4dp">
+        android:padding="4dp"
+        android:paddingStart="@dimen/primary_padding">
 
         <st.slex.messenger.main.ui.core.CustomTextView
             android:id="@+id/usernameTextView"
-            style="@style/TextAppearance.MaterialComponents.Body1"
+            style="@style/TextAppearance.Material3.BodyLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -34,12 +36,11 @@
 
         <st.slex.messenger.main.ui.core.CustomTextView
             android:id="@+id/phoneTextView"
-            style="@style/TextAppearance.MaterialComponents.Body2"
+            style="@style/TextAppearance.Material3.BodyMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             tools:text="PhoneNumber" />
-
     </LinearLayout>
 
     <ProgressBar

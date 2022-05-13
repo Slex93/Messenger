@@ -24,7 +24,6 @@ import st.slex.messenger.main.databinding.FragmentChatsBinding
 import st.slex.messenger.main.databinding.NavigationDrawerHeaderBinding
 import st.slex.messenger.main.ui.MainActivity
 import st.slex.messenger.main.ui.core.BaseFragment
-import st.slex.messenger.main.ui.core.UIExtensions.changeVisibility
 import st.slex.messenger.main.ui.user_profile.UserUI
 import javax.inject.Inject
 
@@ -121,7 +120,7 @@ class ChatsFragment : BaseFragment() {
                 }
             }
             is Resource.Failure<*> -> result.failureResult(view)
-            is Resource.Loading -> view.loadingResult()
+            is Resource.Loading -> showLoading()
         }
     }
 
@@ -136,13 +135,13 @@ class ChatsFragment : BaseFragment() {
 
     @JvmName("collectorUserUI")
     private suspend fun Resource.Success<UserUI>.successResult(view: View) {
-        view.changeVisibility()
+        hideLoading()
         drawResult(data)
     }
 
     @JvmName("collectorChatsUI")
     private suspend fun Resource.Success<List<Resource<ChatsUI>>>.successResult(view: View) {
-        view.changeVisibility()
+        hideLoading()
         drawResult(data)
     }
 
@@ -160,11 +159,17 @@ class ChatsFragment : BaseFragment() {
         }
 
     private suspend fun <T> Resource.Failure<T>.failureResult(view: View) {
-        view.changeVisibility()
+        hideLoading()
         Log.e(TAG, exception.message, exception.cause)
     }
 
-    private suspend fun View.loadingResult() = changeVisibility()
+    private fun showLoading() {
+        binding.SHOWPROGRESS.show()
+    }
+
+    private fun hideLoading() {
+        binding.SHOWPROGRESS.hide()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

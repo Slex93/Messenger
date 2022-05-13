@@ -39,7 +39,7 @@
         <entry key="main/src/main/res/drawable/ic_default_photo.xml" value="0.184" />
         <entry key="main/src/main/res/drawable/ic_next_step.xml" value="0.184" />
         <entry key="main/src/main/res/layout/activity_main.xml" value="0.302536231884058" />
-        <entry key="main/src/main/res/layout/fragment_chats.xml" value="0.25" />
+        <entry key="main/src/main/res/layout/fragment_chats.xml" value="0.11" />
         <entry key="main/src/main/res/layout/fragment_contact.xml" value="0.192481884057971" />
         <entry key="main/src/main/res/layout/fragment_settings.xml" value="0.192481884057971" />
         <entry key="main/src/main/res/layout/fragment_single_chat.xml" value="0.192481884057971" />
