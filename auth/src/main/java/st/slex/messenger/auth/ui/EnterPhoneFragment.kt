@@ -60,10 +60,22 @@ class EnterPhoneFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showKeyboard(binding.phoneEditText)
+
         binding.phoneEditText.setRegionCode(Locale.getDefault().country)
         binding.phoneEditText.addTextChangedListener {
-            binding.fragmentPhoneFab.isEnabled =
-                binding.phoneEditText.isTextValidInternationalPhoneNumber()
+            if (binding.phoneEditText.isTextValidInternationalPhoneNumber()) {
+                binding.fragmentPhoneFab.isEnabled = true
+                val hidingView = requireActivity().currentFocus
+                val inputMethodManager =
+                    requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(
+                    hidingView!!.windowToken,
+                    InputMethodManager.RESULT_UNCHANGED_SHOWN
+                )
+            } else {
+                binding.fragmentPhoneFab.isEnabled = false
+            }
+
         }
         binding.fragmentPhoneFab.setOnClickListener(phoneClickListener)
     }

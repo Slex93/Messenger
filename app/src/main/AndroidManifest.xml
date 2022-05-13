@@ -26,7 +26,8 @@
             android:exported="false" />
         <activity
             android:name="st.slex.messenger.auth.ui.AuthActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="stateAlwaysVisible" />
 
         <service
             android:name="st.slex.messenger.main.notification.PushService"
