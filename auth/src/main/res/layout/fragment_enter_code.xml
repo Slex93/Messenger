@@ -7,7 +7,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/fragment_code_layout"
-        style="@style/CodeCardView"
+        style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -27,6 +27,8 @@
                 style="@style/CodeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor"
                 tools:text="1" />
 
             <EditText
@@ -34,6 +36,8 @@
                 style="@style/CodeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor"
                 tools:text="1" />
 
             <EditText
@@ -41,6 +45,8 @@
                 style="@style/CodeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor"
                 tools:text="1" />
 
             <EditText
@@ -48,6 +54,8 @@
                 style="@style/CodeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor"
                 tools:text="1" />
 
             <EditText
@@ -55,6 +63,8 @@
                 style="@style/CodeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor"
                 tools:text="1" />
 
             <EditText
@@ -62,6 +72,8 @@
                 style="@style/CodeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor"
                 tools:text="1" />
         </LinearLayout>
 
@@ -69,6 +81,7 @@
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/fragment_code_progress_indicator"
+        style="@style/Widget.Material3.CircularProgressIndicator.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top"
@@ -76,5 +89,4 @@
         android:indeterminate="true"
         android:visibility="gone"
         tools:visibility="visible" />
-
 </FrameLayout>

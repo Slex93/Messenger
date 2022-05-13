@@ -44,5 +44,4 @@
     <string name="authTransitionName" translatable="false">auth_transition_name</string>
     <string name="description_change_image" translatable="false">change image</string>
     <string name="label_btn_change" translatable="false">change</string>
-
 </resources>

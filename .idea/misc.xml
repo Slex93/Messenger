@@ -28,6 +28,8 @@
         <entry key="app/src/main/res/layout/toolbar_info.xml" value="0.4466666666666667" />
         <entry key="app/src/main/res/layout/user_profile_content.xml" value="0.3442028985507246" />
         <entry key="app/src/main/res/menu/menu_navigation_drawer.xml" value="0.45856634468734114" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1385" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1385" />
         <entry key="auth/src/main/res/drawable/ic_baseline_call_24.xml" value="0.4869791666666667" />
         <entry key="auth/src/main/res/drawable/ic_next_step.xml" value="0.4864583333333333" />
         <entry key="auth/src/main/res/layout/activity_auth.xml" value="0.22275238573581116" />
@@ -37,11 +39,21 @@
         <entry key="main/src/main/res/drawable/ic_default_photo.xml" value="0.184" />
         <entry key="main/src/main/res/drawable/ic_next_step.xml" value="0.184" />
         <entry key="main/src/main/res/layout/activity_main.xml" value="0.302536231884058" />
-        <entry key="main/src/main/res/layout/fragment_chats.xml" value="0.22275238573581116" />
-        <entry key="main/src/main/res/layout/item_recycler_single_chat.xml" value="0.15806159420289856" />
+        <entry key="main/src/main/res/layout/fragment_chats.xml" value="0.25" />
+        <entry key="main/src/main/res/layout/fragment_contact.xml" value="0.192481884057971" />
+        <entry key="main/src/main/res/layout/fragment_settings.xml" value="0.192481884057971" />
+        <entry key="main/src/main/res/layout/fragment_single_chat.xml" value="0.192481884057971" />
+        <entry key="main/src/main/res/layout/fragment_user_profile.xml" value="0.3976449275362319" />
+        <entry key="main/src/main/res/layout/item_recycler_contact.xml" value="0.3976449275362319" />
+        <entry key="main/src/main/res/layout/item_recycler_main.xml" value="0.192481884057971" />
+        <entry key="main/src/main/res/layout/item_recycler_single_chat.xml" value="0.375" />
         <entry key="main/src/main/res/layout/navigation_drawer_header.xml" value="0.2265193370165746" />
         <entry key="main/src/main/res/layout/toolbar_info.xml" value="0.32608695652173914" />
         <entry key="main/src/main/res/menu/menu_navigation_drawer.xml" value="0.29270833333333335" />
+        <entry key="resources/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1385" />
+        <entry key="resources/src/main/res/drawable/splash_screen.xml" value="0.1385" />
+        <entry key="splashscreen/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1385" />
+        <entry key="splashscreen/src/main/res/drawable/splash_screen.xml" value="0.1385" />
       </map>
     </option>
   </component>

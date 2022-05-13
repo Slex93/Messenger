@@ -16,10 +16,10 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/main" />
             <option value="$PROJECT_DIR$/phoneedittext" />
+            <option value="$PROJECT_DIR$/resources" />
             <option value="$PROJECT_DIR$/splashscreen" />
           </set>
         </option>
-        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

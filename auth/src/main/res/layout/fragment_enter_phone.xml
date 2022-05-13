@@ -8,7 +8,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/fragment_phone_input"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -18,15 +18,17 @@
 
         <st.slex.phoneedittext.PhoneTextInputEditText
             android:id="@+id/phoneEditText"
-            style="@style/TextAppearance.MaterialComponents.Headline5"
+            style="@style/TextAppearance.Material3.LabelMedium"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:textSize="22sp"
             tools:text="+799998887766" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_phone_fab"
+        style="@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Surface"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -38,6 +40,7 @@
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/fragment_code_progress_indicator"
+        style="@style/Widget.Material3.CircularProgressIndicator.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top"

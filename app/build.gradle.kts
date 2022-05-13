@@ -44,4 +44,5 @@ dependencies {
     implementation(project(":splashscreen"))
     implementation(project(":main"))
     implementation(project(":auth"))
+    implementation(project(":resources"))
 }

@@ -55,6 +55,7 @@ android {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":resources"))
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
 

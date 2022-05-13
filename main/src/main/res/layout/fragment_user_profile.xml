@@ -8,12 +8,12 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
-        style="@style/Appbar"
+        style="@style/Widget.Material3.AppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            style="@style/Toolbar"
+            style="@style/Widget.Material3.CollapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:expandedTitleGravity="top"
@@ -29,7 +29,7 @@
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.5"
-                tools:src="@drawable/test_image" />
+                tools:src="@drawable/ic_default_photo" />
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/changeImageFab"
@@ -45,7 +45,7 @@
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/user_profile_toolbar"
-                style="@style/Toolbar"
+                style="@style/Widget.Material3.Toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="top"
