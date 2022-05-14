@@ -5,79 +5,24 @@
     android:layout_height="match_parent"
     tools:context=".ui.EnterCodeFragment">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/fragment_code_layout"
-        style="@style/Widget.Material3.CardView.Elevated"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.FilledBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/big_padding"
-        android:transitionName="@string/authTransitionName">
+        android:hint="@string/code">
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text"
+            style="@style/TextAppearance.Material3.LabelLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/primary_padding"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/codeEditText1"
-                style="@style/CodeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor"
-                tools:text="1" />
-
-            <EditText
-                android:id="@+id/codeEditText2"
-                style="@style/CodeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor"
-                tools:text="1" />
-
-            <EditText
-                android:id="@+id/codeEditText3"
-                style="@style/CodeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor"
-                tools:text="1" />
-
-            <EditText
-                android:id="@+id/codeEditText4"
-                style="@style/CodeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor"
-                tools:text="1" />
-
-            <EditText
-                android:id="@+id/codeEditText5"
-                style="@style/CodeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor"
-                tools:text="1" />
-
-            <EditText
-                android:id="@+id/codeEditText6"
-                style="@style/CodeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:importantForAutofill="no"
-                tools:ignore="LabelFor"
-                tools:text="1" />
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+            android:inputType="number"
+            android:lines="1"
+            android:maxLength="6"
+            android:textSize="40sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/fragment_code_progress_indicator"

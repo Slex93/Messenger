@@ -54,6 +54,7 @@ android {
 dependencies {
     implementation(project(":phoneedittext"))
     implementation(project(":core"))
+    implementation(project(":resources"))
 
     /*Navigation Component*/
     val navVersion = "2.4.2"
@@ -78,7 +79,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
 
     /*Coroutines*/
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1-native-mt")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1")
 
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
