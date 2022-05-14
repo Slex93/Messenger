@@ -6,17 +6,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="st.slex.messenger.MessengerApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/ProjectTheme">
+        android:theme="@style/NewProjectTheme">
         <activity
             android:name="st.slex.messenger.splashscreen.SplashActivity"
             android:exported="true"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/NewSplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -24,10 +23,11 @@
         </activity>
         <activity
             android:name="st.slex.messenger.main.ui.MainActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name="st.slex.messenger.auth.ui.AuthActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="stateAlwaysVisible" />
 
         <service
             android:name="st.slex.messenger.main.notification.PushService"

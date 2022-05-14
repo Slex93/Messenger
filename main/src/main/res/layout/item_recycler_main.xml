@@ -3,8 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemCardView"
+    style="@style/Widget.Material3.CardView.Filled"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="@dimen/primary_padding"
     android:checkable="true"
     android:clickable="true"
     android:focusable="true"
@@ -15,8 +17,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/SHOW_PROGRESS"
+            style="@style/Widget.Material3.CircularProgressIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
@@ -54,8 +57,7 @@
             android:layout_margin="@dimen/primary_padding"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/test_image" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <st.slex.messenger.main.ui.core.CustomTextView
             android:id="@+id/usernameTextView"
@@ -96,15 +98,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/usernameTextView"
             tools:text="12:30" />
-
-        <com.google.android.material.divider.MaterialDivider
-            android:id="@+id/materialDivider"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/primary_padding"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/messageTextView"
-            app:layout_constraintTop_toBottomOf="@+id/messageTextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </st.slex.messenger.main.ui.core.CustomCardView>

@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -18,14 +20,15 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialContainerTransform
 import dagger.Lazy
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import st.slex.messenger.auth.R
 import st.slex.messenger.auth.databinding.FragmentEnterCodeBinding
+import st.slex.messenger.auth.ui.core.LoginUIResult
 import javax.inject.Inject
-import kotlin.coroutines.suspendCoroutine
+
 
 @ExperimentalCoroutinesApi
 class EnterCodeFragment : Fragment() {
@@ -39,6 +42,9 @@ class EnterCodeFragment : Fragment() {
     private val viewModel: AuthViewModel by viewModels {
         viewModelFactory.get()
     }
+
+    private var sendCodeJob: Job = Job()
+    private var collectorJob: Job = Job()
 
     @Inject
     fun injection(viewModelFactory: Lazy<ViewModelProvider.Factory>) {
@@ -72,81 +78,80 @@ class EnterCodeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        editTextList.first().requestFocus()
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            foreachCodeList(editTextList) { sendCode.start() }
+        binding.editText.requestFocus()
+        binding.editText.addTextChangedListener {
+            if (it?.length == 6) sendCode()
         }
     }
 
-    private val sendCode by lazy {
-        viewLifecycleOwner.lifecycleScope.launch(
-            context = Dispatchers.IO,
-            start = CoroutineStart.LAZY
-        ) {
-            viewModel.sendCode(id = args.id, code = codeFromList).collect(::collector)
+    private fun sendCode() {
+        sendCodeJob.cancel()
+        sendCodeJob = viewLifecycleOwner.lifecycleScope.launch(context = Dispatchers.IO) {
+            viewModel.sendCode(
+                id = args.id,
+                code = binding.editText.text.toString()
+            ).collect(::collector)
         }
     }
 
-    private val editTextList: List<EditText> by lazy {
-        listOf(
-            binding.codeEditText1, binding.codeEditText2, binding.codeEditText3,
-            binding.codeEditText4, binding.codeEditText5, binding.codeEditText6
-        )
-    }
-
-    private suspend inline fun foreachCodeList(
-        list: List<EditText>,
-        crossinline startSendingCode: () -> Unit
-    ) = list.indices.forEach {
-        listenCode(list[it]).also { _ ->
-            if (it == list.size - 1) startSendingCode()
-            else list[it + 1].requestFocus()
+    private fun collector(resource: LoginUIResult) {
+        collectorJob.cancel()
+        collectorJob = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            when (resource) {
+                is LoginUIResult.Success -> success()
+                is LoginUIResult.Failure -> failure(resource.exception)
+                is LoginUIResult.Loading -> showProgress()
+            }
         }
     }
 
-    private suspend fun listenCode(editText: EditText): Unit = suspendCoroutine { continuation ->
-        editText.addTextChangedListener {
-            if (it?.length == 1) continuation.resumeWith(Result.success(Unit))
-        }
-    }
-
-    private val codeFromList: String
-        get() = editTextList.joinToString { it.text.toString() }.replace(", ", "")
-
-    private fun collector(
-        resource: LoginUIResult
-    ) = viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-        when (resource) {
-            is LoginUIResult.Success -> success()
-            is LoginUIResult.Failure -> stopProgress()
-            is LoginUIResult.Loading -> showProgress()
-        }
+    private fun failure(exception: Exception) {
+        binding.editText.setText("")
+        stopProgress()
+        showError(exception)
     }
 
     private fun success() {
         stopProgress()
         val intent = Intent()
         intent.setClassName(requireContext(), MAIN_ACTIVITY_PATH)
+        Snackbar.make(binding.root, "SUCCESS", Snackbar.LENGTH_LONG).show()
         startActivity(intent)
         requireActivity().finish()
-        Snackbar.make(binding.root, "SUCCESS", Snackbar.LENGTH_LONG).show()
-    }
-
-    private fun showProgress() {
-        binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
     }
 
     private fun stopProgress() {
         binding.fragmentCodeProgressIndicator.visibility = View.GONE
     }
 
+    private fun showProgress() {
+        binding.fragmentCodeProgressIndicator.visibility = View.VISIBLE
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        sendCodeJob.cancel()
+        collectorJob.cancel()
         _binding = null
+    }
+
+    private fun showError(throwable: Throwable) {
+        if (isVisible) {
+            Snackbar.make(
+                binding.root,
+                throwable.message.toString(),
+                Snackbar.LENGTH_SHORT
+            ).apply {
+                setAction("OK") {}
+                (view.layoutParams as FrameLayout.LayoutParams).gravity = Gravity.TOP
+            }.show()
+        }
+        Log.e(TAG, throwable.stackTraceToString())
     }
 
     companion object {
         private const val MAIN_ACTIVITY_PATH = "st.slex.messenger.main.ui.MainActivity"
+        private const val TAG = "EnterCodeFragment"
     }
 }
 

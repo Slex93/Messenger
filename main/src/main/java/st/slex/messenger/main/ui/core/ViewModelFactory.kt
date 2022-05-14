@@ -9,18 +9,17 @@ class ViewModelFactory @Inject constructor(
     private val viewModelMap: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>
 ) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        var viewModel = viewModelMap[modelClass]
-        if (viewModel == null) {
-            for (entry in viewModelMap) {
-                if (modelClass.isAssignableFrom(entry.key)) {
-                    viewModel = entry.value
-                    break
-                }
-            }
-        }
-        if (viewModel == null) throw IllegalArgumentException("Unknown model class $modelClass")
-        @Suppress("UNCHECKED_CAST")
-        return viewModel.get() as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = viewModelMap[modelClass]
+        ?.let(::viewModelMapper)
+        ?: modelClass.filterViewModelMap?.let(::viewModelMapper)
+        ?: throw IllegalArgumentException("Unknown model class $modelClass")
+
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : ViewModel> viewModelMapper(provider: Provider<ViewModel>): T =
+        provider.get() as T
+
+    private val <T> Class<T>.filterViewModelMap: Provider<ViewModel>?
+        get() = viewModelMap.filter {
+            isAssignableFrom(it.key)
+        }.firstNotNullOfOrNull { it.value }
 }

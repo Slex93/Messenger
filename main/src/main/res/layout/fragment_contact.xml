@@ -12,13 +12,13 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-            style="@style/Appbar"
+            style="@style/Widget.Material3.AppBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/fragment_contact_toolbar"
-                style="@style/Toolbar"
+                style="@style/Widget.Material3.Toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.appbar.AppBarLayout>

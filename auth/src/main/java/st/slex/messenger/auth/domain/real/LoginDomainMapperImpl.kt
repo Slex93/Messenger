@@ -2,7 +2,7 @@ package st.slex.messenger.auth.domain.real
 
 import st.slex.messenger.auth.core.LoginValue
 import st.slex.messenger.auth.domain.interf.LoginDomainMapper
-import st.slex.messenger.auth.ui.LoginUIResult
+import st.slex.messenger.auth.ui.core.LoginUIResult
 import javax.inject.Inject
 
 class LoginDomainMapperImpl @Inject constructor() : LoginDomainMapper {

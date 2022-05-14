@@ -23,11 +23,12 @@ value class GlideBase(
         needCircleCrop: Boolean = false,
         needOriginal: Boolean = false
     ) {
-        val urlSet = if (url == "null" || url == "") {
+        val urlSet = if (url == "null" || url.isEmpty()) {
             R.drawable.ic_default_photo
         } else url
         val glide = Glide.with(imageView)
             .load(urlSet)
+            .placeholder(R.drawable.ic_default_photo)
             .listener(primaryRequestListener)
         if (needCrop) glide.centerCrop()
         if (needCircleCrop) glide.circleCrop()

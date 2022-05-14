@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
-      <module name="Messenger.app" target="11" />
-      <module name="Messenger.auth" target="11" />
-      <module name="Messenger.main" target="11" />
-      <module name="Messenger.phoneedittext" target="11" />
-      <module name="Messenger.splashscreen" target="11" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="11" />
   </component>
 </project>
